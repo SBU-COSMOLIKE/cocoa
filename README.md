@@ -144,13 +144,7 @@ In this section, we assume users have previously activated the Cocoa conda envir
 
 **Step :one:**: Download Cocoa's latest release and go to its main folder (`cocoa/Cocoa`),
 
-  - Stable Version
-    
-        git clone https://github.com/CosmoLike/cocoa.git --branch v4.05 cocoa
-
-  - Testing beta release
-    
-        git clone https://github.com/CosmoLike/cocoa.git --branch v5.0beta1 cocoa
+      git clone git@github.com:SBU-COSMOLIKE/cocoa.git cocoa
 
 and
 
