@@ -117,7 +117,7 @@ Users can now proceed to the **next section**.
 > **Step :two:** Download the file appropriate conda-lock compatible `yml` file.
 >   - Linux
 >     
->         wget https://raw.githubusercontent.com/CosmoLike/cocoa/refs/heads/dev/cocoapy310-linux.yml
+>         wget https://raw.githubusercontent.com/SBU-COSMOLIKE/cocoa/refs/heads/main/cocoapy310.yml
 >
 >   - macOS (arm)
 >     
