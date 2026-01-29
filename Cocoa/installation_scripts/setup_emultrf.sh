@@ -82,14 +82,40 @@ if [ -z "${IGNORE_EMULTRF_CODE}" ]; then
 
     cdfolder "${ECODEF:?}/emulators" || { cdroot; return 1; }
 
-    "${GIT:?}" clone "${URL:?}" --depth ${GIT_CLONE_MAXIMUM_DEPTH:?} --recursive \
-      "${PACKDIR:?}" >${OUT1:?} 2>${OUT2:?} || { error "${EC15:?}"; return 1; }
-  
-    cdfolder "${PACKDIR:?}" || { cdroot; return 1; }
-
     if [ -n "${EMULTRF_GIT_COMMIT}" ]; then
+
+      "${GIT:?}" clone "${URL:?}" --recursive \
+        "${PACKDIR:?}" >${OUT1:?} 2>${OUT2:?} || { error "${EC15:?}"; return 1; }
+
+      cdfolder "${PACKDIR:?}" || { cdroot; return 1; }
+
       "${GIT:?}" checkout "${EMULTRF_GIT_COMMIT:?}" \
         >${OUT1:?} 2>${OUT2:?} || { error "${EC16:?}"; return 1; }
+    
+    elif [ -n "${EMULTRF_GIT_BRANCH}" ]; then
+    
+      "${GIT:?}" clone "${URL:?}" "${FOLDER:?}" --branch ${EMULTRF_GIT_BRANCH:?} \
+        --single-branch >>${OUT1:?} 2>>${OUT2:?} || { error "${EC15:?}"; return 1; }
+    
+    elif [ -n "${EMULTRF_GIT_TAG}" ]; then
+
+      "${GIT:?}" clone "${URL:?}" "${FOLDER:?}" \
+        >>${OUT1:?} 2>>${OUT2:?} || { error "${EC15:?}"; return 1; }
+    
+      cdfolder "${PACKDIR}" || { cdroot; return 1; }
+      
+      "${GIT:?}" fetch --all --tags --prune
+
+      if ! "${GIT:?}" show-ref --verify --quiet "refs/heads/${TAG}"; then
+        "${GIT:?}" checkout tags/${EMULTRF_GIT_TAG:?} -b ${EMULTRF_GIT_TAG:?} \
+          >>${OUT1:?} 2>>${OUT2:?} || { error "${EC16:?}"; return 1; } 
+      fi
+
+    else
+    
+      "${GIT:?}" clone "${URL:?}" --depth ${GIT_CLONE_MAXIMUM_DEPTH:?} --recursive \
+        "${PACKDIR:?}" >${OUT1:?} 2>${OUT2:?} || { error "${EC15:?}"; return 1; }
+
     fi  
   fi
   
