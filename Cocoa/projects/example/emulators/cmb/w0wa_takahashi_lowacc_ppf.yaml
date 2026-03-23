@@ -1,0 +1,133 @@
+stop_at_error: true
+debug: False
+likelihood:
+  planck_2018_highl_plik.TTTEEE_lite:
+    path: ./external_modules/
+    clik_file: plc_3.0/hi_l/plik_lite/plik_lite_v22_TTTEEE.clik
+  planck_2018_lensing.clik:
+    path: ./external_modules/
+    clik_file: plc_3.0/lensing/smicadx12_Dec5_ftl_mv2_ndclpp_p_teb_consext8.clik_lensing
+params:
+  logA:
+    prior:
+      # As_1e9 = 0.5 -> 1.60943791243
+      min: 1.61
+      # As_1e9 = 5.0 -> 3.91202300543
+      max: 3.92
+    ref:
+      dist: norm
+      loc: 3.0448
+      scale: 0.05
+    proposal: 3
+    latex: \log(10^{10} A_\mathrm{s})
+    drop: true
+  As:
+    value: 'lambda logA: 1e-10*np.exp(logA)'
+    latex: A_\mathrm{s}
+  omegabh2:
+    prior:
+      # 0.03 * 0.55^2 ~ 0.009
+      min: 0.005
+      # 0.07 * 0.91^2 ~ 0.057
+      max: 0.061 
+    ref:
+      dist: norm
+      loc: 0.022383
+      scale: 0.005
+    proposal: 0.005
+    latex: \Omega_\mathrm{b} h^2
+  omegach2:
+    prior:
+      min: 0.02
+      max: 0.5
+    ref:
+      dist: norm
+      loc: 0.12011
+      scale: 0.03
+    proposal: 0.03
+    latex: \Omega_\mathrm{c} h^2
+  H0:
+    prior:
+      min: 55
+      max: 91
+    ref:
+      dist: norm
+      loc: 67
+      scale: 2
+    proposal: 0.001
+    latex: H_0
+  ns:
+    prior:
+      min: 0.87
+      max: 1.07
+    ref:
+      dist: norm
+      loc: 0.96605
+      scale: 0.005
+    proposal: 0.005
+    latex: n_\mathrm{s}
+  tau:
+    prior:
+      min: 0.02
+      max: 0.2
+    ref:
+      dist: norm
+      loc: 0.055
+      scale: 0.006
+    proposal: 0.003
+    latex: \tau_\mathrm{reio}
+  mnu:
+    value: 0.06
+    latex: m_{\\nu}
+  w0pwa:
+    prior:
+      min: -5 
+      max: -0.01
+    ref:
+      dist: norm
+      loc: -0.99
+      scale: 0.05
+    proposal: 0.05
+    latex: w_{0,\mathrm{DE}}+w_{a,\mathrm{DE}}
+    drop: true
+  w:
+    prior:
+      min: -3
+      max: -0.01
+    ref:
+      dist: norm
+      loc: -0.99
+      scale: 0.05
+    proposal: 0.05
+    latex: w_{0,\mathrm{DE}}
+  wa:
+    value: 'lambda w0pwa, w: w0pwa - w'
+    latex: w_{a,\mathrm{DE}}
+  A_planck:
+    value: 1
+  thetastar:
+    derived: true
+    latex: \Theta_\star
+  rdrag:
+    derived: True
+    latex: r_\mathrm{drag}
+theory:
+  camb:
+    path: ./external_modules/code/CAMB
+    extra_args:
+      dark_energy_model: ppf
+      halofit_version: takahashi
+      lmax: 5500
+      AccuracyBoost: 1.0
+      lens_potential_accuracy: 1
+      #lens_k_eta_reference: 12000.0
+      nonlinear: NonLinear_both
+      Accuracy.AccurateBB: False
+      #k_per_logint: 5
+      #kmax: 10
+train_args:
+  probe: 'cmblensed'
+  lrange: [0,2500]
+  ord: ['omegabh2','omegach2','H0','tau','ns','logA','w','w0pwa']
+  params_covmat_file: 'w0wa_fisher_covmat.txt'
+  derived: ["rdrag", "thetastar"]
