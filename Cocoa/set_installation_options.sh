@@ -408,4 +408,4 @@ export ROMAN_REAL_COMMIT="50ec8ca9fa79b4170554c0537b2dc539c67c32a2"
 # --------------------------------------------------------------------
 export AXIONS_PROJECT_URL="git@github.com:SBU-COSMOLIKE/cocoa_axions.git"
 export AXIONS_PROJECT_NAME="axions"
-export AXIONS_PROJECT_COMMIT="88487e988d3a0e76d2ce390af4af53ee08ae170d"
+export AXIONS_PROJECT_COMMIT="6ae5d5bf018810e5886f34147a1c58cef2088985"
