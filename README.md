@@ -123,13 +123,13 @@ In this section, we assume users have previously activated the Cocoa conda envir
 
 **Step :one:**: Download Cocoa's latest release and go to its main folder (`cocoa/Cocoa`),
 
-  - Stable Version
+  - Stable Version # copy of upstream cosmolike code
     
-        git clone https://github.com/CosmoLike/cocoa.git --branch v4.07 cocoa
+        git clone https://github.com/SBU-COSMOLIKE/cocoa.git cocoa --branch main
 
-  - Testing beta release
+  - Testing beta release # the work done on this fork
     
-        git clone https://github.com/CosmoLike/cocoa.git --branch v5.0beta2 cocoa
+        git clone https://github.com/SBU-COSMOLIKE/cocoa.git cocoa --branch dev
 
 and
 
