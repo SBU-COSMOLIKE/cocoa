@@ -1,3 +1,3 @@
-numpy
-scipy
-getdist
+version https://git-lfs.github.com/spec/v1
+oid sha256:1ac61f4e2cc1322236f69651be650730ec3a180ecb57cac831b34d79c696a2e6
+size 20

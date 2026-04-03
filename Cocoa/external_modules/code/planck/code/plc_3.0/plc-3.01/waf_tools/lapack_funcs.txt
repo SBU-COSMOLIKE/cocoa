@@ -1,25 +1,3 @@
-dposv
-dtrsv
-dpotrf 
-dpotrs
-dpotri
-dtrtri 
-dtrmm 
-dtrmv 
-dgeqrf 
-dormqr 
-dsyev 
-dgesvd 
-dsymv 
-dgemv 
-dgemm 
-dsyrk 
-dsyr2k 
-daxpy 
-dtrsm 
-dsymm 
-dsyr 
-ddot 
-dsyevd 
-dlamch 
-dsyevr     
+version https://git-lfs.github.com/spec/v1
+oid sha256:266379fe5fc8abad3c21c6d95d41f63d8f2c5a3699947e300c6411b495d540e3
+size 183
