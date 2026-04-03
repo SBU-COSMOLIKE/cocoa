@@ -194,7 +194,7 @@ export GIT_CLONE_MAXIMUM_DEPTH=1000
 export COBAYA_URL="https://github.com/CobayaSampler/cobaya.git"
 export COBAYA_GIT_COMMIT="86943d81d48d2edb2961b17077461df9e799f4d1"
 
-export COSMOLIKE_URL="https://github.com/COSMOLIKE/cocoa-cosmolike-core.git"
+export COSMOLIKE_URL="https://github.com/SBU-COSMOLIKE/cocoa-cosmolike-core.git"
 export COSMOLIKE_GIT_BRANCH="dev" 
 export COSMOLIKE_NAME="cosmolike_core"
 
@@ -293,7 +293,7 @@ export COSMOPOWER_GIT_COMMIT="f70fc789426847eed996d707ec67a3a93d74bbc3"
 export COSMOPOWER_DATA_URL="https://github.com/cosmopower-organization/jense_2024_emulators.git"
 export COSMOPOWER_DATA_URL_COMMIT="4317635eed70289ee1ec6b3df828027173071e36"
 
-export EMULTRF_URL="https://github.com/CosmoLike/emulators_code.git"
+export EMULTRF_URL="https://github.com/SBU-COSMOLIKE/emulators_code.git"
 export EMULTRF_GIT_BRANCH="dev"
 
 export EMULTRF_DATA_URL="https://github.com/SBU-COSMOLIKE/emulators_data_lcdm.git"
@@ -330,31 +330,31 @@ export GETDIST_NAME="getdist"
 # Cosmolike projects below -------------------------------------------
 # --------------------------------------------------------------------
 # --------------------------------------------------------------------
-export LSST_Y1_URL="https://github.com/COSMOLIKE/cocoa_lsst_y1.git"
+export LSST_Y1_URL="https://github.com/SBU-COSMOLIKE/cocoa_lsst_y1.git"
 export LSST_Y1_NAME="lsst_y1"
 export LSST_Y1_BRANCH="dev"
 #export LSST_Y1_GIT_COMMIT="df96af9558c97b07d355df4bfc56f1677e71b201"
 #export LSST_Y1_TAG="v5.0beta1"
 
-export DES_Y3_URL="https://github.com/COSMOLIKE/cocoa_des_y3.git"
+export DES_Y3_URL="https://github.com/SBU-COSMOLIKE/cocoa_des_y3.git"
 export DES_Y3_NAME="des_y3"
 export DES_Y3_BRANCH="dev"
 #export DES_Y3_GIT_COMMIT="1a46582b5539c177bd68f8863c054f79a15f8538"
 #export DES_Y3_TAG="v5.0beta1"
 
-export ROMAN_FOURIER_URL="https://github.com/COSMOLIKE/cocoa_roman_fourier.git"
+export ROMAN_FOURIER_URL="https://github.com/SBU-COSMOLIKE/cocoa_roman_fourier.git"
 export ROMAN_FOURIER_NAME="roman_fourier"
 export ROMAN_FOURIER_BRANCH="dev"
 #export ROMAN_FOURIER_GIT_COMMIT="407a35a15b2a1d96d96cb5f0276cf772c2c60e6d"
 #export ROMAN_FOURIER_TAG="v5.0beta1"
 
-export ROMAN_REAL_URL="https://github.com/COSMOLIKE/cocoa_roman_real.git"
+export ROMAN_REAL_URL="https://github.com/SBU-COSMOLIKE/cocoa_roman_real.git"
 export ROMAN_REAL_NAME="roman_real"
 export ROMAN_REAL_BRANCH="dev"
 #export ROMAN_REAL_GIT_COMMIT="8a13be52849fc7965b99f41bd173b7dda05fba67"
 #export ROMAN_REAL_TAG="v5.0beta2"
 
-export DESXPLANCK_URL="https://github.com/COSMOLIKE/cocoa_desy1xplanck.git"
+export DESXPLANCK_URL="https://github.com/SBU-COSMOLIKE/cocoa_desy1xplanck.git"
 #export DESXPLANCK_NAME="desy1xplanck"
 export DESXPLANCK_BRANCH="dev"
 #export DESXPLANCK_COMMIT=
