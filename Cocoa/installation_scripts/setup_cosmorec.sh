@@ -13,7 +13,7 @@ if [ -z "${IGNORE_COSMOREC_CODE}" ]; then
 
   unset_env_vars () {
     unset -v URL CCIL ECODEF FOLDER PACKDIR CHANGES TFOLDER 
-    unset -v TFILE TFILEP AL PRINTNAME URL_BASE
+    unset -v TFILE TFILEP AL PRINTNAME URL_BASE LOCAL_BACKUP_USED
     cdroot || return 1;
   }
 
@@ -96,8 +96,23 @@ if [ -z "${IGNORE_COSMOREC_CODE}" ]; then
   
     cdfolder "${ECODEF:?}" || { cdroot; return 1; }
 
-    "${WGET:?}" "${URL:?}" -q --show-progress --progress=bar:force || 
-      { error "${EC24:?}"; return 1; }
+    LOCAL_BACKUP_USED=0
+    
+    "${WGET:?}" "${URL}" --show-progress --no-check-certificate \
+      --progress=bar:force:noscroll --timeout=30 --tries=2 --waitretry=0  \
+      --retry-connrefused --read-timeout=30 >>${OUT1:?} 2>>${OUT2:?} || {
+      pwarning "WGET FAILED - USING LOCAL COCOA COSMOREC BACKUP" || return 1;
+      
+      LOCAL_BACKUP_USED=1
+
+      if [ -f "${ECODEF:?}/${FILE}" ]; then
+        rm -f "${ECODEF:?}/${FILE}" \
+          2>>${OUT2:?} || { error "RM COSMOREC FILE"; return 1; }
+      fi
+
+      xz -dc "${CCIL:?}/cosmorec.xz" > "${ECODEF:?}/${FILE}" \
+        2>>${OUT2:?} || { error "UNXZ LOCAL COSMOREC BACKUP"; return 1; }
+    }
     
     tar -zxvf "${FILE:?}" \
       >${OUT1:?} 2>${OUT2:?} || { error "${EC25:?}"; return 1; }
@@ -107,35 +122,36 @@ if [ -z "${IGNORE_COSMOREC_CODE}" ]; then
 
     rm -f  "${ECODEF:?}/${FILE}"
     rm -rf "${ECODEF:?}/${FILENAME}"
+  
+    if [ "${LOCAL_BACKUP_USED}" -eq 0 ]; then
+      # --------------------------------------------------------------------------
+      # We patch the files below so they use the right compilers -----------------
+      # --------------------------------------------------------------------------
+      # T = TMP
+      declare -a TFOLDER=("" 
+                         ) # If nonblank, path must include /
+      
+      # T = TMP
+      declare -a TFILE=("Makefile.in")
 
-    # --------------------------------------------------------------------------
-    # We patch the files below so they use the right compilers -----------------
-    # --------------------------------------------------------------------------
-    # T = TMP
-    declare -a TFOLDER=("" 
-                       ) # If nonblank, path must include /
-    
-    # T = TMP
-    declare -a TFILE=("Makefile.in")
+      #T = TMP, P = PATCH
+      declare -a TFILEP=("Makefile.in.patch" 
+                        )
 
-    #T = TMP, P = PATCH
-    declare -a TFILEP=("Makefile.in.patch" 
-                      )
+      # AL = Array Length
+      AL=${#TFOLDER[@]}
 
-    # AL = Array Length
-    AL=${#TFOLDER[@]}
+      for (( i=0; i<${AL}; i++ ));
+      do
+        cdfolder "${PACKDIR:?}/${TFOLDER[$i]}" || return 1
 
-    for (( i=0; i<${AL}; i++ ));
-    do
-      cdfolder "${PACKDIR:?}/${TFOLDER[$i]}" || return 1
+        cpfolder "${CHANGES:?}/${TFOLDER[$i]}${TFILEP[$i]:?}" . \
+          2>${OUT2:?} || return 1;
 
-      cpfolder "${CHANGES:?}/${TFOLDER[$i]}${TFILEP[$i]:?}" . \
-        2>${OUT2:?} || return 1;
-
-      patch -u "${TFILE[$i]:?}" -i "${TFILEP[$i]:?}" >${OUT1:?} \
-        2>${OUT2:?} || { error "${EC17:?} (${TFILE[$i]:?})"; return 1; }
-    done
-
+        patch -u "${TFILE[$i]:?}" -i "${TFILEP[$i]:?}" >${OUT1:?} \
+          2>${OUT2:?} || { error "${EC17:?} (${TFILE[$i]:?})"; return 1; }
+      done
+    fi
   fi
   
   cdfolder "${ROOTDIR}" || return 1

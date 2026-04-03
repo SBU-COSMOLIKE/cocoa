@@ -83,7 +83,7 @@ In this section, we assume users have previously activated the Cocoa conda envir
 
 **Step :one:**: Download Cocoa's latest release and go to its main folder (`cocoa/Cocoa`),
 
-    git clone git@github.com:SBU-COSMOLIKE/cocoa.git cocoa
+    git clone git@github.com:SBU-COSMOLIKE/cocoa.git cocoa --branch v4.0-beta19-axions
 
 and
 
