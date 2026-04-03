@@ -1,0 +1,79 @@
+import getdist.plots as gplot
+from getdist import MCSamples
+from getdist import loadMCSamples
+import os
+import matplotlib
+import subprocess
+import matplotlib.pyplot as plt
+import numpy as np
+
+# GENERAL PLOT OPTIONS
+matplotlib.rcParams['mathtext.fontset'] = 'stix'
+matplotlib.rcParams['font.family'] = 'STIXGeneral'
+matplotlib.rcParams['mathtext.rm'] = 'Bitstream Vera Sans'
+matplotlib.rcParams['mathtext.it'] = 'Bitstream Vera Sans:italic'
+matplotlib.rcParams['mathtext.bf'] = 'Bitstream Vera Sans:bold'
+matplotlib.rcParams['xtick.bottom'] = True
+matplotlib.rcParams['xtick.top'] = False
+matplotlib.rcParams['ytick.right'] = False
+matplotlib.rcParams['axes.edgecolor'] = 'black'
+matplotlib.rcParams['axes.linewidth'] = '1.0'
+matplotlib.rcParams['axes.labelsize'] = 'medium'
+matplotlib.rcParams['axes.grid'] = True
+matplotlib.rcParams['grid.linewidth'] = '0.0'
+matplotlib.rcParams['grid.alpha'] = '0.18'
+matplotlib.rcParams['grid.color'] = 'lightgray'
+matplotlib.rcParams['legend.labelspacing'] = 0.77
+matplotlib.rcParams['savefig.bbox'] = 'tight'
+matplotlib.rcParams['savefig.format'] = 'pdf'
+
+parameter = [u'H0',u'omegach2',u'Omega_m',u'Omega0_da_dr',u'scf_friction', u'Omega0_scf_ke',
+u'chi2__BAO',u'chi2__CMB',u'chi2__SN']
+chaindir=r'.'
+
+root_chains = ('EXAMPLE_MCMC5','EXAMPLE_MCMC20')
+
+analysissettings={'smooth_scale_1D':0.45,'smooth_scale_2D':0.45,'ignore_rows': u'0.5',
+'range_confidence' : u'0.04'}
+
+analysissettings2={'smooth_scale_1D':0.45,'smooth_scale_2D':0.45,'ignore_rows': u'0.0',
+'range_confidence' : u'0.04'}
+
+#The previous run had 'scf_friction' : 5.7 (Omega_dr_max = 0.044) - 8. 7 (Omega_dr_min = 0.0008)
+or_min = 0.0008
+or_max = 0.044 
+
+# --------------------------------------------------------------------------------
+print("Chain 1")
+samples=loadMCSamples('./' + root_chains[0],settings=analysissettings)
+samples.ranges.setRange('Omega0_da_dr', [or_min, or_max])
+samples.saveAsText('.VM_P4_TMP1')
+# --------------------------------------------------------------------------------
+print("Chain 2")
+samples=loadMCSamples('./' + root_chains[1],settings=analysissettings2)
+samples.ranges.setRange('Omega0_da_dr', [or_min, or_max])
+samples.saveAsText('.VM_P4_TMP2')
+# --------------------------------------------------------------------------------
+
+#GET DIST PLOT SETUP
+g=gplot.getSubplotPlotter(chain_dir=chaindir, analysis_settings=analysissettings2,width_inch=9.0)
+g.settings.lw_contour = 1.2
+g.settings.legend_rect_border = False
+g.settings.figure_legend_frame = False
+g.settings.axes_fontsize = 13.5
+g.settings.legend_fontsize = 15.5
+g.settings.alpha_filled_add = 0.7
+g.settings.lab_fontsize=15
+g.legend_labels=False
+
+param_3d = None
+#g.triangle_plot(['.VM_P4_TMP2', '.VM_P4_TMP1'],parameter,
+g.triangle_plot(['.VM_P4_TMP2'],parameter,
+plot_3d_with_param=param_3d,line_args=[
+{'lw': 1.6,'ls': 'solid', 'color':'firebrick'},
+{'lw': 1.0,'ls': 'solid', 'color':'royalblue'}],
+contour_colors=['firebrick','royalblue'],
+filled=True,shaded=False,
+legend_labels=['Model 5 SO+WF','Model 5 PL+PT'],legend_loc=(0.5,0.825),
+imax_shaded=0)
+g.export()

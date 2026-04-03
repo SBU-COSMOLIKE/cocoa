@@ -1,0 +1,239 @@
+# ---------------------------------------------------
+# THIS IS QUAD SCF
+# ---------------------------------------------------
+stop_at_error: false
+debug: False
+timing: True
+
+likelihood:
+  planck_2018_lowl.TT: 
+    path: ./external_modules/
+  planck_2018_lowl.EE: 
+    path: ./external_modules/
+  planck_2018_highl_plik.TTTEEE:
+    path: ./external_modules/
+    clik_file: plc_3.0/hi_l/plik/plik_rd12_HM_v22b_TTTEEE_35_1296.clik
+  bao.sdss_dr12_consensus_bao: 
+    measurements_file: bao_data/sdss_DR12Consensus_bao2.dat
+    cov_file: bao_data/BAO_consensus_covtot_dM_Hz2.txt
+    path: ./external_modules/data/
+  #bao.sdss_dr7_mgs:
+  #  path: ./external_modules/data/
+  #sn.pantheon: 
+  #  path: ./external_modules/data/sn_data
+  bao.desi_y1:
+    path: ./external_modules/data/
+    measurements_file: bao_data/DESI6.dat
+    cov_file: bao_data/DESICOV6.dat
+  sn.pantheonplus: 
+    path: ./external_modules/data/sn_data
+
+params:
+  As_1e9:
+    prior:
+      min: 1.75
+      max: 2.5
+    ref:
+      dist: norm
+      loc: 2.1
+      scale: 0.06
+    proposal: 0.06
+    latex: 10^9 A_\mathrm{s}
+    drop: true
+    renames: A
+  As:
+    value: 'lambda As_1e9: 1e-9 * As_1e9'
+    latex: A_\mathrm{s}
+  n_s:
+    prior:
+      min: 0.93
+      max: 1.025
+    ref:
+      dist: norm
+      loc: 0.96605
+      scale: 0.005
+    proposal: 0.005
+    latex: n_\mathrm{s}
+  theta_s_1e2:
+    prior:
+      min: 0.94
+      max: 1.11
+    ref:
+      dist: norm
+      loc: 1.0416
+      scale: 0.008
+    proposal: 0.005
+    latex: 100\theta_\mathrm{s}
+    drop: true
+  100*theta_s:
+    value: 'lambda theta_s_1e2: theta_s_1e2'
+    derived: false
+  H0:
+    latex: H_0
+    min: 20
+    max: 100
+  omegabh2:
+    prior:
+      min: 0.005
+      max: 0.1
+    ref:
+      dist: norm
+      loc: 0.0224
+      scale: 0.0001
+    proposal: 0.0001
+    latex: \Omega_\mathrm{b} h^2
+  omegach2:
+    prior:
+      min: 0.08
+      max: 0.22
+    ref:
+      dist: norm
+      loc: 0.12
+      scale: 0.003
+    proposal: 0.0005
+    latex: \Omega_\mathrm{c} h^2
+  tau_reio:
+    prior:
+      min: 0.01
+      max: 0.12
+    ref:
+      dist: norm
+      loc: 0.064
+      scale: 0.008
+    proposal: 0.004
+    latex: \tau_\mathrm{reio}
+  # ----------------------------------------------------------------------------
+  # ----------------------------------------------------------------------------
+  # ----------------------------------------------------------------------------
+  m_ncdm:
+    value: 0.06
+    latex: \sum m_\nu
+    renames: mnu
+  scf_c:
+    prior:
+      min: 1e-4
+      max: 1.e-3
+    drop: true
+    latex: c_{\rm scf}
+  scf_parameters:
+    value: 'lambda scf_c: str(scf_c) + ",1., 0.0"'
+    derived: false
+  Omega0_scf_ke:
+    derived: true
+    latex: \Omega_{\rm scf,k}
+  w_scf_0:
+    latex: w(z=0)
+  w_scf_p3:
+    latex: w(z=0.3)
+  w_scf_p7:
+    latex: w(z=0.7)
+  w_scf_1:
+    latex: w(z=1)
+  w_scf_2:
+    latex: w(z=2)
+  # ----------------------------------------------------------------------------
+  # ----------------------------------------------------------------------------
+  # ----------------------------------------------------------------------------
+  z_reio:
+    latex: z_\mathrm{re}
+  sigma8:
+    latex: \sigma_8
+  s8omegamp5:
+    derived: 'lambda sigma8, Omega_m: sigma8*Omega_m**0.5'
+    latex: \sigma_8 \Omega_\mathrm{m}^{0.5}
+  clamp:
+    derived: 'lambda A_s, tau_reio: 1e9*A_s*np.exp(-2*tau_reio)'
+    latex: 10^9 A_\mathrm{s} e^{-2\tau}
+  age:
+    latex: '{\rm{Age}}/\mathrm{Gyr}'
+  rs_drag:
+    latex: r_\mathrm{drag}
+  rdrag:
+    latex: r_\mathrm{drag}
+  yheused:
+    latex: Y_\mathrm{P}
+  YHe:
+    latex: Y_\mathrm{P}
+  Omega_m:
+    latex: \Omega_\mathrm{m}
+  omegamh2:
+    derived: 'lambda Omega_m, H0: Omega_m*(H0/100)**2'
+    latex: \Omega_\mathrm{m} h^2
+  omegak:
+    value: 0.0
+    latex: \Omega_k
+  age:
+    latex: '{\rm{Age}}/\mathrm{Gyr}'
+  omegan:
+    latex: \Omega_\mathrm{\\nu}
+
+sampler:
+  mcmc:
+    # ---------------------------------------------------------------------
+    # File (w/ path) or matrix defining a covariance matrix for the proposal:
+    # - null (default): will be generated from params info (prior and proposal)
+    # - matrix: remember to set `covmat_params` to the parameters in the matrix
+    covmat: './projects/dark_rad/EXAMPLE_MCMC9002.covmat'
+    covmat_params:
+    # ---------------------------------------------------------------------
+    # ---------------------------------------------------------------------
+    # Proposal covariance matrix learning
+    # ---------------------------------------------------------------------
+    # ---------------------------------------------------------------------
+    learn_proposal: True
+    # Don't learn if convergence better than...
+    learn_proposal_Rminus1_min: 0.03
+    # ---------------------------------------------------------------------
+    # ---------------------------------------------------------------------
+    # Convergence and stopping
+    # ---------------------------------------------------------------------
+    # ---------------------------------------------------------------------
+    # Maximum number of posterior evaluations
+    max_samples: .inf
+    # Gelman-Rubin R-1 on means
+    Rminus1_stop: 0.005
+    # Gelman-Rubin R-1 on std deviations
+    Rminus1_cl_stop: 0.2
+    Rminus1_cl_level: 0.95
+    # ---------------------------------------------------------------------
+    # ---------------------------------------------------------------------
+    # Exploiting speed hierarchy
+    # ---------------------------------------------------------------------
+    # ---------------------------------------------------------------------
+    measure_speeds: True
+    drag: False
+    oversample_power: 0
+    oversample_thin: True
+    # ---------------------------------------------------------------------
+    # ---------------------------------------------------------------------
+    # Avoid chain getting suck forever
+    # ---------------------------------------------------------------------
+    # ---------------------------------------------------------------------
+    max_tries: 100000
+    burn_in: 0
+    # ---------------------------------------------------------------------
+    # ---------------------------------------------------------------------
+    # When no MPI used, number of fractions of the chain to compare
+    # ---------------------------------------------------------------------
+    # ---------------------------------------------------------------------
+    Rminus1_single_split: 4
+
+theory:
+  classy:
+    path: ./external_modules/code/class_de
+    stop_at_error: False
+    use_renames: True
+    extra_args:
+      N_ncdm: 1
+      N_ur: 2.0328
+      # ------------------------------------------------------
+      Omega_fld: 0.
+      Omega_Lambda: 0.
+      Omega_scf: -1.
+      attractor_ic_scf: n
+      scf_tuning_index: 1
+      scf_potential: quad
+      scf_parameterisation: original
+      # ------------------------------------------------------
+
+output: ./projects/dark_rad/chains/EXAMPLE_MCMC9022
