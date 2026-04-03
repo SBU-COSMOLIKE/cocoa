@@ -1,0 +1,8 @@
+path: null
+measurements_file: bao_data/DESI.dat
+cov_file: bao_data/DESICOV.dat
+rs_fid: 1
+# Aliases for automatic covariance matrix
+aliases: [BAO]
+# Speed in evaluations/second
+speed: 2000
