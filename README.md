@@ -43,7 +43,7 @@ Core packages include compilers and numerical libraries that users typically do 
 
 **Step :one:**: Download the file `cocoapy310.yml` yml file
 
-    wget https://raw.githubusercontent.com/SBU-COSMOLIKE/cocoa/refs/heads/main/cocoapy310.yml
+    wget https://raw.githubusercontent.com/SBU-COSMOLIKE/cocoa/refs/heads/v4.0-beta19-axions/cocoapy310.yml
 
 create the cocoa environment,
 
