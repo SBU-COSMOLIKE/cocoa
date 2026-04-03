@@ -31,7 +31,7 @@ export IGNORE_BICEP_CMB_DATA=1
 # export IGNORE_HOLICOW_STRONG_LENSING_DATA=1
 #export IGNORE_SN_DATA=1
 export IGNORE_SPT_CMB_DATA=1
-#export IGNORE_SIMONS_OBSERVATORY_CMB_DATA=1
+export IGNORE_SIMONS_OBSERVATORY_CMB_DATA=1
 #export IGNORE_PLANCK_CMB_DATA=1
 export IGNORE_CAMSPEC_CMB_DATA=1
 #export IGNORE_LIPOP_CMB_DATA=1
@@ -52,7 +52,7 @@ export IGNORE_ACTDR4_CODE=1
 export IGNORE_CPP_CUBA_INSTALLATION=1
 export IGNORE_FGSPECTRA_CODE=1
 export IGNORE_VELOCILEPTORS_CODE=1
-#export IGNORE_SIMONS_OBSERVATORY_LIKELIHOOD_CODE=1
+export IGNORE_SIMONS_OBSERVATORY_LIKELIHOOD_CODE=1
 export IGNORE_CAMSPEC_LIKELIHOOD_CODE=1
 #export IGNORE_LIPOP_LIKELIHOOD_CODE=1
 export IGNORE_HYREC_CODE=1
@@ -60,11 +60,11 @@ export IGNORE_HYREC_CODE=1
 export IGNORE_MGCAMB_CODE=1
 #export IGNORE_EMULTRF_CODE=1     #SaraivanovZhongZhu (SZZ) transformer-based emul
 export IGNORE_COSMOPOWER_CODE=1   #unable to install cosmopower on modern python
-#export IGNORE_EUCLID_EMULATOR_V2_CODE=1
+export IGNORE_EUCLID_EMULATOR_V2_CODE=1
 export IGNORE_DARK_EMULATOR_CODE=1
 #export IGNORE_NAUTILUS_SAMPLER_CODE=1
-#export IGNORE_DERIVKIT_CODE=1
-#export IGNORE_TENSIOMETER_CODE=1
+export IGNORE_DERIVKIT_CODE=1
+export IGNORE_TENSIOMETER_CODE=1
 #export IGNORE_GETDIST_CODE=1 #dev getdist with code tweaks
 # ------------------------------------------------------------------------------
 # ------------------------------------------------------------------------------
@@ -73,10 +73,10 @@ export IGNORE_DARK_EMULATOR_CODE=1
 # ------------------------------------------------------------------------------
 # ------------------------------------------------------------------------------
 # ------------------------------------------------------------------------------
-#export IGNORE_COSMOLIKE_LSST_Y1_CODE=1
-#export IGNORE_COSMOLIKE_DES_Y3_CODE=1
+export IGNORE_COSMOLIKE_LSST_Y1_CODE=1
+export IGNORE_COSMOLIKE_DES_Y3_CODE=1
 export IGNORE_COSMOLIKE_ROMAN_FOURIER_CODE=1
-#export IGNORE_COSMOLIKE_ROMAN_REAL_CODE=1
+export IGNORE_COSMOLIKE_ROMAN_REAL_CODE=1
 
 # ------------------------------------------------------------------------------
 # ------------------------------------------------------------------------------
@@ -348,10 +348,10 @@ export COSMOPOWER_URL_DATA="https://github.com/cosmopower-organization/jense_202
 export COSMOPOWER_URL_DATA_COMMIT="4317635eed70289ee1ec6b3df828027173071e36"
 
 export EMULTRF_URL="git@github.com:SBU-COSMOLIKE/emulators_code.git"
-#export EMULTRF_GIT_COMMIT="0a0cba998643670ca90316eada46fecac1a92e85"
+export EMULTRF_GIT_COMMIT="5f1073deba43c059ac99256ab2955f40616dad84"
 
 export EMULTRF_DATA_URL="git@github.com:SBU-COSMOLIKE/emulators_data_lcdm.git"
-#export EMULTRF_DATA_GIT_COMMIT="208fc465a2beb219fabf92e0802c2815d7556588"
+export EMULTRF_DATA_GIT_COMMIT="090277edf910bde37a856b8e62044d06ea5b5dc0"
 
 export DARKEMULATOR_URL="https://github.com/DarkQuestCosmology/dark_emulator_public.git"
 export DARKEMULATOR_GIT_COMMIT="46df5972509624e2eeadc2bf3ac528b02333a7e2"
@@ -382,21 +382,11 @@ export GETDIST_NAME="getdist"
 # --------------------------------------------------------------------
 export LSST_Y1_URL="git@github.com:SBU-COSMOLIKE/cocoa_lsst_y1.git"
 export LSST_Y1_NAME="lsst_y1"
-#BRANCH: if unset, load the latest commit on the specified branch
-#export LSST_Y1_BRANCH="dev"
-#COMMIT: if unset, load the specified commit
-#export LSST_Y1_COMMIT="df96af9558c97b07d355df4bfc56f1677e71b201"
-#BRANCH: if unset, load the specified TAG
-#export LSST_Y1_TAG="v4.0-beta17"
+export LSST_Y1_COMMIT="dee0af9948a1a1159f65f92d492746469df1961f"
 
 export DES_Y3_URL="git@github.com:SBU-COSMOLIKE/cocoa_des_y3.git"
 export DES_Y3_NAME="des_y3"
-#BRANCH: if unset, load the latest commit on the specified branch
-#export DES_Y3_BRANCH="main"
-#COMMIT: if unset, load the specified commit
-#export DES_Y3_COMMIT="1a46582b5539c177bd68f8863c054f79a15f8538"
-#BRANCH: if unset, load the specified TAG
-#export DES_Y3_TAG="v4.0-beta17"
+export DES_Y3_COMMIT="dee0af9948a1a1159f65f92d492746469df1961f"
 
 export ROMAN_FOURIER_URL="git@github.com:SBU-COSMOLIKE/cocoa_roman_fourier.git"
 export ROMAN_FOURIER_NAME="roman_fourier"
@@ -409,12 +399,7 @@ export ROMAN_FOURIER_NAME="roman_fourier"
 
 export ROMAN_REAL_URL="git@github.com:SBU-COSMOLIKE/cocoa_roman_real.git"
 export ROMAN_REAL_NAME="roman_real"
-#BRANCH: if unset, load the latest commit on the specified branch
-#export ROMAN_REAL_BRANCH="main"
-#COMMIT: if unset, load the specified commit
-#export ROMAN_REAL_COMMIT="8a13be52849fc7965b99f41bd173b7dda05fba67"
-#BRANCH: if unset, load the specified TAG
-#export ROMAN_REAL_TAG="v4.0-beta17"
+export ROMAN_REAL_COMMIT="50ec8ca9fa79b4170554c0537b2dc539c67c32a2"
 
 # --------------------------------------------------------------------
 # --------------------------------------------------------------------
@@ -423,4 +408,4 @@ export ROMAN_REAL_NAME="roman_real"
 # --------------------------------------------------------------------
 export AXIONS_PROJECT_URL="git@github.com:SBU-COSMOLIKE/cocoa_axions.git"
 export AXIONS_PROJECT_NAME="axions"
-#export AXIONS_PROJECT_COMMIT="df96af9558c97b07d355df4bfc56f1677e71b201"
+export AXIONS_PROJECT_COMMIT="88487e988d3a0e76d2ce390af4af53ee08ae170d"
