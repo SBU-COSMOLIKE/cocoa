@@ -159,18 +159,10 @@ fi
 if [[ -z "${IGNORE_EMULTRF_CODE}" ]]; then
   COBTH="${ROOTDIR:?}/cobaya/cobaya/theories"
 
-  for TMP in \
-    "emulcmb" \
-    "emulbaosn" \
-    "emultheta" \
-    "emulrdrag" \
-    "emul_cosmic_shear" \
-    "emul_ggl" \
-    "emul_wtheta" \
-    "emulmps"
-  do
-    if [[ -L "${COBTH:?}/${TMP:?}" ]]; then
-      rm -f "${COBTH:?}/${TMP:?}"
+  for TMP in "emulcmb" "emulbaosn" "emultheta" "emulrdrag" \
+             "emul_cosmic_shear" "emul_ggl" "emul_wtheta"; do
+    if [[ -L "${COBTH:?}/${TMP}" ]]; then
+      rm -f "${COBTH:?}/${TMP}"
     fi
   done
 
@@ -180,6 +172,7 @@ fi
 # ----------------------------------------------------------------------------
 # ------------------------ STOP EXTERNAL PROJECTS ---------------------------
 # ----------------------------------------------------------------------------
+
 
 if [ -n "${ROOTDIR}" ]; then
   source "${ROOTDIR:?}/installation_scripts/stop_all_projects.sh"
