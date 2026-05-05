@@ -123,7 +123,13 @@ In this section, we assume users have previously activated the Cocoa conda envir
 
 **Step :one:**: Download Cocoa's latest release and go to its main folder (`cocoa/Cocoa`),
 
+- LATEST TAG VERSION
+  
         git clone https://github.com/SBU-COSMOLIKE/cocoa.git --branch v4.11.1 cocoa
+
+- LATEST COMMIT
+
+       git clone https://github.com/SBU-COSMOLIKE/cocoa.git cocoa
 
 > [!NOTE]
 > Version `v4.10.1` and above include significant cosmolike speed-ups from refactoring non-limber/C-FASTPT modules. 
