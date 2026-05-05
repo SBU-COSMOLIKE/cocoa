@@ -123,24 +123,18 @@ In this section, we assume users have previously activated the Cocoa conda envir
 
 **Step :one:**: Download Cocoa's latest release and go to its main folder (`cocoa/Cocoa`),
 
-  - Stable Version
-    
-        git clone https://github.com/SBU-COSMOLIKE/cocoa.git --branch v4.10.3 cocoa
-
-  - Testing beta release
-    
-        git clone https://github.com/SBU-COSMOLIKE/cocoa.git --branch v4.11 cocoa
+        git clone https://github.com/SBU-COSMOLIKE/cocoa.git --branch v4.11.1 cocoa
 
 > [!NOTE]
 > Version `v4.10.1` and above include significant cosmolike speed-ups from refactoring non-limber/C-FASTPT modules. 
 
 > [!NOTE]
 > `v4.10.2` cosmolike benchmark: do not include CAMB; CPU: `Intel(R) Core(TM) i9-10940X CPU @ 3.30GHz`; OpenMP cores: `8`; Includes TATT and non-limber (in `w_gg`).
-> - **LSST-Y1 Real 3x2pt**: ~`0.093`s
-> - **Roman Real 3x2pt**: ~`0.161`s    
+> - **LSST-Y1 Real 3x2pt**: ~`0.075`s
+> - **Roman Real 3x2pt**: ~`0.14`s    
 > - **Roman Fourier 3x2pt**: ~`0.06`s
 > - **DES-Y3 x Planck 6x2pt** ~`0.10`s
-> - **DES-Y3 Real 3x2pt (des_y3 repo)** ~`0.074`s
+> - **DES-Y3 Real 3x2pt (des_y3 repo)** ~`0.063`s
 > 
 > How to record benchmarks on cosmolike projects? 
 > - Go to `EXAMPLE_EVALUATE2.yaml` on each repository; Turn on TATT flag (`IA_model: 1`),
@@ -615,8 +609,12 @@ Now, users must follow all the steps below.
   - macOS (arm)
 
         export OMP_NUM_THREADS=4; export OMP_PROC_BIND=disabled; export OMP_PLACES=cores; export OMP_DYNAMIC=FALSE
-    
- **Step :three:** Run `cobaya-run` on the first emulator example, following the commands below (here we only provide lsst-y1 examples).
+  
+ **Step :three:**: Remove GPU (idea is to run with CPU!) CPU also increase compatibility with hardware
+  
+        export CUDA_VISIBLE_DEVICES=""
+
+ **Step :four:** Run `cobaya-run` on the first emulator example, following the commands below (here we only provide lsst-y1 examples).
 
 - **One model evaluation**:
 
