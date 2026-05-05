@@ -149,7 +149,6 @@ if [ ! -d "${ROOTDIR:?}/cobaya" ]; then
   # PATCH FILE --------------------------------------------- -----------------
   # --------------------------------------------------------------------------  
   # instead of using JAX-CLIK - uses the original CLIK in FORTRAN
-
   declare -a TFOLDER=("cobaya/likelihoods/base_classes/") # Must include  
   declare -a TFILE=("planck_clik.py")
   declare -a TFILEP=("planck_clik.patch")
@@ -171,7 +170,7 @@ if [ ! -d "${ROOTDIR:?}/cobaya" ]; then
   declare -a TFOLDER=("cobaya/") # Must include  
   declare -a TFILE=("model.py")
   declare -a TFILEP=("model.patch")
-  
+
   for (( i=0; i<${#TFOLDER[@]}; i++ ));
   do
     cdfolder "${COB:?}/${TFOLDER[$i]}" || { unset_all; return 1; }
