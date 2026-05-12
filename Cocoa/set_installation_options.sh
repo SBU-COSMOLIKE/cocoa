@@ -149,7 +149,7 @@ export COSMOLIKE_NAME="cosmolike_core"
 # ------------------------------------------------------------------------------
 # ------------------------------------------------------------------------------
 # ------------------------------------------------------------------------------
-export EMULTRF_URL="git@github.com:SBU-COSMOLIKE/emulators_code.git"
+export EMULTRF_URL="https://github.com/CosmoLike/emulators_code.git"
 export EMULTRF_GIT_TAG="v4.10.2"
 export OVERWRITE_EXISTING_EMULTRF_CODE=1
 
