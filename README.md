@@ -60,7 +60,7 @@ Core packages include compilers and numerical libraries that users typically do 
 
   - Linux
     
-         wget https://raw.githubusercontent.com/CosmoLike/cocoa/refs/heads/dev/cocoapy310.yml
+         wget https://raw.githubusercontent.com/CosmoLike/cocoa/refs/heads/main/cocoapy310.yml
 
   - macOS (arm)
     
@@ -114,6 +114,14 @@ Users can now proceed to the **next section**.
 > for instructions on how to install `Miniforge`, which is a  minimal installer of conda that downloads default packages from the `conda-forge` community-driven channel.
 
 > [!TIP]
+> If conda create hangs or fails, install mamba (faster and more robust dependency solver) and retry with (e.g., Linux version)
+>
+>      conda activate base
+>      conda install -n base -c conda-forge mamba
+>      mamba env create --name cocoa --file=cocoapy310.yml
+>      conda activate cocoa
+
+> [!TIP]
 > During the Arizona Winter School (January 2026), we noted that some students with macOS struggled to get the conda to work (conflicts). 
 > If this is the case for you, try the steps in the appendix [FAQ: How can users deal with Conda conflicts (MacOS): a possible solution](#macos_solve_conda_conficts)
 
@@ -123,28 +131,33 @@ In this section, we assume users have previously activated the Cocoa conda envir
 
 **Step :one:**: Download Cocoa's latest release and go to its main folder (`cocoa/Cocoa`),
 
-- LATEST TAG VERSION
-  
+  - Stable Version
+    
         git clone https://github.com/SBU-COSMOLIKE/cocoa.git --branch v4.11.1 cocoa
 
-- LATEST COMMIT
-
-       git clone https://github.com/SBU-COSMOLIKE/cocoa.git cocoa
-
-> [!NOTE]
-> Version `v4.10.1` and above include significant cosmolike speed-ups from refactoring non-limber/C-FASTPT modules. 
+  - Latest Commit
+  
+        git clone https://github.com/SBU-COSMOLIKE/cocoa.git cocoa
 
 > [!NOTE]
-> `v4.10.2` cosmolike benchmark: do not include CAMB; CPU: `Intel(R) Core(TM) i9-10940X CPU @ 3.30GHz`; OpenMP cores: `8`; Includes TATT and non-limber (in `w_gg`).
-> - **LSST-Y1 Real 3x2pt**: ~`0.075`s
-> - **Roman Real 3x2pt**: ~`0.14`s    
-> - **Roman Fourier 3x2pt**: ~`0.06`s
-> - **DES-Y3 x Planck 6x2pt** ~`0.10`s
-> - **DES-Y3 Real 3x2pt (des_y3 repo)** ~`0.063`s
+> Version `v4.11.1` and include significant cosmolike speed-ups from refactoring non-limber/C-FASTPT/cosmo2d modules. 
+
+> [!NOTE]
+> `v4.11.1` benchmark: do not include CAMB (or the Hybrid Emulator); **Includes TATT in** ($\xi_{\pm}, \gamma_t$) **and non-limber in** $w_{gg}(\theta)$.
+>
+> CPU: `Intel(R) Core(TM) i9-10940X CPU @ 3.30GHz` (`1/8 OpenMP cores`). *Times are approximate*.
+>
+> - **LSST-Y1-Real 3x2pt**: (CoCoA) `0.29/0.06s`, (DESC-CCL)`7.96/1.72s`. **CoCoA speed-up**: `27/28x`
+> - **Roman-Real 3x2pt**: (CoCoA) `0.45/0.095s`, (DESC-CCL) `8.17/1.96s`. **CoCoA speed-up**: `18/20x`
+> - **Roman-Fourier 3x2pt**:  (CoCoA) `0.08/0.03s`, (DESC-CCL) `0.65/0.36s`. **CoCoA speed-up**: `7.5/21x`
+> - **DES-Y3xPlanck 6x2pt**  (CoCoA) `0.40/0.075s`
+> - **DES-Y3-Real 3x2pt (des_y3 repo)**  (CoCoA)~`0.25/0.05s`
 > 
 > How to record benchmarks on cosmolike projects? 
 > - Go to `EXAMPLE_EVALUATE2.yaml` on each repository; Turn on TATT flag (`IA_model: 1`),
-> - Set `N=10` on the evaluate sampler (Timing on `N=1` is highly biased); Remove the `override` YAML block. 
+> - Set `N=10` on the evaluate sampler (Timing on `N=1` is highly biased due to once per chain array allocation and initialization); Remove the `override` YAML block.
+> The DESC-CCL-Benchmark scripts can be found [here](https://github.com/vivianmiranda/CCL-benchmark)
+> DESC-CCL uses flat-sky for fourier -> real transformation. If you know a module that implements curved sky transformation in CCL for a more 1x1 comparison, let us know. 
 
 and
 
@@ -210,11 +223,11 @@ Users will see a terminal like this: `$(cocoa)(.local)`. *This is a feature, not
 
   - Linux
     
-        export OMP_NUM_THREADS=8; export OMP_PROC_BIND=close; export OMP_PLACES=cores; export OMP_DYNAMIC=FALSE
+        export OMP_NUM_THREADS=8; export OMP_PROC_BIND=close; export OMP_PLACES=cores; export OMP_DYNAMIC=FALSE; export OPENBLAS_NUM_THREADS=1; export MKL_NUM_THREADS=1
 
   - macOS (arm)
     
-        export OMP_NUM_THREADS=8; export OMP_PROC_BIND=disabled; export OMP_PLACES=cores; export OMP_DYNAMIC=FALSE
+        export OMP_NUM_THREADS=8; export OMP_PROC_BIND=disabled; export OMP_PLACES=cores; export OMP_DYNAMIC=FALSE; export OPENBLAS_NUM_THREADS=1; export MKL_NUM_THREADS=1
     
 ## Examples not involving Cosmolike
 
@@ -326,9 +339,9 @@ Now, users must follow all the steps below.
     source start_cocoa.sh
 
  **Step :two:**: Ensure OpenMP is **OFF**.
-    
-    export OMP_NUM_THREADS=1
-    
+
+    export OMP_NUM_THREADS=1; export OPENBLAS_NUM_THREADS=1; export MKL_NUM_THREADS=1
+
  **Step :three:** Run `cobaya-run` on the first emulator example following the commands below.
 
 - **One model evaluation**:
@@ -610,13 +623,15 @@ Now, users must follow all the steps below.
 
   - Linux
 
-        export OMP_NUM_THREADS=4; export OMP_PROC_BIND=close; export OMP_PLACES=cores; export OMP_DYNAMIC=FALSE
+        export OMP_NUM_THREADS=4; export OMP_PROC_BIND=close; export OMP_PLACES=cores; export OMP_DYNAMIC=FALSE; export OPENBLAS_NUM_THREADS=1; export MKL_NUM_THREADS=1
 
   - macOS (arm)
 
-        export OMP_NUM_THREADS=4; export OMP_PROC_BIND=disabled; export OMP_PLACES=cores; export OMP_DYNAMIC=FALSE
+        export OMP_NUM_THREADS=4; export OMP_PROC_BIND=disabled; export OMP_PLACES=cores; export OMP_DYNAMIC=FALSE; export OPENBLAS_NUM_THREADS=1; export MKL_NUM_THREADS=1
   
  **Step :three:**: Remove GPU (idea is to run with CPU!) CPU also increase compatibility with hardware
+  
+  - Linux
   
         export CUDA_VISIBLE_DEVICES=""
 
