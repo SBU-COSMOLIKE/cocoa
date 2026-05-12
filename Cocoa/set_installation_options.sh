@@ -26,14 +26,6 @@ esac
 #export COCOA_OUTPUT_VERBOSE=1
 #export COCOA_OUTPUT_DEBUG=1 # turn on bash strict mode (set -exo pipefail) on  
                              # instalation_scripts/setup/compile_x.sh scripts 
-<<<<<<< HEAD
-
-# ------------------------------------------------------------------------------
-# If set, COSMOLIKE will compile with DEBUG flags ------------------------------
-# ------------------------------------------------------------------------------
-#export COSMOLIKE_DEBUG_MODE=1
-=======
->>>>>>> upstream/main
 
 # ------------------------------------------------------------------------------
 # The flags below allow users to skip downloading specific datasets ------------
@@ -187,7 +179,6 @@ export OVERWRITE_EXISTING_EMULTRF_DATA=1
 #export COSMOLIKE_AGGRESSIVE_MODE=1
 
 # ------------------------------------------------------------------------------
->>>>>>> upstream/main
 # ------------------------------------------------------------------------------
 # ------------------------------------------------------------------------------
 # ------------------------------------------------------------------------------
