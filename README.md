@@ -130,12 +130,6 @@ Users can now proceed to the **next section**.
 In this section, we assume users have previously activated the Cocoa conda environment.
 
 **Step :one:**: Download Cocoa's latest release and go to its main folder (`cocoa/Cocoa`),
-
-  - Stable Version
-    
-        git clone https://github.com/SBU-COSMOLIKE/cocoa.git --branch v4.11.1 cocoa
-
-  - Latest Commit
   
         git clone https://github.com/SBU-COSMOLIKE/cocoa.git cocoa
 
