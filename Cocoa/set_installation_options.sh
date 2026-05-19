@@ -154,8 +154,8 @@ export ROMAN_KL_GIT_TAG="v4.11.0"
 # ------------------------------------------------------------------------------
 # ------------------------------------------------------------------------------
 # ------------------------------------------------------------------------------
-export EMULTRF_URL="https://github.com/CosmoLike/emulators_code.git"
-export EMULTRF_GIT_TAG="v4.11.1"
+export EMULTRF_URL="https://github.com/SBU-COSMOLIKE/emulators_code.git"
+export EMULTRF_GIT_COMMIT="d0b41a7f407002e2b5486e9660522770eaeef41b"
 export OVERWRITE_EXISTING_EMULTRF_CODE=1
 
 export EMULTRF_DATA_URL="https://github.com/SBU-COSMOLIKE/emulators_data_lcdm.git"
