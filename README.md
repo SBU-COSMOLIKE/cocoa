@@ -34,7 +34,6 @@
     3. [FAQ: Where do users find common FAQs about Cosmolike? (external readme)](Cocoa/projects/)
     4. [FAQ: Note on Planck-2018 low-ell SimAll EE and Gibbs TT likelihoods?](#planck2018lowell)
     5. [FAQ: How can users deal with pip getting stuck during installation (Linux): a possible cause](#pip_ngc_nvidia)
-    6. [FAQ: How can developers improve their Bash/C/C++ knowledge?](#lectnotes)
 
 # Overview <a name="overview"></a>
 
@@ -128,10 +127,6 @@ Users can now proceed to the **next section**.
 >
 > 2. If the hang happens at the `Installing pip dependencies` step, see the appendix [FAQ: How can users deal with pip getting stuck during installation (Linux): a possible cause](#pip_ngc_nvidia).
 
-> [!TIP]
-> During the Arizona Winter School (January 2026), we noted that some students with macOS struggled to get the conda to work (conflicts). 
-> If this is the case for you, try the steps in the appendix [FAQ: How can users deal with Conda conflicts (MacOS): a possible solution](#macos_solve_conda_conficts)
-
 # Installation and Compilation of external modules <a name="cobaya_base_code"></a>
 
 In this section, we assume users have previously activated the Cocoa conda environment.
@@ -139,7 +134,6 @@ In this section, we assume users have previously activated the Cocoa conda envir
 **Step :one:**: Download Cocoa's latest release and go to its main folder (`cocoa/Cocoa`),
   
     git clone https://github.com/SBU-COSMOLIKE/cocoa.git cocoa
-
 
 and
 
@@ -1391,9 +1385,3 @@ On some machines, the step `Installing pip dependencies` hangs (mamba shows repe
 **Step :four:**: In case the interrupted installation already finished the conda stage, rerun only the pip stage
 
     conda env update --name cocoa --file=cocoapy311.yml
-
-## :interrobang: FAQ: How can developers improve their Bash/C/C++ knowledge? <a name="lectnotes"></a>
-
-A working knowledge of Python is required to understand the Cobaya framework at the developer level. Users must also be familiar with the Bash language to understand Cocoa's scripts. Proficiency in C and C++ is also needed to manipulate Cosmolike and the C++ Cobaya-Cosmolike C++ interface. Finally, users need to understand the Fortran-2003 language to modify CAMB.
-
-Learning all these languages can be overwhelming, so to enable new users to do research that demands modifications on the inner workings of these codes, we include [here](cocoa_installation_libraries/LectNotes.pdf) a link to approximately 600 slides that provide an overview of Bash (slides ~1-137), C (slides ~138-371), and C++ (slides ~372-599). In the future, we aim to add lectures about Python and Fortran. 
