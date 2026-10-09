@@ -57,12 +57,12 @@ Core packages include compilers and numerical libraries that users typically do 
 
     bash
 
-**Step :one:**: Choose the Cocoa version to be installed, and download the corresponding `yml` file
+**Step :one:**: Download the corresponding `yml` file
 
 
   - Linux
 
-    wget https://raw.githubusercontent.com/SBU-COSMOLIKE/cocoa/refs/heads/main/cocoapy311.yml
+        wget https://raw.githubusercontent.com/SBU-COSMOLIKE/cocoa/refs/heads/main/cocoapy311.yml
 
   - macOS (arm)
     
@@ -73,10 +73,10 @@ Core packages include compilers and numerical libraries that users typically do 
 
     Then, download the `yml` file matching the chosen version.
 
-    wget https://raw.githubusercontent.com/SBU-COSMOLIKE/cocoa/refs/heads/main/cocoapy311-osxarm-base.yml
+        wget https://raw.githubusercontent.com/SBU-COSMOLIKE/cocoa/refs/heads/main/cocoapy311-osxarm-base.yml
 
 
-**Step :two:**: Create the Cocoa environment (if the Deprecated or Legacy version was chosen in the previous step, replace `cocoapy311` with `cocoapy310` below),
+**Step :two:**: Create the Cocoa environment,
 
   - Linux
   
