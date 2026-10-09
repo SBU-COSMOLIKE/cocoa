@@ -1,6 +1,13 @@
 #!/bin/bash
 # ----------------------------------------------------------------------------
-# ----------------------------------------------------------------------------
+# stop_cocoa.sh: deactivate the Cocoa session started by start_cocoa.sh.
+#
+# Run as `source stop_cocoa.sh`. It removes the project and theory-block
+# symlinks, unsets every key and function Cocoa defined
+# (flags_impl_unset_keys.sh), and restores the saved system variables
+# (flags_recover_old.sh): afterwards the shell is exactly as it was
+# before start_cocoa.sh. The guard just below refuses execution for the
+# same reason start_cocoa.sh does.
 # ----------------------------------------------------------------------------
 if [[ ! "${BASH_SOURCE[0]}" != "$0" ]]; then
   FILE="$(basename ${BASH_SOURCE[0]})"
@@ -144,12 +151,10 @@ fi
 # ----------------------------------------------------------------------------
 if [[ -z "${IGNORE_COSMOPOWER_CODE}" ]]; then
   COBTH="${ROOTDIR:?}/cobaya/cobaya/theories"
-
   TMP="cosmopower"
   if [[ -L "${COBTH:?}/${TMP:?}" ]]; then
     rm -f "${COBTH:?}/${TMP:?}"
   fi
-
   unset -v COBTH TMP
 fi
 
@@ -158,7 +163,6 @@ fi
 # ----------------------------------------------------------------------------
 if [[ -z "${IGNORE_EMULTRF_CODE}" ]]; then
   COBTH="${ROOTDIR:?}/cobaya/cobaya/theories"
-
   for TMP in \
     "emulcmb" \
     "emulbaosn" \
@@ -173,7 +177,42 @@ if [[ -z "${IGNORE_EMULTRF_CODE}" ]]; then
       rm -f "${COBTH:?}/${TMP:?}"
     fi
   done
+  unset -v COBTH TMP
+fi
 
+# ----------------------------------------------------------------------------
+# ---------------------------- PYFAST-PT THEORY ------------------------------
+# ----------------------------------------------------------------------------
+if [[ -z "${IGNORE_FASTPT_CODE}" ]]; then
+  COBTH="${ROOTDIR:?}/cobaya/cobaya/theories"
+  TMP="fastpt"
+  if [[ -L "${COBTH:?}/${TMP}" ]]; then
+    rm -f "${COBTH:?}/${TMP:?}"
+  fi
+  unset -v COBTH TMP
+fi
+
+# ----------------------------------------------------------------------------
+# ------------------------------- AXIE CAMB ----------------------------------
+# ----------------------------------------------------------------------------
+if [[ -z "${INSTALL_AXIE_CAMB_V2}" ]]; then
+  COBTH="${ROOTDIR:?}/cobaya/cobaya/theories"
+  TMP="${AXION_HMCODE_NAME:-"axionHMcode"}"
+  if [[ -L "${COBTH:?}/${TMP}" ]]; then
+    rm -f "${COBTH:?}/${TMP:?}"
+  fi
+  unset -v COBTH TMP
+fi
+
+# ----------------------------------------------------------------------------
+# ---------------------------- BFM Theory ------------------------------------
+# ----------------------------------------------------------------------------
+if [[ -z "${IGNORE_BFMT_CODE}" ]]; then
+  COBTH="${ROOTDIR:?}/cobaya/cobaya/theories"
+  TMP="bfmt"
+  if [[ -L "${COBTH:?}/${TMP}" ]]; then
+    rm -f "${COBTH:?}/${TMP:?}"
+  fi
   unset -v COBTH TMP
 fi
 

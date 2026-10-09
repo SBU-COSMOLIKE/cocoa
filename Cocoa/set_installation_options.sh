@@ -71,35 +71,75 @@ export IGNORE_DARK_EMULATOR_CODE=1
 #export IGNORE_DERIVKIT_CODE=1
 #export IGNORE_TENSIOMETER_CODE=1
 #export IGNORE_GETDIST_CODE=1 #dev getdist with code tweaks
+#export IGNORE_PYSPK_CODE=1
+#export IGNORE_BCEMU_CODE=1
+#export IGNORE_FBRE_CODE=1
+#export IGNORE_BACCOEMU_CODE=1
 
 # ------------------------------------------------------------------------------
 # The keys below control which cosmolike projects will be installed and compiled 
 # ------------------------------------------------------------------------------
 #export IGNORE_COSMOLIKE_LSST_Y1_CODE=1
-#export IGNORE_COSMOLIKE_DES_Y3_CODE=1
+export IGNORE_COSMOLIKE_DES_Y3_CODE=1
 #export IGNORE_COSMOLIKE_DESXPLANCK_CODE=1
-#export IGNORE_COSMOLIKE_ROMAN_FOURIER_CODE=1
+export IGNORE_COSMOLIKE_ROMAN_FOURIER_CODE=1
 #export IGNORE_COSMOLIKE_ROMAN_REAL_CODE=1
 export IGNORE_COSMOLIKE_ROMAN_KL_CODE=1
+export IGNORE_COSMOLIKE_DES_CLUSTER_CODE=1
+# WARNING: des_y6 is not production ready.
+export IGNORE_COSMOLIKE_DES_Y6_CODE=1
 
 # ------------------------------------------------------------------------------
-# The keys below control which private projects (not public repo)
+# Covariance generation is optional; data-vector likelihoods still read their
+# supplied covariance matrices. Unset a project's key after start_cocoa.sh and
+# recompile its interface to enable covariance generation and notebook bindings.
+# Comment its export here to keep covariance generation enabled across sessions.
 # ------------------------------------------------------------------------------
-#export INSTALL_PRIVATE_AXIONS_PROJECT=1
+export IGNORE_COSMOLIKE_LSST_Y1_COVARIANCE=1
+export IGNORE_COSMOLIKE_ROMAN_REAL_COVARIANCE=1
+export IGNORE_COSMOLIKE_ROMAN_FOURIER_COVARIANCE=1
+export IGNORE_COSMOLIKE_ROMAN_KL_COVARIANCE=1
+export IGNORE_COSMOLIKE_DES_Y3_COVARIANCE=1
+export IGNORE_COSMOLIKE_DES_Y6_COVARIANCE=1
+export IGNORE_COSMOLIKE_DESXPLANCK_COVARIANCE=1
+export IGNORE_COSMOLIKE_DES_CLUSTER_COVARIANCE=1
+
+#export IGNORE_BFMT_CODE=1 # Baryon Feedback Theory Block from Nihar&JVicente
+
+# ------------------------------------------------------------------------------
+# The keys below control which private projects (may not be public repo)
+# ------------------------------------------------------------------------------
+#export INSTALL_PRIVATE_INFPC_PROJECT=1
+#export INSTALL_AXIONS_2025_PROJECT=1
+#export INSTALL_AXIE_CAMB_V2=1
+#export INSTALL_AXIE_CAMB_2026_PROJECT=1
 
 # ------------------------------------------------------------------------------
 # If not set, pip_core_packages.sh will install several ML packages ------------
 # ------------------------------------------------------------------------------
 #export IGNORE_EMULATOR_GPU_PIP_PACKAGES=1
-
 # New GPUs require cuda 13 / Old GPUs may still require cuda 11.8 --------------
 #export ML_BLEEDING_EDGE_LIBS=1
 #export ML_LEGACY_LIBS=1
 
 # ------------------------------------------------------------------------------
+# If set, clone Cosmolike/Emulator repos via SSH (developers with write access)
+# ------------------------------------------------------------------------------
+#export SWITCH_TO_DEV_MODE=1
+
+# ------------------------------------------------------------------------------
 # If set, compile_planck.sh uses click like code from github.com/benabed/clik
 # ------------------------------------------------------------------------------
 export USE_SPT_CLIK_PLANCK=1
+
+# ------------------------------------------------------------------------------
+# If set, setup_camb.sh applies camb_changes/camb/halofit.patch: halofit stops
+# its bisection for the nonlinear scale at |sigma(R)-1| <= 1e-7 (CAMB: 1e-3).
+# With 1e-3 the nonlinear P(k) jitters by ~0.3% between nearby cosmologies, and
+# finite-difference Fisher derivatives move with the step size. An installed
+# CAMB gets the patch only when re-cloned (OVERWRITE_EXISTING_CAMB_CODE=1).
+# ------------------------------------------------------------------------------
+#export PATCH_CAMB_HALOFIT_TOLERANCE=1
 
 # ------------------------------------------------------------------------------
 # ------------------------------------------------------------------------------
@@ -111,31 +151,46 @@ export USE_SPT_CLIK_PLANCK=1
 
 export DES_Y3_URL="https://github.com/SBU-COSMOLIKE/cocoa_des_y3.git"
 export DES_Y3_NAME="des_y3"
-export DES_Y3_GIT_TAG="v4.10.4"
+export DES_Y3_GIT_BRANCH="main"
 
 export DESXPLANCK_URL="https://git@github.com/SBU-COSMOLIKE/cocoa_desy1xplanck.git"
 export DESXPLANCK_GIT_NAME="desy1xplanck"
-export DESXPLANCK_GIT_TAG="v4.10.4"
+export DESXPLANCK_GIT_BRANCH="main"
 
 export LSST_Y1_URL="https://github.com/SBU-COSMOLIKE/cocoa_lsst_y1.git"
 export LSST_Y1_NAME="lsst_y1"
-export LSST_Y1_GIT_TAG="v4.10.5"
+export LSST_Y1_GIT_BRANCH="main"
 
 export ROMAN_FOURIER_URL="https://github.com/SBU-COSMOLIKE/cocoa_roman_fourier.git"
 export ROMAN_FOURIER_NAME="roman_fourier"
-export ROMAN_FOURIER_GIT_TAG="v4.10.5"
+export ROMAN_FOURIER_GIT_BRANCH="main"
 
 export ROMAN_REAL_URL="https://github.com/SBU-COSMOLIKE/cocoa_roman_real.git"
 export ROMAN_REAL_NAME="roman_real"
-export ROMAN_REAL_GIT_TAG="v4.10.7"
+export ROMAN_REAL_GIT_BRANCH="main"
 
 export COSMOLIKE_URL="https://github.com/SBU-COSMOLIKE/cocoa-cosmolike-core.git"
-export COSMOLIKE_GIT_TAG="v4.11.3"
 export COSMOLIKE_NAME="cosmolike_core"
+export COSMOLIKE_GIT_BRANCH="main"
 
-export ROMAN_KL_URL="https://github.com/CosmoLike/cocoa_roman_kl.git"
+
+export ROMAN_KL_URL="https://github.com/SBU-COSMOLIKE/cocoa_roman_kl.git"
 export ROMAN_KL_NAME="roman_kl"
-export ROMAN_KL_GIT_TAG="v4.11.0"
+export ROMAN_KL_GIT_BRANCH="main"
+
+# WARNING: des_cluster is not production ready.
+export DES_CLUSTER_URL="https://github.com/SBU-COSMOLIKE/cocoa_des_cluster.git"
+export DES_CLUSTER_NAME="des_cluster"
+export DES_CLUSTER_GIT_BRANCH="main"
+
+# WARNING: des_y6 is not production ready.
+export DES_Y6_URL="https://github.com/SBU-COSMOLIKE/cocoa_des_y6.git"
+export DES_Y6_NAME="des_y6"
+export DES_Y6_GIT_BRANCH="main"
+
+export BFMT_THEORY_URL="https://github.com/SBU-COSMOLIKE/cocoa_baryonic_feedback_models_theory.git"
+export BFMT_NAME="baryon_suppression"
+export BFMT_GIT_BRANCH="main"
 
 # ------------------------------------------------------------------------------
 # ------------------------------------------------------------------------------
@@ -144,8 +199,14 @@ export ROMAN_KL_GIT_TAG="v4.11.0"
 # ------------------------------------------------------------------------------
 # ------------------------------------------------------------------------------
 # ------------------------------------------------------------------------------
-#export AXIONS_PROJECT_URL="git@github.com:SBU-COSMOLIKE/cocoa_axions.git"
-#export AXIONS_PROJECT_NAME="axions"
+export INFPC_PROJECT_URL="git@github.com:SBU-COSMOLIKE/InPCReiPCNewCAMB.git"
+export INFPC_PROJECT_NAME="InPCReiPC"
+
+export AXIONS_2025_PROJECT_URL="https://github.com/SBU-COSMOLIKE/cocoa_axions.git"
+export AXIONS_PROJECT_NAME="axions"
+
+export AXIE_CAMB_2026_PROJECT_URL="https://github.com/SBU-COSMOLIKE/cocoa_axiecamb_2026.git"
+export AXIE_CAMB_2026_PROJECT_NAME="axicambv2"
 
 # ------------------------------------------------------------------------------
 # ------------------------------------------------------------------------------
@@ -155,11 +216,10 @@ export ROMAN_KL_GIT_TAG="v4.11.0"
 # ------------------------------------------------------------------------------
 # ------------------------------------------------------------------------------
 export EMULTRF_URL="https://github.com/SBU-COSMOLIKE/emulators_code.git"
-export EMULTRF_GIT_COMMIT="d0b41a7f407002e2b5486e9660522770eaeef41b"
-export OVERWRITE_EXISTING_EMULTRF_CODE=1
+export EMULTRF_GIT_BRANCH="main"
 
 export EMULTRF_DATA_URL="https://github.com/SBU-COSMOLIKE/emulators_data_lcdm.git"
-export EMULTRF_DATA_GIT_TAG="v4.11.1"
+export EMULTRF_DATA_GIT_BRANCH="main"
 export OVERWRITE_EXISTING_EMULTRF_DATA=1
 
 # ------------------------------------------------------------------------------
@@ -173,30 +233,31 @@ export FASTPT_URL="https://github.com/jablazek/FAST-PT.git"
 export FASTPT_GIT_COMMIT="a970d700703814f8513cf3848add4c167e60fc76"
 export FASTPT_NAME="FAST-PT"
 
-export FASTPT_WRAPPER_URL="https://github.com/CosmoLike/fastpt.git"
+export FASTPT_WRAPPER_URL="https://github.com/SBU-COSMOLIKE/fastpt.git"
 export FASTPT_WRAPPER_NAME="PyFAST-PT"
-export FASTPT_WRAPPER_GIT_COMMIT="398e79264098f83b4df711b6a33861b62d21b4b1"
+export FASTPT_WRAPPER_GIT_BRANCH="main"
 
 # ------------------------------------------------------------------------------
 # Build modes — select ONE via environment or make invocation:
 # ------------------------------------------------------------------------------
 # DEBUG MODE (COSMOLIKE_DEBUG_MODE=1)
 #   No optimization (-O0), full warnings, debug symbols, and sanitizers
-#   (UBSan + float-divide-by-zero on macOS). Disables SIMD codepaths.
+#   (UBSan + float-divide-by-zero on macOS). Keeps the SIMDe codepaths.
 #   Use for: debugging, valgrind, catching undefined behavior.
 #
-# AGGRESSIVE MODE (COSMOLIKE_AGGRESSIVE_MODE=1)
-#   Maximum performance. Enables -ffast-math (non-IEEE FP: reassociation,
-#   reciprocal math, no NaN/Inf checks) and link-time optimization (-flto).
+# Aggressive mode is retired: fast-math builds produced incorrect covariance
+# inverses. COSMOLIKE_AGGRESSIVE_MODE now causes a build error; unset it.
+# Do not add -ffast-math, -Ofast, -funsafe-math-optimizations,
+# -fassociative-math, -ffinite-math-only, -freciprocal-math,
+# -fno-signed-zeros, or -fno-trapping-math to the compiler flags.
 #
-# DEFAULT MODE (neither flag set)
+# DEFAULT MODE (COSMOLIKE_DEBUG_MODE unset)
 #   Full optimization (-O3, -march=native, LTO, loop unrolling) but with
 #   strict IEEE-754 floating-point semantics: no reassociation, correct
 #   rounding, trapping on signaling NaNs. This is the safe baseline for
 #   validating new models or investigating numerical differences.
 # ------------------------------------------------------------------------------
 #export COSMOLIKE_DEBUG_MODE=1
-#export COSMOLIKE_AGGRESSIVE_MODE=1
 
 # ------------------------------------------------------------------------------
 # ------------------------------------------------------------------------------
@@ -285,7 +346,7 @@ export SO_SYSLIB_URL="https://github.com/simonsobs/syslibrary.git"
 export SO_SYSLIB_GIT_COMMIT="2471df981053a7526a441d2547eb8dde10d92f70"
 
 export EE2_URL="https://github.com/vivianmiranda/EuclidEmulator2.git"
-export EE2_GIT_COMMIT="1c019a5c8985202e55534fad3e26fa298e5c572e"
+export EE2_GIT_COMMIT="77084311ef6ce94b44f731281b157be75260c8ad"
 # THIS GIT IS FOR THE ORIGINAL EE2 BEFORE VM MODS
 #export EE2_GIT_COMMIT="ff59f6683069417f6b4d2fb5d59197044d424445"
 export EE2_NAME="euclidemu2"
@@ -337,6 +398,31 @@ export GETDIST_NAME="getdist"
 export SIMDE_URL="https://github.com/simd-everywhere/simde.git"
 export SIMDE_GIT_COMMIT="71fd833d9666141edcd1d3c109a80e228303d8d7"
 export SIMDE_NAME="simde"
+
+export AXIE_CAMB_URL="https://github.com/SBU-COSMOLIKE/NewTestingAxieCAMB.git"
+export AXIE_CAMB_GIT_COMMIT="6fd63c6753120bed2f306de8494605bde3472262"
+export AXIE_CAMB_NAME="axiecamb"
+
+export AXION_HMCODE_URL="https://github.com/SBU-COSMOLIKE/axionHMcode.git"
+export AXION_HMCODE_GIT_COMMIT="c9c482300f8d0853fc3d46f64ae086917738e078"
+export AXION_HMCODE_NAME="axionHMcode"
+
+export PYSPK_URL="https://github.com/jemme07/pyspk.git"
+export PYSPK_GIT_COMMIT="50737f9295fee75ef2fe97e4bdd284134ed0d474"
+export PYSPK_NAME="pyspk"
+
+export BCEMU_URL="https://github.com/sambit-giri/BCemu.git"
+export BCEMU_GIT_COMMIT="c32577654e1b48b4bdf079c01a26b16f1473598f"
+export BCEMU_NAME="bcemu"
+
+export FBRE_URL="https://github.com/FLAMINGOSIM/FlamingoBaryonResponseEmulator.git"
+export FBRE_GIT_COMMIT="76b259cd44d28d9ab24b5f08ffaf536a9d4c41d7"
+export FBRE_NAME="fbre"
+
+export BACCOEMU_URL="https://bitbucket.org/rangulo/baccoemu.git"
+export BACCOEMU_GIT_COMMIT="2dfea6e3960fe0239c1d56480f952c3da7e9843b"
+export BACCOEMU_NAME="baccoemu"
+
 # ------------------------------------------------------------------------------
 # ------------------------------------------------------------------------------
 # ------------------------------------------------------------------------------
@@ -359,7 +445,7 @@ export SIMDE_NAME="simde"
 # ------------------------------------------------------------------------------
 # ------------------------------------------------------------------------------
 # ------------------------------------------------------------------------------
-export PYTHON_VERSION=3.10
+export PYTHON_VERSION=3.11
 export MINICONDA_INSTALLATION=1
 
 # ------------------------------------------------------------------------------

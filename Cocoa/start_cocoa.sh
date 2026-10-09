@@ -1,6 +1,15 @@
 #!/bin/bash
 # ----------------------------------------------------------------------------
-# ----------------------------------------------------------------------------
+# start_cocoa.sh: activate a Cocoa session in the current shell.
+#
+# Run as `source start_cocoa.sh` from this folder, with the cocoa conda
+# environment already active. It reads set_installation_options.sh, saves
+# the system variables it is about to modify (flags_save_old.sh), exports
+# ROOTDIR and the library/python paths the compiled codes need, and
+# creates the symlinks that expose the installed projects and theory
+# blocks inside cobaya. stop_cocoa.sh undoes all of it. The guard just
+# below refuses execution: an executed script could not change this
+# shell's environment, so running it that way would silently do nothing.
 # ----------------------------------------------------------------------------
 if [[ ! "${BASH_SOURCE[0]}" != "$0" ]]; then
   FILE="$(basename ${BASH_SOURCE[0]})"
@@ -214,7 +223,7 @@ if [[ -z "${IGNORE_COSMOPOWER_CODE}" ]]; then
 fi
 
 # ----------------------------------------------------------------------------
-# ----------------------------- EMUL TRF THEORY -------------------------------
+# ----------------------------- EMUL TRF THEORY ------------------------------
 # ----------------------------------------------------------------------------
 if [[ -z "${IGNORE_EMULTRF_CODE}" ]]; then
   ECODEF="${ROOTDIR:?}/external_modules/code"
@@ -238,7 +247,6 @@ if [[ -z "${IGNORE_EMULTRF_CODE}" ]]; then
   done
 
   unset -v ECODEF COBTH TMP TMP2
-
 fi 
 
 # ----------------------------------------------------------------------------
@@ -254,6 +262,40 @@ if [[ -z "${IGNORE_FASTPT_CODE}" ]]; then
     ln -s "${ECODEF:?}/${TMP}" "${COBTH:?}/${TMP2}" \
       >>${OUT1:?} 2>>${OUT2:?} || { error_start_cocoa "${EC34:?}"; return 1; }
   fi
+
+  unset -v ECODEF COBTH TMP TMP2
+fi
+
+# ----------------------------------------------------------------------------
+# ------------------------------- AXIE CAMB ----------------------------------
+# ----------------------------------------------------------------------------
+if [[ -n "${INSTALL_AXIE_CAMB_V2}" ]]; then
+  ECODEF="${ROOTDIR:?}/external_modules/code"
+  COBTH="${ROOTDIR:?}/cobaya/cobaya/theories"
+  TMP="${AXION_HMCODE_NAME:-"axionHMcode"}"
+
+  if [[ ! -L "${COBTH:?}/${TMP}" ]]; then
+    ln -s "${ECODEF:?}/${TMP}" "${COBTH:?}/${TMP}" \
+      >>${OUT1:?} 2>>${OUT2:?} || { error_start_cocoa "${EC34:?}"; return 1; }
+  fi
+
+  unset -v ECODEF COBTH TMP
+fi
+
+# ----------------------------------------------------------------------------
+# ----------------------------- BFM Theory -----------------------------------
+# ----------------------------------------------------------------------------
+if [[ -z "${IGNORE_BFMT_CODE}" ]]; then
+  ECODEF="${ROOTDIR:?}/external_modules/code"
+  COBTH="${ROOTDIR:?}/cobaya/cobaya/theories"
+  TMP="${BFMT_NAME:-"baryon_suppression"}"
+
+  TMP2="bfmt"
+  if [[ ! -L "${COBTH:?}/${TMP2}" ]]; then
+    ln -s "${ECODEF:?}/${TMP}" "${COBTH:?}/${TMP2}" \
+      >>${OUT1:?} 2>>${OUT2:?} || { error_start_cocoa "${EC34:?}"; return 1; }
+  fi
+
   unset -v ECODEF COBTH TMP TMP2
 fi
 

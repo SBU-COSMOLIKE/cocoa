@@ -1,4 +1,15 @@
 #!/bin/bash
+# ------------------------------------------------------------------------------
+# flags_derived.sh: derive the internal keys from the user-facing ones: the
+# OVERWRITE_EXISTING_ALL_PACKAGES cascade, PYTHON3/PIP3, the EC<N> error-
+# message catalog, and similar bookkeeping.
+#
+# Sourced, never executed: use `return`, not `exit`, and unset everything
+# defined here before returning.
+#
+# Skipped (return 99) when IGNORE_CPP_INSTALLATION is set. Reruns are safe:
+# existing results are kept unless OVERWRITE_EXISTING_ALL_PACKAGES is set.
+# ------------------------------------------------------------------------------
 # ----------------------------------------------------------------------------
 # ----------------------------------------------------------------------------
 # ----------------------------------------------------------------------------
@@ -48,6 +59,13 @@ if [ -n "${OVERWRITE_EXISTING_ALL_PACKAGES}" ]; then
   export OVERWRITE_EXISTING_TENSIOMETER_CODE=1
   export OVERWRITE_EXISTING_GETDIST_CODE=1
   export OVERWRITE_EXISTING_FASTPT_CODE=1
+  export OVERWRITE_EXISTING_AXION_HMCODE_CODE=1
+  export OVERWRITE_EXISTING_AXIECAMB_CODE=1
+  export OVERWRITE_EXISTING_PYSPK_CODE=1
+  export OVERWRITE_EXISTING_BCEMU_CODE=1
+  export OVERWRITE_EXISTING_FBRE_CODE=1
+  export OVERWRITE_EXISTING_BACCOEMU_CODE=1
+  export OVERWRITE_EXISTING_BFMT_CODE=1
 fi
 
 # ------------------------------------------------------------------------------

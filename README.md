@@ -9,29 +9,31 @@
 4. [Running Examples](#cobaya_base_code_examples)
 5. [Running ML emulators](#cobaya_base_code_examples_emul)
 6. [Creating Cosmolike projects (external readme)](Cocoa/projects/)
-7. [Credits](#appendix_proper_credits)
+7. [Integrating external codes as Cobaya theory blocks (external readme)](Cocoa/external_modules/code/)
+8. [Credits](#appendix_proper_credits)
 
 ### Common questions raised by developers
 
-8. [Appendices about Conda](#appendix_conda)
+9. [Appendices about Conda](#appendix_conda)
     1. [FAQ: How can users install Conda?](#overview_miniforge)
     2. [FAQ: How can users install cocoa conda environment via conda-lock (better reproducibility)?](#install_conda_env_condalock)
     3. [FAQ: How can users deal with Conda conflicts (MacOS): a possible solution](#macos_solve_conda_conficts)
-9. [Appendices about Git](#appendix_git)
+10. [Appendices about Git](#appendix_git)
     1. [FAQ: How can developers develop from a Git tag?](#dev_from_tag)
     2. [FAQ: How can developers push changes to the Cocoa main branch?](#push_main)
-10. [Appendices about Cocoa run](#appendix_cocoa_run)    
+11. [Appendices about Cocoa run](#appendix_cocoa_run)    
     1. [FAQ: How can users debug Cocoa Installation? Suggested steps](#running_wrong)
     2. [FAQ: How can users compile a single external module (not involving Cosmolike)?](#appendix_compile_separately)
     3. [FAQ: How can users install Cosmolike projects?](#appendix_compile_cosmolike_separately)
+    4. [FAQ: How can users test Cosmolike projects?](#appendix_test_cosmolike_projects)
     4. [FAQ: How can users run Cocoa with Docker?](#appendix_jupyter_whovian)
     6. [FAQ: How can users set the appropriate environment for ML?](#ml_emulators)
-11. [Advanced Appendices](#appendix_additional)
+12. [Advanced Appendices](#appendix_additional)
     1. [FAQ: How can users download additional likelihood data? (external readme)](Cocoa/external_modules/data)
     2. [FAQ: Where do users find common FAQs about external modules? (external readme)](Cocoa/external_modules/code)
     3. [FAQ: Where do users find common FAQs about Cosmolike? (external readme)](Cocoa/projects/)
     4. [FAQ: Note on Planck-2018 low-ell SimAll EE and Gibbs TT likelihoods?](#planck2018lowell)
-    5. [FAQ: How can users run Cocoa on Google Colab?](#overview_google_colab)
+    5. [FAQ: How can users deal with pip getting stuck during installation (Linux): a possible cause](#pip_ngc_nvidia)
     6. [FAQ: How can developers improve their Bash/C/C++ knowledge?](#lectnotes)
 
 # Overview <a name="overview"></a>
@@ -42,9 +44,107 @@ Besides integrating [Cobaya](https://github.com/CobayaSampler) and [CosmoLike](h
 
 Our scripts never install packages or Python modules in a global folder such as `$HOME/.local`. Here, `$HOME` denotes a shell environment variable that points to the user's home folder. Doing so would force cocoa packages to be global to the user, possibly breaking environments. Our scripts enable users to work on multiple Cocoa instances simultaneously, similar to what was possible with [CosmoMC](https://github.com/cmbant/CosmoMC). 
 
-This Readme file presents basic and advanced instructions for installing all [Cobaya](https://github.com/CobayaSampler) and [CosmoLike](https://github.com/CosmoLike) components **on linux** or **macOS-arm**.
+This Readme file presents basic and advanced instructions for installing all [Cobaya](https://github.com/CobayaSampler) and [CosmoLike](https://github.com/CosmoLike) components **on Linux** or **macOS-arm**.
 
 We provide the Docker image [whovian-cocoa](https://hub.docker.com/r/vivianmiranda/whovian-cocoa) to facilitate the installation of Cocoa on Windows. 
+
+> [!WARNING]
+> **CLI for production; notebook wrappers for exploration.**
+>
+> Run production and HPC calculations from YAML through the optimized
+> `_interface` bindings. Notebook `_wrapper` APIs expose intermediate
+> quantities for exploration; copying and rearranging their arrays adds
+> overhead. Both routes call the same C kernels.
+>
+> In a matched **LSST Y1 covariance** test on an M2 Pro with eight threads,
+> the CLI averaged **29.45 s** (three runs); one wrapper run took **94.61 s**.
+> The CLI was **3.21× faster**, with bitwise-identical covariance components.
+> The timing comparisons below use the optimized production interfaces.
+
+> [!NOTE]
+> **Real-space 3x2pt timings with accuracy-tested sampling** (2026-10-02).
+> CPU: **Apple M2 Pro**, macOS 13.7.5, **8 OpenMP threads**.
+>
+> The previous Intel/default-setting timings did not fully account for a
+> common numerical-convergence target of $`\Delta\chi^2 < 0.2`$. Here
+> $`\Delta\chi^2 = (d_{\rm fine}-d_{\rm base})^T C^{-1}(d_{\rm fine}-d_{\rm base})`$
+> compares two accuracy settings **within one code**, using the survey mask
+> and covariance. It does not require the two codes to agree to that level.
+> For example, DESC-CCL's default sampling differs from the study's reference
+> sampling by $`\Delta\chi^2 = 0.345`$ for LSST-Y1; the reference versus finer
+> sampling gives 0.0014. CoCoA's default versus higher accuracy gives
+> 0.004–0.008 across the two surveys and NLA/TATT cases.
+>
+> | Case | CoCoA (s) | DESC-CCL (s) | DESC-CCL / CoCoA |
+> |---|---:|---:|---:|
+> | LSST-Y1, NLA | 0.0459 | 10.450 | 228 |
+> | LSST-Y1, TATT | 0.0528 | 15.414 | 292 |
+> | Roman-Real, NLA | 0.0703 | 17.962 | 256 |
+> | Roman-Real, TATT | 0.0764 | 22.747 | 298 |
+>
+> These are means of 20 CoCoA and 10 DESC-CCL evaluations, after two untimed
+> warm-up calls, cycling through five cosmologies. CAMB is excluded from
+> both timings: CoCoA times its likelihood; DESC-CCL times its data-vector
+> script from the supplied CAMB tables, subtracting table-read time.
+> Both use full-sky, bin-averaged transforms. **In the older benchmark,
+> DESC-CCL used Limber for $`\gamma_t`$, while CoCoA included non-Limber
+> $`C_{gs}`$.** In the reference configuration timed above, DESC-CCL also
+> enables FKEM for $`C_{gs}`$ below $`\ell = 150`$. Both codes include
+> non-Limber galaxy clustering in these reference runs.
+> DESC-CCL uses the study's reference sampling and PR #1296 build; these
+> measurements are specific to these configurations, not all CCL releases
+> or survey likelihoods.
+>
+> The [CCL-benchmark study](https://github.com/vivianmiranda/CCL-benchmark)
+> provides the accuracy checks, modeling differences, reproduction scripts,
+> and [saved timing log](https://github.com/vivianmiranda/CCL-benchmark/blob/main/cocoa_comparison/timing_macos.txt)
+> for users who want to double-check or challenge these results.
+
+> [!NOTE]
+> **Covariance forecasts — production CLI** (2026-10-09).
+> CPU: **Apple M2 Pro**, macOS 13.7.5, **8 OpenMP threads**.
+>
+> CoCoA computes real- and Fourier-space galaxy-clustering and weak-lensing
+> covariances, plus joint cluster **6×2pt + counts** covariances. Outputs
+> separate **Gaussian (G)**, **super-sample (SSC)**, **connected non-Gaussian
+> (cNG)** and total contributions.
+>
+> The galaxy/shear examples include **non-Limber clustering and galaxy–shear
+> spectra in the Gaussian covariance**. The joint DES cluster example remains
+> Limber. Real-space transforms are full-sky and bin-averaged, retaining the
+> internal cross-bin correlations needed by every covariance block.
+>
+> | Project | Space | Matrix before scale cuts | G + SSC + cNG construction |
+> |---|---|---:|---:|
+> | [LSST Y1(https://github.com/SBU-COSMOLIKE/cocoa_lsst_y1#computing_covariances) | Real | 1,560 × 1,560 | 29.5 s |
+> | [Roman real](https://github.com/SBU-COSMOLIKE/cocoa_roman_real#computing_covariances) | Real | 2,115 × 2,115 | 34.6 s |
+> | [Roman Fourier](https://github.com/SBU-COSMOLIKE/cocoa_roman_fourier#computing_covariances) | Fourier | 1,485 × 1,485 | 14.1 s |
+> | [Roman KL](https://github.com/SBU-COSMOLIKE/cocoa_roman_kl#computing_covariances) | Fourier | 2,200 × 2,200 | 23.0 s |
+> | [DES Y3](https://github.com/SBU-COSMOLIKE/cocoa_des_y3#computing_covariances) | Real | 900 × 900 | 25.8 s |
+> | [DES × Planck (galaxy/shear)](https://github.com/SBU-COSMOLIKE/cocoa_desy1xplanck#computing_covariances) | Real | 1,500 × 1,500 | 28.7 s |
+> | [DES cluster 6×2pt + N](https://github.com/SBU-COSMOLIKE/cocoa_des_cluster#computing_covariances) | Real (Limber) | 2,812 × 2,812 | 63.3 s |
+>
+> These are mean **CLI** construction times from three sequential runs of
+> each supplied evaluate YAML. Project links above explain the model,
+> timing scope, command-line examples, notebooks and accuracy comparisons.
+>
+> Detailed code comparisons of these covariances — complete source-bin
+> pilot matrices, component-by-component accuracy and execution times —
+> are available against OneCovariance in the
+> [OneCov-benchmark study](https://github.com/vivianmiranda/OneCov-benchmark-)
+> and against TJPCov with CCL halo ingredients in the
+> [TJPCov-benchmark study](https://github.com/vivianmiranda/tjcovbenchmark).
+> The real-space 3x2pt **data vectors** are separately compared against
+> DESC-CCL in the [CCL-benchmark study](https://github.com/vivianmiranda/CCL-benchmark),
+> cited with its timing table above.
+>
+> The project notebooks include saved covariance and **1h, 2h, 3h and 4h
+> matter trispectrum plots**, visible directly on GitHub.
+>
+> Covariance generation is excluded from the default build: enable the
+> project's covariance option and recompile as described in its guide.
+> Likelihood use of a supplied covariance remains available in
+> data-vector-only builds.
 
 # Installation of core packages <a name="required_packages_conda"></a>
 
@@ -56,11 +156,12 @@ Core packages include compilers and numerical libraries that users typically do 
 
     bash
 
-**Step :one:**: Download the appropriate `Python-3.10` compatible `yml` file
+**Step :one:**: Choose the Cocoa version to be installed, and download the corresponding `yml` file
+
 
   - Linux
-    
-         wget https://raw.githubusercontent.com/CosmoLike/cocoa/refs/heads/main/cocoapy310.yml
+
+    wget https://raw.githubusercontent.com/SBU-COSMOLIKE/cocoa/refs/heads/main/cocoapy311.yml
 
   - macOS (arm)
     
@@ -69,19 +170,20 @@ Core packages include compilers and numerical libraries that users typically do 
         conda activate
         conda install -y wget
 
-    Then, type.
+    Then, download the `yml` file matching the chosen version.
 
-        wget https://raw.githubusercontent.com/CosmoLike/cocoa/refs/heads/dev/cocoapy310-osxarm-base.yml
+    wget https://raw.githubusercontent.com/SBU-COSMOLIKE/cocoa/refs/heads/main/cocoapy311-osxarm-base.yml
 
-**Step :two:**: Create the Cocoa environment,
+
+**Step :two:**: Create the Cocoa environment (if the Deprecated or Legacy version was chosen in the previous step, replace `cocoapy311` with `cocoapy310` below),
 
   - Linux
   
-        conda env create --name cocoa --file=cocoapy310.yml
+        conda env create --name cocoa --file=cocoapy311.yml
 
   - macOS (arm)
 
-        conda env create --name cocoa --file=cocoapy310-osxarm-base.yml
+        conda env create --name cocoa --file=cocoapy311-osxarm-base.yml
     
 and activate it
 
@@ -90,10 +192,10 @@ and activate it
 **Step :three:**: When and only when loading the conda cocoa environment for the first time, create the following symbolic links
 
   - Linux
-    
-        ln -s "${CONDA_PREFIX}"/bin/x86_64-conda_cos6-linux-gnu-gcc "${CONDA_PREFIX}"/bin/gcc
-        ln -s "${CONDA_PREFIX}"/bin/x86_64-conda_cos6-linux-gnu-g++ "${CONDA_PREFIX}"/bin/g++
-        ln -s "${CONDA_PREFIX}"/bin/x86_64-conda_cos6-linux-gnu-gfortran "${CONDA_PREFIX}"/bin/gfortran
+
+        ln -s "${CONDA_PREFIX}"/bin/x86_64-conda-linux-gnu-gcc "${CONDA_PREFIX}"/bin/gcc
+        ln -s "${CONDA_PREFIX}"/bin/x86_64-conda-linux-gnu-g++ "${CONDA_PREFIX}"/bin/g++
+        ln -s "${CONDA_PREFIX}"/bin/x86_64-conda-linux-gnu-gfortran "${CONDA_PREFIX}"/bin/gfortran
         ln -s "${CONDA_PREFIX}"/bin/x86_64-conda-linux-gnu-gcc-ar "${CONDA_PREFIX}"/bin/gcc-ar
         ln -s "${CONDA_PREFIX}"/bin/x86_64-conda-linux-gnu-gcc-ranlib "${CONDA_PREFIX}"/bin/gcc-ranlib
         ln -s "${CONDA_PREFIX}"/bin/x86_64-conda-linux-gnu-ld "${CONDA_PREFIX}"/bin/ld
@@ -111,15 +213,18 @@ Users can now proceed to the **next section**.
 
 > [!TIP]
 > We advise users to avoid repositories managed by `Anaconda` due to licensing restrictions. See the Appendix [FAQ: How can we install Conda?](#overview_miniforge)
-> for instructions on how to install `Miniforge`, which is a  minimal installer of conda that downloads default packages from the `conda-forge` community-driven channel.
 
 > [!TIP]
-> If conda create hangs or fails, install mamba (faster and more robust dependency solver) and retry with (e.g., Linux version)
+> If conda create hangs or fails, there are two possible solutions.
 >
->      conda activate base
->      conda install -n base -c conda-forge mamba
->      mamba env create --name cocoa --file=cocoapy310.yml
->      conda activate cocoa
+> 1. Install mamba and redo the creation of the cocoa env, explicitly selecting mamba as the dependency solver (e.g., Linux version)
+>
+>        conda activate base
+>        conda install -n base -c conda-forge mamba
+>        mamba env create --name cocoa --file=cocoapy311.yml
+>        conda activate cocoa
+>
+> 2. If the hang happens at the `Installing pip dependencies` step, see the appendix [FAQ: How can users deal with pip getting stuck during installation (Linux): a possible cause](#pip_ngc_nvidia).
 
 > [!TIP]
 > During the Arizona Winter School (January 2026), we noted that some students with macOS struggled to get the conda to work (conflicts). 
@@ -131,27 +236,8 @@ In this section, we assume users have previously activated the Cocoa conda envir
 
 **Step :one:**: Download Cocoa's latest release and go to its main folder (`cocoa/Cocoa`),
   
-        git clone https://github.com/SBU-COSMOLIKE/cocoa.git cocoa
+    git clone https://github.com/SBU-COSMOLIKE/cocoa.git cocoa
 
-> [!NOTE]
-> Version `v4.11.1` and include significant cosmolike speed-ups from refactoring non-limber/C-FASTPT/cosmo2d modules. 
-
-> [!NOTE]
-> `v4.11.1` benchmark: do not include CAMB (or the Hybrid Emulator); **Includes TATT in** ($\xi_{\pm}, \gamma_t$) **and non-limber in** $w_{gg}(\theta)$.
->
-> CPU: `Intel(R) Core(TM) i9-10940X CPU @ 3.30GHz` (`1/8 OpenMP cores`). *Times are approximate*.
->
-> - **LSST-Y1-Real 3x2pt**: (CoCoA) `0.29/0.06s`, (DESC-CCL)`7.96/1.72s`. **CoCoA speed-up**: `27/28x`
-> - **Roman-Real 3x2pt**: (CoCoA) `0.45/0.095s`, (DESC-CCL) `8.17/1.96s`. **CoCoA speed-up**: `18/20x`
-> - **Roman-Fourier 3x2pt**:  (CoCoA) `0.08/0.03s`, (DESC-CCL) `0.65/0.36s`. **CoCoA speed-up**: `7.5/21x`
-> - **DES-Y3xPlanck 6x2pt**  (CoCoA) `0.40/0.075s`
-> - **DES-Y3-Real 3x2pt (des_y3 repo)**  (CoCoA)~`0.25/0.05s`
-> 
-> How to record benchmarks on cosmolike projects? 
-> - Go to `EXAMPLE_EVALUATE2.yaml` on each repository; Turn on TATT flag (`IA_model: 1`),
-> - Set `N=10` on the evaluate sampler (Timing on `N=1` is highly biased due to once per chain array allocation and initialization); Remove the `override` YAML block.
-> The DESC-CCL-Benchmark scripts can be found [here](https://github.com/vivianmiranda/CCL-benchmark)
-> DESC-CCL uses flat-sky for fourier -> real transformation. If you know a module that implements curved sky transformation in CCL for a more 1x1 comparison, let us know. 
 
 and
 
@@ -160,7 +246,6 @@ and
 **Step :two:**: Run the script `setup_cocoa.sh` via
 
     source setup_cocoa.sh
-
 
 This script downloads and decompresses external modules, which require internet access (on an HPC, this typically means running `setup_cocoa.sh` on the login node).
 
@@ -172,6 +257,17 @@ Cocoa does not install all the available external modules by default. If the use
     
 This script compiles external modules selected for installation on `set_installation_options.sh` (e.g., CAMB) and does not require internet access. Code compilation is CPU-intensive; therefore, running  `compile_cocoa.sh` on a cluster login node may violate HPC policy. Users should then run `setup_cocoa.sh` in a login node and `compile_cocoa.sh` on an interactive compute node.
 
+> [!Warning]
+> CosmoLike supports the optimized strict-IEEE default build and
+> `COSMOLIKE_DEBUG_MODE`. The compiler mode `COSMOLIKE_AGGRESSIVE_MODE`
+> is retired because its fast-math configuration produced incorrect
+> covariance inverses. Unset that variable before compiling.
+> Do not enable `-ffast-math`, `-Ofast`, `-funsafe-math-optimizations`,
+> `-fassociative-math`, `-ffinite-math-only`, `-freciprocal-math`,
+> `-fno-signed-zeros`, or `-fno-trapping-math` in CosmoLike builds.
+> The installation script's separate `--aggressive` download option below
+> is unchanged.
+
 Users can now proceed to **the next section**.
 
 > [!NOTE]
@@ -182,7 +278,7 @@ When rerunning `setup_cocoa.sh`, Cocoa will not redownload previously installed 
 > - --hard: force new download of `THEORY`, `ML`, and `LIKELIHOOD` script blocks (it spares `cosmolike_core` and all projects)
 > - --aggressive: force new download of `THEORY`, `ML`, `LIKELIHOOD`, and CORE script blocks (it spares `cosmolike_core` and all projects)
 > - --extreme: force new download of `THEORY`, `ML`, `LIKELIHOOD`, `CORE`, and `DATA` script blocks (it spares `cosmolike_core` and all projects)
-> - --purge: force new download of all packages (beware of the loss of uncommitted work associted with `cosmolike_core` and all projects)
+> - --purge: force new download of all packages (beware of the loss of uncommitted work associated with `cosmolike_core` and all projects)
 >
 
 > [!NOTE]
@@ -217,41 +313,53 @@ Users will see a terminal like this: `$(cocoa)(.local)`. *This is a feature, not
 
   - Linux
     
-        export OMP_NUM_THREADS=8; export OMP_PROC_BIND=close; export OMP_PLACES=cores; export OMP_DYNAMIC=FALSE; export OPENBLAS_NUM_THREADS=1; export MKL_NUM_THREADS=1
+        export OMP_NUM_THREADS=8; export OMP_PROC_BIND=close; \
+        export OMP_PLACES=cores; export OMP_DYNAMIC=FALSE; \
+        export OPENBLAS_NUM_THREADS=1; export MKL_NUM_THREADS=1
 
   - macOS (arm)
     
-        export OMP_NUM_THREADS=8; export OMP_PROC_BIND=disabled; export OMP_PLACES=cores; export OMP_DYNAMIC=FALSE; export OPENBLAS_NUM_THREADS=1; export MKL_NUM_THREADS=1
+        export OMP_NUM_THREADS=8; export OMP_PROC_BIND=disabled; \
+        export OMP_PLACES=cores; export OMP_DYNAMIC=FALSE; \
+        export OPENBLAS_NUM_THREADS=1; export MKL_NUM_THREADS=1
     
 ## Examples not involving Cosmolike
 
  **Step :three:**: The folder `projects/example` contains a few examples involving different likelihoods. So, run the `cobaya-run` on the first example following the commands below.
 
+> [!Warning] 
+> (Linux only) In some HPC nodes, `numa` can cause you problems. If that is the case,
+> replace `numa` with `slot`
+
 - **One model evaluation**:
 
   - Linux
   
-        mpirun -n 1 --oversubscribe --mca pml ^ucx --mca btl vader,tcp,self \
-           --bind-to core:overload-allowed --report-bindings  \
-           --rank-by slot --map-by numa:pe=${OMP_NUM_THREADS} \
-           cobaya-run ./projects/example/EXAMPLE_EVALUATE1.yaml -f
+        "${CONDA_PREFIX}"/bin/mpirun -n 1 --oversubscribe \
+          --mca pml ob1 --mca btl vader,tcp,self \
+          --bind-to core:overload-allowed --report-bindings \
+          --rank-by slot --map-by numa:pe=${OMP_NUM_THREADS} \
+          cobaya-run ./projects/example/EXAMPLE_EVALUATE1.yaml -f
 
   - macOS (arm)
   
-        mpirun -n 1 --oversubscribe cobaya-run ./projects/example/EXAMPLE_EVALUATE1.yaml -f
+        mpirun -n 1 --oversubscribe \
+          cobaya-run ./projects/example/EXAMPLE_EVALUATE1.yaml -f
     
 - **MCMC (Metropolis-Hastings Algorithm)**:
 
-    - Linux
+  - Linux
   
-          mpirun -n 4 --oversubscribe --mca pml ^ucx --mca btl vader,tcp,self \
-             --bind-to core:overload-allowed --report-bindings  \
-             --rank-by slot --map-by numa:pe=${OMP_NUM_THREADS} \
-             cobaya-run ./projects/example/EXAMPLE_MCMC1.yaml -f
+        "${CONDA_PREFIX}"/bin/mpirun -n 4 --oversubscribe \
+          --mca pml ob1 --mca btl vader,tcp,self \
+          --bind-to core:overload-allowed --report-bindings \
+          --rank-by slot --map-by numa:pe=${OMP_NUM_THREADS} \
+          cobaya-run ./projects/example/EXAMPLE_MCMC1.yaml -f
 
   - macOS (arm)
 
-        mpirun -n 4 --oversubscribe cobaya-run ./projects/example/EXAMPLE_MCMC1.yaml -f
+        mpirun -n 4 --oversubscribe \
+          cobaya-run ./projects/example/EXAMPLE_MCMC1.yaml -f
 
 ## Examples involving Cosmolike
 
@@ -263,27 +371,34 @@ Cocoa provides several Cosmolike projects, not all of which are installed by def
 
   - Linux
 
-        mpirun -n 1 --oversubscribe --mca pml ^ucx --mca btl vader,tcp,self \
-           --bind-to core:overload-allowed --report-bindings  \
-           --rank-by slot --map-by numa:pe=${OMP_NUM_THREADS} \
-           cobaya-run ./projects/lsst_y1/EXAMPLE_EVALUATE1.yaml -f
+        "${CONDA_PREFIX}"/bin/mpirun -n 1 --oversubscribe \
+          --mca pml ob1 --mca btl vader,tcp,self \
+          --bind-to core:overload-allowed --report-bindings \
+          --rank-by slot --map-by numa:pe=${OMP_NUM_THREADS} \
+          cobaya-run ./projects/lsst_y1/EXAMPLE_EVALUATE1.yaml -f
 
   - macOS (arm)
 
-        mpirun -n 1 --oversubscribe  cobaya-run ./projects/lsst_y1/EXAMPLE_EVALUATE1.yaml -f
+        mpirun -n 1 --oversubscribe \
+          cobaya-run ./projects/lsst_y1/EXAMPLE_EVALUATE1.yaml -f
 
 - **MCMC (Metropolis-Hastings Algorithm)**:
 
   - Linux
     
-        mpirun -n 4 --oversubscribe --mca pml ^ucx --mca btl vader,tcp,self \
-           --bind-to core:overload-allowed --report-bindings  \
-           --rank-by slot --map-by numa:pe=${OMP_NUM_THREADS} \
-           cobaya-run ./projects/lsst_y1/EXAMPLE_MCMC1.yaml -f
+        "${CONDA_PREFIX}"/bin/mpirun -n 4 --oversubscribe \
+          --mca pml ob1 --mca btl vader,tcp,self \
+          --bind-to core:overload-allowed --report-bindings \
+          --rank-by slot --map-by numa:pe=${OMP_NUM_THREADS} \
+          cobaya-run ./projects/lsst_y1/EXAMPLE_MCMC1.yaml -f
 
   - macOS (arm)
 
-        mpirun -n 4 --oversubscribe cobaya-run ./projects/lsst_y1/EXAMPLE_MCMC1.yaml -f
+        mpirun -n 4 --oversubscribe \
+          cobaya-run ./projects/lsst_y1/EXAMPLE_MCMC1.yaml -f
+
+> [!TIP]
+> Each Cosmolike project ships unit tests under its `tests/` folder. To run them after an installation or a code change, see the appendix [FAQ: How can users test Cosmolike projects?](#appendix_test_cosmolike_projects).
 
 ### Running Jupyter Notebooks
 
@@ -342,25 +457,31 @@ Now, users must follow all the steps below.
 
   - Linux
 
-        mpirun -n 1 --oversubscribe --mca pml ^ucx --mca btl vader,tcp,self --rank-by slot \
-          --bind-to core:overload-allowed --map-by slot \
+        "${CONDA_PREFIX}"/bin/mpirun -n 1 --oversubscribe \
+          --mca pml ob1 --mca btl vader,tcp,self \
+          --bind-to core:overload-allowed --report-bindings \
+          --rank-by slot --map-by slot \
           cobaya-run ./projects/example/EXAMPLE_EMUL_EVALUATE1.yaml -f
 
   - macOS (arm)
 
-        mpirun -n 1 --oversubscribe cobaya-run ./projects/example/EXAMPLE_EMUL_EVALUATE1.yaml -f
+        mpirun -n 1 --oversubscribe \
+          cobaya-run ./projects/example/EXAMPLE_EMUL_EVALUATE1.yaml -f
     
 - **MCMC (Metropolis-Hastings Algorithm)**:
 
   - Linux
 
-        mpirun -n 4 --oversubscribe --mca pml ^ucx --mca btl vader,tcp,self --rank-by slot \
-            --bind-to core:overload-allowed --map-by slot \
-            cobaya-run ./projects/example/EXAMPLE_EMUL_MCMC1.yaml -r
+        "${CONDA_PREFIX}"/bin/mpirun -n 4 --oversubscribe \
+          --mca pml ob1 --mca btl vader,tcp,self \
+          --bind-to core:overload-allowed --report-bindings \
+          --rank-by slot --map-by slot \
+          cobaya-run ./projects/example/EXAMPLE_EMUL_MCMC1.yaml -r
 
   - macOS (arm)
 
-        mpirun -n 4 --oversubscribe cobaya-run ./projects/example/EXAMPLE_EMUL_MCMC1.yaml -r
+        mpirun -n 4 --oversubscribe \
+          cobaya-run ./projects/example/EXAMPLE_EMUL_MCMC1.yaml -r
 
 > [!Note]
 > The examples below may require a large number of MPI workers. Before running them, it may be necessary to increase 
@@ -371,55 +492,87 @@ Now, users must follow all the steps below.
 
   - Linux
 
-        mpirun -n 90 --oversubscribe --mca pml ^ucx --mca btl vader,tcp,self --rank-by slot \
-            --bind-to core:overload-allowed --map-by slot \
-            cobaya-run ./projects/example/EXAMPLE_EMUL_POLY1.yaml -r
+        "${CONDA_PREFIX}"/bin/mpirun -n 90 --oversubscribe \
+          --mca pml ob1 --mca btl vader,tcp,self \
+          -x PATH -x LD_LIBRARY_PATH -x PYTHONPATH -x CONDA_PREFIX -x ROOTDIR \
+          -x OMP_NUM_THREADS -x OMP_PROC_BIND -x OMP_PLACES -x OMP_DYNAMIC \
+          -x OPENBLAS_NUM_THREADS -x MKL_NUM_THREADS -x CLIK_PATH -x CLIK_DATA \
+          -x CLIK_PLUGIN --mca mpi_yield_when_idle 1 \
+          --mca btl_tcp_if_exclude lo,docker0,virbr0,ib0 \
+          --bind-to core:overload-allowed --report-bindings \
+          --rank-by slot --map-by slot \
+          cobaya-run ./projects/example/EXAMPLE_EMUL_POLY1.yaml -r
 
   - macOS (arm)
 
-        mpirun -n 12 --oversubscribe cobaya-run ./projects/example/EXAMPLE_EMUL_POLY1.yaml -r
+        mpirun -n 12 --oversubscribe \
+          cobaya-run ./projects/example/EXAMPLE_EMUL_POLY1.yaml -r
     
-> [!Note]
-> When running `PolyChord` or any of our scripts in more than one node, replace `--mca btl vader,tcp,self` by `--mca btl tcp,self`.
+> [!NOTE]
+> **Running on more than one node.** The flag `--mca btl vader,tcp,self` works unchanged across
+> nodes (shared memory within a node, TCP between nodes). The commands that can run on more
+> than one node already include the flags below.
+>
+> 1. `--mca btl_tcp_if_exclude lo,docker0,virbr0,ib0`: stop TCP from selecting an interface
+>    that is not routable between compute nodes.
+> 2. `-x PATH -x LD_LIBRARY_PATH (...)`: forward Cocoa's environment to ranks on remote nodes
+>    (needed under ssh-based launchers; Slurm forwards it automatically).
+> 3. `--map-by numa:pe=${OMP_NUM_THREADS}`: reserve, on each rank, the cores its OpenMP threads
+>    will use. On Slurm, keep `ntasks-per-node` × `cpus-per-task` within the cores per node.
+> 4. `--mca mpi_yield_when_idle 1`: make waiting MPI processes give up the CPU instead of
+>    burning 100% of a core; harmless when cores are not oversubscribed.
 
-> [!Note]
-> When running `PolyChord` (or any of the samplers below) with oversubscription (more MPI processes than available cores), add the option `--mca mpi_yield_when_idle 1`
-
-The `Nautilis`, `Minimizer`, `Profile`, and `Emcee` scripts below contain an internally defined `yaml_string` that specifies priors, 
+The `Nautilus`, `Minimizer`, `Profile`, and `Emcee` scripts below contain an internally defined `yaml_string` that specifies priors, 
 likelihoods, and the theory code, all following Cobaya Conventions.
 
 - **Nautilus**:
 
   - Linux
 
-        mpirun -n 90 --oversubscribe --mca pml ^ucx --mca btl vader,tcp,self --rank-by slot \
-            --bind-to core:overload-allowed --map-by slot \
-            python -m mpi4py.futures ./projects/example/EXAMPLE_EMUL_NAUTILUS1.py \
-                --root ./projects/example/ --outroot "EXAMPLE_EMUL_NAUTILUS1"  \
-                --maxfeval 450000 --nlive 2048 --neff 15000 --flive 0.01 --nnetworks 5
+        "${CONDA_PREFIX}"/bin/mpirun -n 90 --oversubscribe \
+          --mca pml ob1 --mca btl vader,tcp,self \
+          -x PATH -x LD_LIBRARY_PATH -x PYTHONPATH -x CONDA_PREFIX -x ROOTDIR \
+          -x OMP_NUM_THREADS -x OMP_PROC_BIND -x OMP_PLACES -x OMP_DYNAMIC \
+          -x OPENBLAS_NUM_THREADS -x MKL_NUM_THREADS -x CLIK_PATH -x CLIK_DATA \
+          -x CLIK_PLUGIN --mca mpi_yield_when_idle 1 \
+          --mca btl_tcp_if_exclude lo,docker0,virbr0,ib0 \
+          --bind-to core:overload-allowed --report-bindings \
+          --rank-by slot --map-by slot \
+          python -m mpi4py.futures ./projects/example/EXAMPLE_EMUL_NAUTILUS1.py \
+            --root ./projects/example/ --outroot "EXAMPLE_EMUL_NAUTILUS1"  \
+            --maxfeval 450000 --nlive 2048 --neff 15000 --flive 0.01 --nnetworks 5
 
   - macOS (arm)
 
-        mpirun -n 12 --oversubscribe python -m mpi4py.futures ./projects/example/EXAMPLE_EMUL_NAUTILUS1.py \
-                --root ./projects/example/ --outroot "EXAMPLE_EMUL_NAUTILUS1"  \
-                --maxfeval 450000 --nlive 2048 --neff 15000 --flive 0.01 --nnetworks 5
+        mpirun -n 12 --oversubscribe \
+          python -m mpi4py.futures ./projects/example/EXAMPLE_EMUL_NAUTILUS1.py \
+          --root ./projects/example/ --outroot "EXAMPLE_EMUL_NAUTILUS1"  \
+          --maxfeval 450000 --nlive 2048 --neff 15000 --flive 0.01 --nnetworks 5
 
 > [!NOTE]
 > What if the user runs an `Nautilus` chain with `maxeval` insufficient for producing `neff` samples? `Nautilus` creates a checkpoint at `chains/outroot_checkpoint.hdf5`.
 
 - **Emcee**:
 
-    - Linux
-      
-          mpirun -n 21 --oversubscribe --mca pml ^ucx --mca btl vader,tcp,self --rank-by slot \
-              --bind-to core:overload-allowed --map-by slot \
-              python ./projects/example/EXAMPLE_EMUL_EMCEE1.py --root ./projects/example/ \
-                  --outroot "EXAMPLE_EMUL_EMCEE1" --maxfeval 80000
+  - Linux
+    
+        "${CONDA_PREFIX}"/bin/mpirun -n 21 --oversubscribe \
+          --mca pml ob1 --mca btl vader,tcp,self \
+          -x PATH -x LD_LIBRARY_PATH -x PYTHONPATH -x CONDA_PREFIX -x ROOTDIR \
+          -x OMP_NUM_THREADS -x OMP_PROC_BIND -x OMP_PLACES -x OMP_DYNAMIC \
+          -x OPENBLAS_NUM_THREADS -x MKL_NUM_THREADS -x CLIK_PATH -x CLIK_DATA \
+          -x CLIK_PLUGIN --mca mpi_yield_when_idle 1 \
+          --mca btl_tcp_if_exclude lo,docker0,virbr0,ib0 \
+          --bind-to core:overload-allowed --report-bindings \
+          --rank-by slot --map-by slot \
+          python ./projects/example/EXAMPLE_EMUL_EMCEE1.py --root ./projects/example/ \
+            --outroot "EXAMPLE_EMUL_EMCEE1" --maxfeval 80000
 
-    - macOS (arm)
+  - macOS (arm)
 
-          mpirun -n 12 --oversubscribe python ./projects/example/EXAMPLE_EMUL_EMCEE1.py \
-                --root ./projects/example/ --outroot "EXAMPLE_EMUL_EMCEE1" --maxfeval 80000
+        mpirun -n 12 --oversubscribe \
+          python ./projects/example/EXAMPLE_EMUL_EMCEE1.py \
+          --root ./projects/example/ --outroot "EXAMPLE_EMUL_EMCEE1" --maxfeval 80000
 
   The number of steps per MPI worker is $n_{\mathrm{sw}} =  \mathrm{maxfeval}/n_{\mathrm{w}}$,
   with the number of walkers being $n_{\mathrm{w}}=\mathrm{max}(3n_{\mathrm{params}},n_{\mathrm{MPI}})$.
@@ -440,11 +593,11 @@ likelihoods, and the theory code, all following Cobaya Conventions.
 
 - **Sampler Comparison**
 
-    The script that generated the plot below is provided at `projects/example/scripts/EXAMPLE_PLOT_COMPARE_CHAINS.py`. The Google Colab notebook [Example Sampler Comparison](https://github.com/CosmoLike/CoCoAGoogleColabExamples/blob/main/Cocoa_Example_(Sampler_Comparison).ipynb) can also reconstruct a similar version of this figure.
+  The script that generated the plot below is provided at `projects/example/scripts/EXAMPLE_PLOT_COMPARE_CHAINS.py`.
 
-    <p align="center">
-    <img width="750" height="750" alt="projects_example_sampler_comparison" src="https://github.com/user-attachments/assets/d3639673-36ea-4fd9-9c91-1f5b97845fe0" />
-    </p>
+  <p align="center">
+  <img width="750" height="750" alt="projects_example_sampler_comparison" src="https://github.com/user-attachments/assets/d3639673-36ea-4fd9-9c91-1f5b97845fe0" />
+  </p>
   
 - **Global Minimizer**:
 
@@ -452,15 +605,27 @@ likelihoods, and the theory code, all following Cobaya Conventions.
 
     - Linux
 
-          mpirun -n 21 --oversubscribe --mca pml ^ucx --mca btl vader,tcp,self --rank-by slot \
-              --bind-to core:overload-allowed --map-by slot \
-              python ./projects/example/EXAMPLE_EMUL_MINIMIZE1.py --root ./projects/example/ \
-                  --outroot "EXAMPLE_EMUL_MIN1" --nstw 200
+          "${CONDA_PREFIX}"/bin/mpirun -n 21 --oversubscribe \
+            --mca pml ob1 --mca btl vader,tcp,self \
+            -x PATH -x LD_LIBRARY_PATH -x PYTHONPATH -x CONDA_PREFIX -x ROOTDIR \
+            -x OMP_NUM_THREADS -x OMP_PROC_BIND -x OMP_PLACES -x OMP_DYNAMIC \
+            -x OPENBLAS_NUM_THREADS -x MKL_NUM_THREADS -x CLIK_PATH -x CLIK_DATA \
+            -x CLIK_PLUGIN --mca mpi_yield_when_idle 1 \
+            --mca btl_tcp_if_exclude lo,docker0,virbr0,ib0 \
+            --bind-to core:overload-allowed --report-bindings \
+            --rank-by slot --map-by slot \
+            python ./projects/example/EXAMPLE_EMUL_MINIMIZE1.py \
+              --root ./projects/example/ \
+              --outroot "EXAMPLE_EMUL_MIN1" \
+              --nstw 200
   
     - macOS (arm)
 
-          mpirun -n 12 --oversubscribe python ./projects/example/EXAMPLE_EMUL_MINIMIZE1.py \
-                --root ./projects/example/ --outroot "EXAMPLE_EMUL_MIN1" --nstw 200
+          mpirun -n 12 --oversubscribe \
+            python ./projects/example/EXAMPLE_EMUL_MINIMIZE1.py \
+            --root ./projects/example/ \
+            --outroot "EXAMPLE_EMUL_MIN1" \
+            --nstw 200
        
   The number of steps per Emcee walker per temperature is $n_{\mathrm{stw}}$,
   and the number of walkers is $n_{\mathrm{w}}=\mathrm{max}(3n_{\mathrm{params}},n_{\mathrm{MPI}})$. The minimum number of total evaluations is then 
@@ -468,7 +633,7 @@ likelihoods, and the theory code, all following Cobaya Conventions.
   Do maintain $n_{\mathrm{stw}} > 200$ for reliable convergence in LCDM (see plot below).
   The same rule applies to *Profile* and *Scan* codes, as they are all based on the same minimization strategy.
 
-  The script that generated the plot below is provided at `projects/example/scripts/EXAMPLE_MIN_COMPARE_CONV.py`. The Google Colab notebook [Test Minimizer Convergence](https://github.com/CosmoLike/CoCoAGoogleColabExamples/blob/main/Cocoa_Example_Test_Minimizer_Convergence.ipynb) can also reconstruct a similar version of this figure. 
+  The script that generated the plot below is provided at `projects/example/scripts/EXAMPLE_MIN_COMPARE_CONV.py`.
 
   <p align="center">
   <img width="700" height="470" alt="Screenshot 2025-08-04 at 7 05 53 AM" src="https://github.com/user-attachments/assets/a48b267a-beba-4e53-9dbf-e3c5a24daff1" />
@@ -483,35 +648,46 @@ likelihoods, and the theory code, all following Cobaya Conventions.
 
 - **Profile**: 
 
-    - Linux
+  - Linux
 
-          mpirun -n 21 --oversubscribe --mca pml ^ucx --mca btl vader,tcp,self --rank-by slot \
-              --bind-to core:overload-allowed --map-by slot \
-              python ./projects/example/EXAMPLE_EMUL_PROFILE1.py \
-                  --root ./projects/example/ --cov 'chains/EXAMPLE_EMUL_MCMC1.covmat' \
-                  --outroot "EXAMPLE_EMUL_PROFILE1" --factor 3 --nstw 200 --numpts 10 \
-                  --profile 1 --minfile "./projects/example/chains/EXAMPLE_EMUL_MIN1.txt"
+        "${CONDA_PREFIX}"/bin/mpirun -n 21 --oversubscribe \
+          --mca pml ob1 --mca btl vader,tcp,self \
+          -x PATH -x LD_LIBRARY_PATH -x PYTHONPATH -x CONDA_PREFIX -x ROOTDIR \
+          -x OMP_NUM_THREADS -x OMP_PROC_BIND -x OMP_PLACES -x OMP_DYNAMIC \
+          -x OPENBLAS_NUM_THREADS -x MKL_NUM_THREADS -x CLIK_PATH -x CLIK_DATA \
+          -x CLIK_PLUGIN --mca mpi_yield_when_idle 1 \
+          --mca btl_tcp_if_exclude lo,docker0,virbr0,ib0 \
+          --bind-to core:overload-allowed --report-bindings \
+          --rank-by slot --map-by slot \
+          python ./projects/example/EXAMPLE_EMUL_PROFILE1.py \
+            --root ./projects/example/ \
+            --cov 'chains/EXAMPLE_EMUL_MCMC1.covmat' \
+            --outroot "EXAMPLE_EMUL_PROFILE1" \
+            --factor 3 --nstw 200 --numpts 10 --profile 1 \
+            --minfile "./projects/example/chains/EXAMPLE_EMUL_MIN1.txt"
 
-    - macOS (arm)
+  - macOS (arm)
 
-          mpirun -n 12 --oversubscribe python ./projects/example/EXAMPLE_EMUL_PROFILE1.py \
-                  --root ./projects/example/ --cov 'chains/EXAMPLE_EMUL_MCMC1.covmat' \
-                  --outroot "EXAMPLE_EMUL_PROFILE1" --factor 3 --nstw 200 --numpts 10 \
-                  --profile 1 --minfile "./projects/example/chains/EXAMPLE_EMUL_MIN1.txt"
+        mpirun -n 12 --oversubscribe \
+          python ./projects/example/EXAMPLE_EMUL_PROFILE1.py \
+          --root ./projects/example/ --cov 'chains/EXAMPLE_EMUL_MCMC1.covmat' \
+          --outroot "EXAMPLE_EMUL_PROFILE1" \
+          --factor 3 --nstw 200 --numpts 10 --profile 1 \
+          --minfile "./projects/example/chains/EXAMPLE_EMUL_MIN1.txt"
       
     Profile provides the optional argument `minfile`, as it is significantly faster to run the profile script with a previously provided global minimum. 
     The profile also provides the optional argument `cov`. Again, it is considerably more efficient to employ a covariance matrix from a converged chain. 
 
     The argument `factor` specifies the start and end of the parameter being profiled:
 
-          start value ~ mininum value - factor*np.sqrt(np.diag(cov))
-          end   value ~ mininum value + factor*np.sqrt(np.diag(cov))
+          start value ~ minimum value - factor*np.sqrt(np.diag(cov))
+          end   value ~ minimum value + factor*np.sqrt(np.diag(cov))
 
     We advise $\mathrm{factor} \sim 3$ for parameters that are well constrained by the data when a covariance matrix is provided.
     If `cov` is not supplied, the code estimates one internally from the prior.
     If a parameter is poorly constrained or `cov` is not given, we recommend $\mathrm{factor} \ll 1$.
 
-    The script that generated the plot below is provided at `projects/example/scripts/EXAMPLE_PLOT_PROFILE1.py`. The Google Colab notebook [Example Profile Likelihood](https://github.com/CosmoLike/CoCoAGoogleColabExamples/blob/main/Cocoa_Example_Profile_Likelihoods.ipynb) can also reconstruct a similar version of this figure. 
+    The script that generated the plot below is provided at `projects/example/scripts/EXAMPLE_PLOT_PROFILE1.py`.
   
     <p align="center">
     <img width="832.32" height="617.76" alt="Screenshot 2025-08-02 at 8 42 41 PM" src="https://github.com/user-attachments/assets/22182688-2865-4b15-a80b-783ddd21f715" />
@@ -519,70 +695,87 @@ likelihoods, and the theory code, all following Cobaya Conventions.
 
 - **Profile method 2**:
 
-    If the dimensionality of the problem is not large, and the spacing between values of the parameter
-    being profiled is small, it can be considerably faster to use a simple scipy `Nelder-Mead`
-    to calculate the profile. Here, the `minfile` and `cov` options are mandatory.
+  If the dimensionality of the problem is not large, and the spacing between values of the parameter
+  being profiled is small, it can be considerably faster to use a simple scipy `Nelder-Mead`
+  to calculate the profile. Here, the `minfile` and `cov` options are mandatory.
 
     - Linux
 
-          mpirun -n 1 --mca pml ^ucx --mca btl vader,tcp,self --rank-by slot \
-              --bind-to core:overload-allowed --map-by slot \
-              python ./projects/example/EXAMPLE_EMUL_PROFILE_SCIPY1.py \
-                  --root ./projects/example/ --cov 'chains/EXAMPLE_EMUL_MCMC1.covmat' \
-                  --outroot "EXAMPLE_EMUL_PROFILE1M2" --factor 3 --maxfeval 5000 --numpts 10 \
-                  --profile 1 --minfile "./projects/example/chains/EXAMPLE_EMUL_MIN1.txt"
+          "${CONDA_PREFIX}"/bin/mpirun -n 1 \
+            --mca pml ob1 --mca btl vader,tcp,self \
+            -x PATH -x LD_LIBRARY_PATH -x PYTHONPATH -x CONDA_PREFIX -x ROOTDIR \
+            -x OMP_NUM_THREADS -x OMP_PROC_BIND -x OMP_PLACES -x OMP_DYNAMIC \
+            -x OPENBLAS_NUM_THREADS -x MKL_NUM_THREADS -x CLIK_PATH -x CLIK_DATA \
+            -x CLIK_PLUGIN --mca mpi_yield_when_idle 1 \
+            --mca btl_tcp_if_exclude lo,docker0,virbr0,ib0 \
+            --bind-to core:overload-allowed --report-bindings \
+            --rank-by slot --map-by slot \
+            python ./projects/example/EXAMPLE_EMUL_PROFILE_SCIPY1.py \
+              --root ./projects/example/ --cov 'chains/EXAMPLE_EMUL_MCMC1.covmat' \
+              --outroot "EXAMPLE_EMUL_PROFILE1M2" --factor 3 --maxfeval 5000 --numpts 10 \
+              --profile 1 --minfile "./projects/example/chains/EXAMPLE_EMUL_MIN1.txt"
 
     - macOS (arm)
 
           mpirun -n 1 python ./projects/example/EXAMPLE_EMUL_PROFILE_SCIPY1.py \
-                --root ./projects/example/ --cov 'chains/EXAMPLE_EMUL_MCMC1.covmat' \
-                --outroot "EXAMPLE_EMUL_PROFILE1M2" --factor 3 --maxfeval 5000 --numpts 10 \
-                --profile 1 --minfile "./projects/example/chains/EXAMPLE_EMUL_MIN1.txt"
-      
-    The script that generated the plot below is provided at `projects/example/scripts/EXAMPLE_PLOT_PROFILE1_COMP.py`
-  
-    <p align="center">
-    <img width="832.32" height="617.76" alt="example_profile_comp" src="https://github.com/user-attachments/assets/ba0c0629-bd3b-4274-9f24-9db5929dc35c" />
-    </p>
+            --root ./projects/example/ --cov 'chains/EXAMPLE_EMUL_MCMC1.covmat' \
+            --outroot "EXAMPLE_EMUL_PROFILE1M2" --factor 3 --maxfeval 5000 --numpts 10 \
+            --profile 1 --minfile "./projects/example/chains/EXAMPLE_EMUL_MIN1.txt"
+    
+  The script that generated the plot below is provided at `projects/example/scripts/EXAMPLE_PLOT_PROFILE1_COMP.py`
+
+  <p align="center">
+  <img width="832.32" height="617.76" alt="example_profile_comp" src="https://github.com/user-attachments/assets/ba0c0629-bd3b-4274-9f24-9db5929dc35c" />
+  </p>
 
 - **Scan**: 
 
   This profile code has a different MPI strategy. It scans one parameter on the entire prior,
   with each MPI being assigned to one minimization (not Emcee walker!). This is a strategy when probing 
-  beyond-LCDM parameters with oscilatory behavior (e.g., Monodromic Dark Energy).
+  beyond-LCDM parameters with oscillatory behavior (e.g., Monodromic Dark Energy).
 
     - Linux
       
-          mpirun -n 90 --oversubscribe --mca pml ^ucx --mca btl vader,tcp,self \
-              --bind-to core:overload-allowed --map-by slot \
+          "${CONDA_PREFIX}"/bin/mpirun -n 90 --oversubscribe \
+            --mca pml ob1 --mca btl vader,tcp,self \
+            -x PATH -x LD_LIBRARY_PATH -x PYTHONPATH -x CONDA_PREFIX -x ROOTDIR \
+            -x OMP_NUM_THREADS -x OMP_PROC_BIND -x OMP_PLACES -x OMP_DYNAMIC \
+            -x OPENBLAS_NUM_THREADS -x MKL_NUM_THREADS -x CLIK_PATH -x CLIK_DATA \
+            -x CLIK_PLUGIN --mca mpi_yield_when_idle 1 \
+            --mca btl_tcp_if_exclude lo,docker0,virbr0,ib0 \
+            --bind-to core:overload-allowed --report-bindings \
+            --rank-by slot --map-by slot \
               python -m mpi4py.futures ./projects/example/EXAMPLE_EMUL_SCAN1.py \
-                  --root ./projects/example/ --outroot "EXAMPLE_EMUL_SCAN1" --nstw 200 --profile 1
+                --root ./projects/example/ --outroot "EXAMPLE_EMUL_SCAN1" \
+                --nstw 200 --profile 1
 
     - macOS (arm)
 
-          mpirun -n 12 --oversubscribe python -m mpi4py.futures ./projects/example/EXAMPLE_EMUL_SCAN1.py \
-              --root ./projects/example/ --outroot "EXAMPLE_EMUL_SCAN1" --nstw 200 --profile 1
+          mpirun -n 12 --oversubscribe \
+            python -m mpi4py.futures ./projects/example/EXAMPLE_EMUL_SCAN1.py \
+            --root ./projects/example/ --outroot "EXAMPLE_EMUL_SCAN1" \
+            --nstw 200 --profile 1
       
 - **Tension Metrics**
 
-    We provide the Jupyter Notebook and the SLURM script, located at
+  We provide the Jupyter Notebook and the SLURM script, located at
 
       projects/example/EXAMPLE_EMUL_MCMC_TENSION_METRICS/EXAMPLE_TENSION_METRICS.ipynb
       projects/example/scripts/EXAMPLE_EMUL_TM.sbatch
 
-    that exemplifies how emulators can be used to quickly assess the tension between data sets.
-    All Tension metrics were computed using the package `Tensiometer`.
+  that exemplify how emulators can be used to quickly assess the tension between data sets.
+  All Tension metrics were computed using the package `Tensiometer`.
 
-    The plot below, taken from `EXAMPLE_TENSION_METRICS.ipynb`, exemplifies the tension between CMB+BAO vs. Type Ia SN.
+  The plot below, taken from `EXAMPLE_TENSION_METRICS.ipynb`, exemplifies the tension between CMB+BAO vs. Type Ia SN.
 
 <p align="center">
 <img width="790" height="333" alt="Unknown" src="https://github.com/user-attachments/assets/b5ef808e-0efa-4bb9-852a-854f6531e3ed" />
 </p>
 
 > [!NOTE]
-> What about [CosmoPower](https://alessiospuriomancini.github.io/cosmopower/)? CosmoPower is a suite of popular emulators developed by Prof. Alessio Mancini
+> What about [CosmoPower](https://alessiospuriomancini.github.io/cosmopower/)? CosmoPower is a collection of popular emulators developed by Prof. Alessio Mancini
 > and collaborators. Our Cocoa port relies on the work done by Hidde Jense @HTJense (kudos to his/their work) as well as the Simons Observatory SOLikeT code.
-> Even though they are not the suite of AI-powered emulators adopted by Cocoa developers, we do provide limited support for running them.
+> Even though they are not the AI-powered emulators adopted by Cocoa developers, we do provide limited support for running them.
 > To set up and compile Cosmopower and also the corresponding Cobaya Wrapper, comment the following keys before running `setup_cocoa.sh` and `compile_cocoa.sh`.
 > 
 >     [Adapted from Cocoa/set_installation_options.sh shell script]
@@ -598,9 +791,6 @@ likelihoods, and the theory code, all following Cobaya Conventions.
 
 # Running Hybrid Cosmolike-ML emulators <a name="cobaya_base_code_examples_emul2"></a>
 
-> [!Warning]
-> The code and examples associated with this section are still in alpha stage
-
 Our main line of research involves emulators that simulate the entire Cosmolike data vectors, and each project (LSST, Roman, DES) contains its own README with emulator examples. The speed of such emulators is incredible, especially when GPUs are available, and our emulators do take advantage of the CPU-GPU integration on Apple MX chips. For example, the average timing of lsst-y1 cosmic shear data vector emulation is around 0.005s ($\sim$ 200828 evaluations in $\sim$ 850.5 seconds) on a macOS M2 Pro.
 
 While the data vector emulators are incredibly fast, there is an intermediate approach that emulates only the Boltzmann outputs (comoving distance, linear and nonlinear matter power spectrum). This hybrid-ML case can offer greater flexibility, especially in the initial phases of a research project, as changes to the modeling of nuisance parameters or to the assumed galaxy distributions do not require retraining of the network. 
@@ -613,17 +803,21 @@ Now, users must follow all the steps below.
 
     source start_cocoa.sh
 
- **Step :two:**: Select the number of OpenMP cores. Below, we set it to 4, the ideal setting for hybrid examples.
+ **Step :two:**: Select the number of OpenMP cores.
 
   - Linux
 
-        export OMP_NUM_THREADS=4; export OMP_PROC_BIND=close; export OMP_PLACES=cores; export OMP_DYNAMIC=FALSE; export OPENBLAS_NUM_THREADS=1; export MKL_NUM_THREADS=1
+        export OMP_NUM_THREADS=8; export OMP_PROC_BIND=close; \
+        export OMP_PLACES=cores; export OMP_DYNAMIC=FALSE; \
+        export OPENBLAS_NUM_THREADS=1; export MKL_NUM_THREADS=1
 
   - macOS (arm)
 
-        export OMP_NUM_THREADS=4; export OMP_PROC_BIND=disabled; export OMP_PLACES=cores; export OMP_DYNAMIC=FALSE; export OPENBLAS_NUM_THREADS=1; export MKL_NUM_THREADS=1
+        export OMP_NUM_THREADS=8; export OMP_PROC_BIND=disabled; \
+        export OMP_PLACES=cores; export OMP_DYNAMIC=FALSE; \
+        export OPENBLAS_NUM_THREADS=1; export MKL_NUM_THREADS=1
   
- **Step :three:**: Remove GPU (idea is to run with CPU!) CPU also increase compatibility with hardware
+ **Step :three:**: Remove GPU (idea is to run emulators on the CPU!)
   
   - Linux
   
@@ -635,26 +829,31 @@ Now, users must follow all the steps below.
 
   - Linux
 
-        mpirun -n 1 --oversubscribe --mca pml ^ucx --mca btl vader,tcp,self \
-           --bind-to core:overload-allowed --report-bindings  \
+        "${CONDA_PREFIX}"/bin/mpirun -n 1 --oversubscribe \
+          --mca pml ob1 --mca btl vader,tcp,self \
+           --bind-to core:overload-allowed --report-bindings \
            --rank-by slot --map-by numa:pe=${OMP_NUM_THREADS} \
            cobaya-run ./projects/lsst_y1/EXAMPLE_EMUL2_EVALUATE1.yaml -f
 
   - macOS (arm)
 
-        mpirun -n 1 --oversubscribe  cobaya-run ./projects/lsst_y1/EXAMPLE_EMUL2_EVALUATE1.yaml -f
+        mpirun -n 1 --oversubscribe \
+          cobaya-run ./projects/lsst_y1/EXAMPLE_EMUL2_EVALUATE1.yaml -f
     
 - **MCMC (Metropolis-Hastings Algorithm)**:
 
   - Linux
 
-        mpirun -n 4 --oversubscribe --mca pml ^ucx --mca btl vader,tcp,self --rank-by slot \
-            --bind-to core:overload-allowed --map-by slot \
-            cobaya-run ./projects/lsst_y1/EXAMPLE_EMUL2_MCMC1.yaml -r
+        "${CONDA_PREFIX}"/bin/mpirun -n 4 --oversubscribe \
+          --mca pml ob1 --mca btl vader,tcp,self \
+          --bind-to core:overload-allowed --report-bindings \
+          --rank-by slot --map-by numa:pe=${OMP_NUM_THREADS} \
+          cobaya-run ./projects/lsst_y1/EXAMPLE_EMUL2_MCMC1.yaml -r
 
   - macOS (arm)
 
-        mpirun -n 4 --oversubscribe cobaya-run ./projects/lsst_y1/EXAMPLE_EMUL2_MCMC1.yaml -r
+        mpirun -n 4 --oversubscribe \
+          cobaya-run ./projects/lsst_y1/EXAMPLE_EMUL2_MCMC1.yaml -r
     
 Details on the matter power spectrum emulator designs will be presented in the [emulator_code](https://github.com/CosmoLike/emulators_code) repository. Basically, we apply standard neural network techniques to generalize the *syren-new* Eq. 6 of [arXiv:2410.14623](https://arxiv.org/abs/2410.14623) formula for the linear power spectrum (w0waCDM with a fixed neutrino mass of $0.06$ eV) to new models, extended ranges, or higher precision. Similarly, we use networks to generalize the *syren-Halofit* LCDM nonlinear boost fit (Eq. 11 of [arXiv:2402.17492](https://arxiv.org/abs/2402.17492)).
 
@@ -669,8 +868,6 @@ Details on the matter power spectrum emulator designs will be presented in the [
 >    <img width="450" alt="Screenshot 2026-01-06 at 2 13 06 AM" src="https://github.com/user-attachments/assets/d19f0900-cebc-41ca-9028-1d4e0bd40cc9" />
 >  </span>
 > </p>
-
-
 
 
 ## Credits <a name="appendix_proper_credits"></a>
@@ -740,7 +937,7 @@ and
           && conda init bash
 
 > [!Note]
-> The strict use of Miniconda and conda-forge packages appears to mitigate the significant licensing issue involving Anaconda packages and academic/research institutions.
+> The strict use of Miniforge and conda-forge packages appears to mitigate the significant licensing issue involving Anaconda packages and academic/research institutions.
 
 **Step :three:**: After running this command, you will see a message in the terminal that ends with the statement *For changes to take effect, close and re-open your current shell*. Then, type
 
@@ -760,25 +957,25 @@ and
  
      conda activate lockenv
 
-**Step :two:** Download the file appropriate conda-lock compatible `yml` file.
+**Step :two:** Download the appropriate conda-lock compatible `yml` file. As in the section [Installation of core packages](#required_packages_conda), replace the tag `v5.08` in the URL with the Cocoa version that will be cloned (tags older than `v4.11.4` carry the `cocoapy310` prefix).
 
    - Linux
   
-         wget https://raw.githubusercontent.com/CosmoLike/cocoa/refs/heads/dev/cocoapy310-linux.yml
+         wget https://raw.githubusercontent.com/CosmoLike/cocoa/refs/tags/v5.08/cocoapy311-linux.yml
 
    - macOS (arm)
      
-         wget https://raw.githubusercontent.com/CosmoLike/cocoa/refs/heads/dev/cocoapy310-osxarm.yml
+         wget https://raw.githubusercontent.com/CosmoLike/cocoa/refs/tags/v5.08/cocoapy311-osxarm.yml
 
 **Step :three:** Create the conda environment
 
    - Linux
      
-         conda-lock install -n cocoa cocoapy310-linux.yml
+         conda-lock install -n cocoa cocoapy311-linux.yml
 
    - macOS (arm)
 
-         conda-lock install -n cocoa cocoapy310-osxarm.yml   
+         conda-lock install -n cocoa cocoapy311-osxarm.yml   
 
   and activate it
 
@@ -796,17 +993,17 @@ and
 
      conda activate base2
 
-**Step :two:** Now install wget and download a looser version of the yml file (note here slightly modified conda command)
+**Step :two:** Now install wget and download a looser version of the yml file (note here slightly modified conda command). As in the section [Installation of core packages](#required_packages_conda), replace the tag `v5.08` in the URL with the Cocoa version that will be cloned (tags older than `v4.11.4` carry the `cocoapy310` prefix).
 
      conda install -y wget --solver=libmamba --strict-channel-priority --override-channels -c conda-forge
 
 and
 
-     wget https://raw.githubusercontent.com/CosmoLike/cocoa/refs/heads/dev/cocoapy310-osxarm-loose.yml
+     wget https://raw.githubusercontent.com/CosmoLike/cocoa/refs/tags/v5.08/cocoapy311-osxarm-loose.yml
 
-**Step :three:** Create the cocoa conda env using a looser yml ((note here slightly modified conda command)
-    
-    conda env create --solver=libmamba --name cocoa -f cocoapy310-osxarm-loose.yml
+**Step :three:** Create the cocoa conda env using a looser yml (note here slightly modified conda command)
+
+    conda env create --solver=libmamba --name cocoa -f cocoapy311-osxarm-loose.yml
 
 # Appendices about Git <a name="appendix_git"></a>
 
@@ -815,11 +1012,14 @@ and
 A useful Git hack concerns developing Cocoa from a Git tag. 
 
 Git tags set milestones in our development, so they serve as good starting points for coding new features or implementing bug fixes.
-When you check out a tag, Git places you in a detached `HEAD` state. So, before making futher commits, you must create a local branch from that tag.
+When you check out a tag, Git places you in a detached `HEAD` state. So, before making further commits, you must create a local branch from that tag.
 
 **Step :one: (optional)** If the repository was cloned with the `https` URL, switch `origin` to the SSH-based URL address (assuming your public key is already registered on GitHub)
 
-    git remote set-url origin git@github.com:CosmoLike/cocoa.git # that would allow users to push without typing a password
+    git remote set-url origin git@github.com:SBU-COSMOLIKE/cocoa.git # that would allow users to push without typing a password
+
+> [!TIP]
+> This step covers the Cocoa repository itself. For the Cosmolike/Emulator repositories, set `SWITCH_TO_DEV_MODE=1` on `set_installation_options.sh` *before* `setup_cocoa.sh`, and they are cloned via SSH from the start (see [FAQ: How can users install Cosmolike projects?](#appendix_compile_cosmolike_separately)).
 
 **Step :two: (optional)** check the names of remote branches so you can create a unique branch name from the checked-out tag
 
@@ -829,11 +1029,11 @@ and
 
     git fetch origin -v
 
-This will display all remote branches in the terminal. The output will be resemble the following snippet
+This will display all remote branches in the terminal. The output will resemble the following snippet
 
     [Adapted from the terminal output of git fetch origin -v] 
     (...)
-    From https://github.com/CosmoLike/cocoa
+    From https://github.com/SBU-COSMOLIKE/cocoa
      = [up to date]        CMB_bp        -> origin/CMB_bp
      = [up to date]        cocoa_emu     -> origin/cocoa_emu
      = [up to date]        demu          -> origin/demu
@@ -844,7 +1044,7 @@ This will display all remote branches in the terminal. The output will be resemb
     git switch -c xyzlocdev
 
 Choose a unique name that does not already exist as a branch in the remote repository. 
-A practical convention is to use your initial, followed a suffix such as `locdev`.
+A practical convention is to use your initial, followed by suffix such as `locdev`.
 
 Now, all subsequent commits will be associated with the xyzlocdev local branch. 
 
@@ -868,7 +1068,7 @@ Now, all subsequent commits will be associated with the xyzlocdev local branch.
                
 ## :interrobang: FAQ: How can developers push changes to the Cocoa main branch? <a name="push_main"></a>
 
-Until recently, Cocoa development was a bit unstructured. Developers could push directly to the `main` branch, and small commits to the main were not discouraged. Such flexible development rules will soon change when `v4.0` leaves the beta phase. We will protect the `main` branch by requiring every push to be reviewed by Cocoa's leading developers. Our new philosophy establishes that *a commit in the main branch should contain an atomic change that takes code from one working state to another working state with meaningful and well-tested improvements*. Therefore, developers should propose changes to the `main` branch in larger chunks (*via squash commits*), as shown below.
+The `main` branch is protected: *a commit in the main branch should contain an atomic change that takes code from one working state to another working state with meaningful and well-tested improvements*. Therefore, developers should propose changes to the `main` branch in larger chunks (*via squash commits*), as shown below.
 
 > [!NOTE]
 > In a developer branch, users are encouraged to make small commits so that work can be tracked easily. Our policy regarding squash atomic changes only applies to the main branch.
@@ -912,6 +1112,19 @@ and
 
     git push origin main  # run on the main branch
 
+**Step :five:**: after the squash commit lands on `main`, retire the development branch and recreate it fresh. The squash created a brand-new commit on `main`, so the individual commits of `xyzdev` are not part of `main`'s history: git sees the same changes twice, and the merge of Step :three: on the next development cycle would report conflicts on work that `main` already accepted. Deleting the branch and recreating it from the updated `main` avoids this without any force push.
+
+    git branch -D xyzdev   # run on the main branch
+
+and
+
+    git switch -c xyzdev   # run on the main branch
+
+> [!NOTE]
+> The capital `-D` (force) flag is required: because of the squash, git cannot detect that the branch was merged, so the lowercase `-d` would refuse to delete it.
+
+> [!Warning]
+> If the old `xyzdev` still exists on the server, delete it there before pushing the recreated branch — on the GitHub branches page, or with `git push origin --delete xyzdev`. Never force-push over a stale branch.
 
 # Appendices about Cocoa run <a name="appendix_cocoa_run"></a>
 
@@ -979,40 +1192,61 @@ In addition to `setup` and `compile` scripts, Cocoa contains `unxv` scripts that
 
 ## :interrobang: FAQ: How can users install Cosmolike projects?  <a name="appendix_compile_cosmolike_separately"></a>
 
-The script `set_installation_options.sh` includes instructions for installing several Cosmo-like-based projects. To activate them, modify the following lines in `set_installation_options.sh` by inserting the symbol `#` before the name of the module users want to be installed and compiled.
+The script `set_installation_options.sh` selects which Cosmolike projects
+are installed. A commented `IGNORE_*_CODE` key enables a project; an active
+key skips it. The defaults enable LSST Y1, DES × Planck and Roman real.
 
      [Adapted from Cocoa/set_installation_options.sh shell script]
-     # ------------------------------------------------------------------------------
-     # The keys below control which cosmolike projects will be installed and compiled
-     # ------------------------------------------------------------------------------
-     export IGNORE_COSMOLIKE_LSSTY1_CODE=1
+     #export IGNORE_COSMOLIKE_LSST_Y1_CODE=1
      export IGNORE_COSMOLIKE_DES_Y3_CODE=1
-     #export IGNORE_COSMOLIKE_ROMAN_FOURIER_CODE=1
+     #export IGNORE_COSMOLIKE_DESXPLANCK_CODE=1
+     export IGNORE_COSMOLIKE_ROMAN_FOURIER_CODE=1
      #export IGNORE_COSMOLIKE_ROMAN_REAL_CODE=1
-     (...)
-     # ------------------------------------------------------------------------------
-     # OVERWRITE_EXISTING_XXX_CODE=1 -> setup_cocoa overwrites existing PACKAGES ----
-     # overwrite: delete the existing PACKAGE folder and install it again -----------
-     # redownload: delete the compressed file and download data again ---------------
-     # These keys are only relevant if you run setup_cocoa multiple times -----------
-     # ------------------------------------------------------------------------------
-     (...)
-     export OVERWRITE_EXISTING_COSMOLIKE_CODE=1 # dangerous (possible loss of uncommitted work)
-                                                # If unset, users must manually delete cosmolike projects
-     (...)
-     # ------------------------------------------------------------------------------
-     # Cosmolike projects below -------------------------------------------
-     # ------------------------------------------------------------------------------
+     export IGNORE_COSMOLIKE_ROMAN_KL_CODE=1
+     export IGNORE_COSMOLIKE_DES_CLUSTER_CODE=1
+     # WARNING: des_y6 is not production ready.
+     export IGNORE_COSMOLIKE_DES_Y6_CODE=1
      (...)
      export ROMAN_REAL_URL="https://github.com/CosmoLike/cocoa_roman_real.git"
      export ROMAN_REAL_NAME="roman_real"
-     #BRANCH: if unset, load the latest commit on the specified branch
-     #export ROMAN_REAL_BRANCH="dev"
-     #COMMIT: if unset, load the specified commit
-     export ROMAN_REAL_COMMIT="a5cf62ffcec7b862dda5bf343bf6bb19124bb5d0"
-     #TAG: if unset, load the specified TAG
-     #export ROMAN_REAL_TAG="v4.0-beta17"
- 
+     export ROMAN_REAL_GIT_TAG="v5.07"
+
+Each released project is pinned to a tag. To select another revision, set
+only one of its `GIT_COMMIT`, `GIT_BRANCH` or `GIT_TAG` keys: a commit takes
+precedence over a branch, and a branch over a tag. DES Y6 is disabled by
+default and not production ready; its key block pins a tag like the
+released projects.
+
+The [DES Y6 project](https://github.com/SBU-COSMOLIKE/cocoa_des_y6) provides
+data-vector notebooks, tests and a covariance forecast CLI. Its active
+likelihood still selects dummy data; the separate supplied covariance has
+an incompatible layout. See its input inventory before using observational
+data.
+
+Covariance generation is a separate build option, disabled for all projects
+by default. To enable it for Roman real, comment out
+`export IGNORE_COSMOLIKE_ROMAN_REAL_COVARIANCE=1`, reload `start_cocoa.sh`
+and recompile that project. See its
+[covariance guide](https://github.com/SBU-COSMOLIKE/cocoa_roman_real#computing_covariances)
+for the production CLI and notebook examples.
+
+DES Y6 uses the corresponding
+`IGNORE_COSMOLIKE_DES_Y6_COVARIANCE` setting. Its
+[covariance guide](https://github.com/SBU-COSMOLIKE/cocoa_des_y6#computing_covariances)
+describes the catalogue assumptions and the distinction between a forecast
+and the supplied likelihood covariance.
+
+> [!NOTE]
+> The https URLs are the right choice for almost all users. Developers with write
+> access to the Cosmolike/Emulator repositories can clone them via SSH keys instead
+> by setting the key below on `set_installation_options.sh`.
+>
+>     [Adapted from Cocoa/set_installation_options.sh shell script]
+>     # ------------------------------------------------------------------------------
+>     # If set, clone Cosmolike/Emulator repos via SSH (developers with write access)
+>     # ------------------------------------------------------------------------------
+>     #export SWITCH_TO_DEV_MODE=1
+
 Once more, anytime `set_installation_options.sh` is modified, we need to reload `(.local)` by rerunning `start_cocoa.sh`. Then, run the following commands:
 
       cd ./cocoa/Cocoa
@@ -1021,25 +1255,82 @@ and
 
       source start_cocoa.sh # even if (.local) is already active, users must run start_cocoa.sh again to update bash environment values
       
-Now, to download and compile all Cosmolike projects, type
+Now, to download and compile the enabled Cosmolike projects, type
  
-      source ./installation_scripts/setup_cosmolike_projects.sh   # download all cosmolike projects  
+      source ./installation_scripts/setup_cosmolike_projects.sh   # download enabled cosmolike projects
 
 and
 
-      source ./installation_scripts/compile_all_projects.sh       # compile  all cosmolike project
+      source ./installation_scripts/compile_all_projects.sh       # compile enabled cosmolike projects
 
 > [!NOTE]
 > In case users need to rerun `setup_cocoa.sh` (or `setup_cosmolike_projects.sh`) , Cocoa will not download previously installed cosmolike projects (this avoids loss of uncommitted work), unless the following key is set on `set_installation_options.sh`
 >
->     [Adapted from Cocoa/set_installation_options.sh shell script]
 >     #export OVERWRITE_EXISTING_COSMOLIKE_CODE=1 # dangerous (possible loss of uncommitted work)
->                                                 # if unset, users must manually delete cosmolike projects
+
+> [!TIP]
+> **A stale project folder causes compile errors for files the pinned tag contains**, for example `compile_des_y6.sh: No such file or directory` or a `DIR DOES NOT EXIST` message naming a folder the tag ships. The no-overwrite protection above keeps the local clone at whatever revision was downloaded first, so moving a pin (or a project gaining new scripts) does not refresh an existing folder. Refresh the one affected project without touching the others (below, the `des_y6` project), from the Cocoa main folder `cocoa/Cocoa` with `(.local)` active:
+>
+>     rm -rf ./projects/des_y6
+>
+> and
+>
+>     source ./installation_scripts/setup_cosmolike_projects.sh
+>
+> and
+>
+>     source ./projects/des_y6/scripts/compile_des_y6.sh
+>
+> The `OVERWRITE_EXISTING_COSMOLIKE_CODE=1` key also fixes this, but it re-downloads **every** enabled project folder and loses uncommitted work in all of them.
 
 In case users only want to compile a single Cosmolike project (let's say the `roman_real` project)
 
       source ./projects/roman_real/scripts/compile_roman_real.sh
      
+## :interrobang: FAQ: How can users test Cosmolike projects? <a name="appendix_test_cosmolike_projects"></a>
+
+Every Cosmolike project separates its tests into `tests/data_vector/` and
+`tests/covariance/`. Most likelihood users need the data-vector tests, which
+include the following checks:
+
+- $\chi^2$: the $\chi^2$ of each likelihood at a fixed reference point must stay within 0.2 of the value stored in `tests/frozen/reference_chi2.json`; a moved value means code or data changed the numbers.
+- race condition: the same point is evaluated on its own and then again after nine other cosmologies, with the test modules forcing `OMP_NUM_THREADS=4` internally; the two $\chi^2$ values must agree to $10^{-4}$. Leftover internal state or colliding OpenMP threads break the agreement.
+- accuracy (`test_accuracy.py`; advisory, no pass/fail): the numerical settings are raised one accuracy parameter at a time, then all at once. Each check prints the $\Delta\chi^2$ between the high-accuracy and the default evaluations: the numerical error of the default settings.
+
+To run the tests of a project, follow the steps below.
+
+**Step :one:**: from the Cocoa main folder `cocoa/Cocoa`, activate the Conda cocoa environment and source `start_cocoa.sh`
+
+     conda activate cocoa
+
+and
+
+     source start_cocoa.sh
+
+**Step :two:**: run the tests of a project (below, the `lsst_y1` project)
+
+     python -m pytest ./projects/lsst_y1/tests/data_vector
+
+> [!NOTE]
+> `--ignore ./projects/lsst_y1/tests/data_vector/test_accuracy.py`: skip the accuracy checks, whose high-accuracy evaluations take minutes each. The remaining tests take a few minutes.
+
+To check covariance generation separately, enable the project's covariance
+build option, recompile, and run:
+
+     python -m pytest ./projects/lsst_y1/tests/covariance
+
+The project's [test guide](https://github.com/SBU-COSMOLIKE/cocoa_lsst_y1/tree/main/tests)
+describes the checks and their requirements.
+
+The tests' own snapshot under `tests/frozen/` holds the cobaya configurations fully expanded (every option and every parameter written out, so editing the likelihood default yaml files cannot change what the tests evaluate), the tests' own copy of the data files, and synthetic data vectors generated at the reference point, so each $\chi^2$ sits at its minimum. The file `tests/manifest_sha256.json` stores a SHA-256 hash of every file of the snapshot, and each test refuses to run when one was edited. Users can therefore change the live data and examples freely without breaking the tests.
+
+Maintainers redefine the snapshot after a deliberate change to the data files, examples, or likelihood defaults:
+
+     python ./projects/lsst_y1/tests/generate_frozen_reference.py --overwrite
+
+> [!NOTE]
+> `--overwrite`: delete the existing `frozen/` folder, rebuild it from the current project, and rewrite the manifest (the script refuses to run without this flag). Review the printed reference $\chi^2$ values before committing: they define what every later test run compares against.
+
 ## :interrobang: FAQ: How can users run Cocoa with Docker? <a name="appendix_jupyter_whovian"></a>
 
 We provide the Docker image [whovian-cocoa](https://hub.docker.com/r/vivianmiranda/whovian-cocoa) to facilitate installing Cocoa on Windows and macOS. This appendix assumes that users have already installed the Docker Engine on their local PC. For instructions on installing the Docker engine on specific operating systems, refer to [Docker's official documentation](https://docs.docker.com/engine/install/). 
@@ -1052,6 +1343,11 @@ We provide the Docker image [whovian-cocoa](https://hub.docker.com/r/vivianmiran
  **Step :two:**: Download the Docker image *whovian-cocoa*, name the associated container `cocoa2025` (flag `--name cocoa2025` in the command below), and run the container for the first time, type:
 
     docker run --platform linux/amd64 --hostname cocoa --name cocoa2025 -it -p 8888:8888 -v $(pwd):/home/whovian/host/ -v ~/.ssh:/home/whovian/.ssh:ro vivianmiranda/whovian-cocoa:thin
+
+> [!Warning] 
+> There is a weird bug on macOS that Mathplotlib does not work unless you add the flags `-e EXPERIMENTAL_DOCKER_DESKTOP_FORCE_QEMU=1 -e PYTHONUNBUFFERED=1` 
+>  right after `docker run --platform linux/amd64`
+>  
 
 This is a large image, approximately 13GB, as it already contains the conda cocoa environment. Users can now proceed to the [Installation and Compilation of external modules](#cobaya_base_code) section to continue the installation. 
 
@@ -1102,15 +1398,40 @@ This is a large image, approximately 13GB, as it already contains the conda coco
 > [!Warning]
 > Do not allow the Docker container to have system-wide access to your files. Accidents happen, especially when dealing with dangerous bash commands such as `rm` (deletion).
 
+> [!NOTE]
+> The recipe of the *whovian-cocoa* image is maintained at `cocoa_installation_libraries/docker/`.
+> To rebuild and publish the image (developers only), type
+>
+>     cd ./cocoa/cocoa_installation_libraries/docker
+>
+> and
+>
+>     docker build . --build-arg COCOA_TAG=v5.08 -t vivianmiranda/whovian-cocoa # replace the tag with the Cocoa version whose yml seeds the conda env
+>
+> and
+>
+>     docker push vivianmiranda/whovian-cocoa
+>
+> To publish the `:thin` variant, run the container, install and compile Cocoa inside it, and type
+>
+>     docker commit <containerid> vivianmiranda/whovian-cocoa:thin # docker ps -a shows the container id
+>
+> and
+>
+>     docker push vivianmiranda/whovian-cocoa:thin
+
 ## :interrobang: FAQ: How can users set the appropriate environment for ML? <a name="ml_emulators"></a>
 
-Although this is the default configuration in CoCoA, it is worth noting that commenting out the environmental flags below enables the installation of several machine-learning-related libraries via pip.  
+By default, Cocoa installs several machine-learning-related libraries via pip; the keys below control this installation. To skip the GPU-based ML libraries, uncomment `IGNORE_EMULATOR_GPU_PIP_PACKAGES`. GPU users must also select the CUDA generation that matches their hardware.
 
     [Adapted from Cocoa/set_installation_options.sh shell script] 
     # ------------------------------------------------------------------------------
-    # If not set, pip_core_packages.sh will install several ML package
+    # If not set, pip_core_packages.sh will install several ML packages ------------
     # ------------------------------------------------------------------------------
     #export IGNORE_EMULATOR_GPU_PIP_PACKAGES=1
+    # New GPUs require cuda 13 / Old GPUs may still require cuda 11.8 --------------
+    #export ML_BLEEDING_EDGE_LIBS=1
+    #export ML_LEGACY_LIBS=1
     (...)
 
 If users have already run `setup_cocoa.sh` prior to commenting these flags, run the command.
@@ -1133,167 +1454,55 @@ Cocoa does not adopt Cobaya's Python reimplementation of SimAll EE and Gibbs TT 
 
 to call the original Planck-2018 Clik likelihoods, as shown below.
 
-<img width="1146" height="498" alt="Screenshot 2025-10-20 at 8 38 56 PM" src="https://github.com/user-attachments/assets/4ab8beff-bda1-4bf8-b2c6-56f5501e3773" />
-<img width="1236" height="514" alt="Screenshot 2025-10-20 at 8 39 04 PM" src="https://github.com/user-attachments/assets/22b21a5d-c716-45dc-949c-59f31be91def" />
+    [Adapted from Cocoa/cobaya/cobaya/likelihoods/planck_2018_lowl/TT.py]
+    from cobaya.likelihoods.base_classes import Planck2018Clik
 
-This ensure backward consistency in our code, as `TT.py` and `EE.py` used to point to Planck-2018 Clik before Cobaya's authors moved them to `EE_clik.py` and `TT_clik.py`. 
+    #COCOA BEGINS
+    #class TT_clik(Planck2018Clik):
+    class TT(Planck2018Clik):
+    #COCOA ENDS
+        r"""
+        Low-$\ell$ temperature-only likelihood of Planck's 2018 data release
+        """
+        pass
 
-## :interrobang: FAQ: How can users run Cocoa on Google Colab? <a name="overview_google_colab"></a>
+and
 
-[Google Colab](https://colab.research.google.com/) provides a convenient platform for users to run MCMCs, likelihood minimizations, and profiles, as long as Machine-Learning Emulators are used to compute the data vectors. In the repository [CoCoAGoogleColabExamples](https://github.com/CosmoLike/CoCoAGoogleColabExamples), we provide a few examples along with explanatory notes. 
+    [Adapted from Cocoa/cobaya/cobaya/likelihoods/planck_2018_lowl/EE.py]
+    from cobaya.likelihoods.base_classes import Planck2018Clik
 
-Installing Cocoa requires time and also strains our limited Git-LFS quota, which is especially relevant given that **the entire local drive is wiped when a Colab notebook is disconnected**. To prevent this problem, we provide instructions for saving and loading Cocoa immediately after the initial installation. 
+    #COCOA BEGINS
+    #class EE_clik(Planck2018Clik):
+    class EE(Planck2018Clik):
+    #COCOA ENDS
+        r"""
+        Low-$\ell$ EE likelihood of Planck's 2018 data release
+        """
 
-There are a few differences users should be aware of when running Cocoa on Google Colab.
+This ensures backward consistency in our code, as `TT.py` and `EE.py` used to point to Planck-2018 Clik before Cobaya's authors moved them to `EE_clik.py` and `TT_clik.py`. 
 
-  - Running Colab Notebook for the first time
+## :interrobang: FAQ: How can users deal with pip getting stuck during installation (Linux): a possible cause <a name="pip_ngc_nvidia"></a>
 
-    - **Cell :one:**: Connect the notebook to your Google Drive account (will be important later)
+On some machines, the step `Installing pip dependencies` hangs (mamba shows repeated `Failed to establish a new connection` warnings). A possible cause: pip is configured with the retired NVIDIA index `pypi.ngc.nvidia.com`, planted by the `nvidia-pyindex` package (which Cocoa's machine-learning setup installed before `v4.11.4`). If that is the case, follow the steps below.
 
-          from google.colab import drive
-          drive.mount('/content/drive')
+**Step :one:**: Locate the pip configuration files
 
-    Below, we provide instructions on how to install Cocoa. *Google Colab does provide direct terminal access if users prefer to follow the standard installation procedure*
-    
-    - **Cell 2️⃣**: Install Miniforge (Similar to our documentation in section [FAQ: How can users install Conda?](#overview_miniforge))
+    python3 -m pip config list -v
 
-          %%bash
-          export CONDA_DIR="/content/conda"
-          mkdir "${CONDA_DIR:?}"
-          curl -L -O "https://github.com/conda-forge/miniforge/releases/latest/download/Miniforge3-$(uname)-$(uname -m).sh"
-          /bin/bash Miniforge3-$(uname)-$(uname -m).sh -f -b -p "${CONDA_DIR:?}"
-          /bin/bash
-          source $CONDA_DIR/etc/profile.d/conda.sh \
-                && conda config --set auto_update_conda false \
-                && conda config --set show_channel_urls true \
-                && conda config --set auto_activate_base false \
-                && conda config --prepend channels conda-forge \
-                && conda config --add allowlist_channels conda-forge \
-                && conda config --set channel_priority strict \
-                && conda init bash
-          source ~/.bashrc
+**Step :two:**: Remove the `extra-index-url` and `trusted-host` entries that point to `pypi.ngc.nvidia.com`
 
-    - **Cell 3️⃣**: Install Conda cocoa env (similar to our documentation in section [Installation of core packages](#required_packages_conda))
+    sed -i '/extra-index-url/,+1d; /trusted-host/,+1d' ~/.pip/pip.conf ~/.config/pip/pip.conf
 
-          %%bash
-          source "/content/conda/etc/profile.d/conda.sh"
-          conda activate lockenv
-          conda-lock install -n cocoa cocoapy310-linux.yml
-          conda activate cocoa 
-          ln -s "${CONDA_PREFIX}"/bin/x86_64-conda_cos6-linux-gnu-gcc "${CONDA_PREFIX}"/bin/gcc
-          ln -s "${CONDA_PREFIX}"/bin/x86_64-conda_cos6-linux-gnu-g++ "${CONDA_PREFIX}"/bin/g++
-          ln -s "${CONDA_PREFIX}"/bin/x86_64-conda_cos6-linux-gnu-gfortran "${CONDA_PREFIX}"/bin/gfortran
-          ln -s "${CONDA_PREFIX}"/bin/x86_64-conda-linux-gnu-gcc-ar "${CONDA_PREFIX}"/bin/gcc-ar
-          ln -s "${CONDA_PREFIX}"/bin/x86_64-conda-linux-gnu-gcc-ranlib "${CONDA_PREFIX}"/bin/gcc-ranlib
-          git-lfs install
+**Step :three:**: Remove the `pip.conf` files located on older Cocoa installations (they take priority whenever that `(.local)` environment is active)
 
-    - **Cell 4️⃣**: Clone CoCoA (similar to our documentation in section [Installation and Compilation of external modules](#cobaya_base_code))
+    rm -f <old cocoa>/Cocoa/.local/pip.conf
 
-          %%bash
-          source "/content/conda/etc/profile.d/conda.sh"
-          conda activate cocoa                                  
-          git clone https://github.com/CosmoLike/cocoa.git --branch v4.0 cocoa # users can adjust this line
+**Step :four:**: In case the interrupted installation already finished the conda stage, rerun only the pip stage
 
-    - **Cell 5️⃣**: run `setup_cocoa.sh`
-
-           %%bash
-           source "/content/conda/etc/profile.d/conda.sh" 
-           conda activate cocoa
-           cd ./cocoa/Cocoa/
-           source setup_cocoa.sh
-
-    - **Cell 6️⃣**: run `compile_cocoa.sh`
-
-          %%bash
-          source "/content/conda/etc/profile.d/conda.sh"
-          conda activate cocoa
-          cd ./cocoa/Cocoa/
-          source compile_cocoa.sh
-
-    - **Cell 7️⃣**: Save Cocoa on Drive (does not work with local runtime)
-
-          %%bash
-          DEST="/content/drive/MyDrive/ColabBackups"
-          ARCHIVE="$DEST/colab_basic_cocoa.tar.gz"
-          if [[ -f "$ARCHIVE" ]]; then
-            echo "Backup already exists: $ARCHIVE — skipping."
-            exit 0
-          fi
-          mkdir -p "$DEST"
-          tar -czf "$DEST/colab_basic_cocoa.tar.gz" \
-            --exclude='/content/drive' \
-            --exclude='**/__pycache__' \
-            --exclude='**/.ipynb_checkpoints' \
-            /content
-          echo "Created: $ARCHIVE"
-
-  - Running Colab Notebook with Cocoa pre-installed, loaded from Drive (does not work with local runtime)
-
-    - **Cell :one:**: Connect the notebook to your Google Drive account
-
-          from google.colab import drive
-          drive.mount('/content/drive')
-
-    - **Cell 2️⃣**: Load Cocoa from Drive
-
-          %%bash
-          DEST="/content/drive/MyDrive/ColabBackups"
-          ARCHIVE="$DEST/colab_basic_cocoa.tar.gz"
-          SENTINEL="/content/conda/etc/profile.d/conda.sh"  # exists when your env is restored
-          if [[ -e "$SENTINEL" ]]; then
-            echo "Found $SENTINEL — environment already restored. Skipping untar."
-            exit 0
-          fi
-          test -f "$ARCHIVE"
-          ARCHIVE="/content/drive/MyDrive/ColabBackups/colab_basic_cocoa.tar.gz"
-          tar -xzf "$ARCHIVE" -C /
-
-> [!Note]
-> From now on, users must start every subsequent shell with 
->
->        %%bash
->        source "/content/conda/etc/profile.d/conda.sh"
->        conda activate cocoa`
->        cd ./cocoa/Cocoa/
->        source start_cocoa.sh
-
-
-- Saving/Loading checkpoints
-
-  Not reserving time to copy the `/content` folder to the user's Google Drive —an expensive operation —can result in up to 24 hours of lost computation. To prevent such a catastrophe, the code below creates and loads *checkpoints* that users can add after computationally intensive cells.
-
-  *This solution is not valid when running Colab with local runtime* (see [Google documentation](https://research.google.com/colaboratory/local-runtimes.html) for additional information on how to link notebooks to local resources). The good news here is that local storage is persistent, so there is no need to create backups on Google Drive.
-  
-  - Saving checkpoints: compress and copy the `/content` folder from the local disk to the user's Drive
-
-        %%bash
-        ROOT="colab_name_notebook"
-        DEST="/content/drive/MyDrive/ColabBackups"
-        mkdir -p "$DEST"
-        ARCHIVE="$DEST/$ROOT_$(date +%F_%H-%M).tar.gz"
-        tar -czf "$ARCHIVE" \
-            --exclude='/content/drive' \
-            --exclude='**/__pycache__' \
-            --exclude='**/.ipynb_checkpoints' \
-            /content
-        echo "Created: $ARCHIVE"
-
-  - Loading checkpoints: decompress and copy the `/content` folder from the user's Drive to the local disk
-
-        %%bash
-        SENTINEL="/content/conda/etc/profile.d/conda.sh"  # exists when your env is restored
-        if [[ -e "$SENTINEL" ]]; then
-          echo "Found $SENTINEL — environment already restored. Skipping untar."
-          exit 0
-        fi
-        ARCHIVE="CHECKPOINT_FILE"
-        test -f "$ARCHIVE"
-        tar -xzf "$ARCHIVE" -C /
+    conda env update --name cocoa --file=cocoapy311.yml
 
 ## :interrobang: FAQ: How can developers improve their Bash/C/C++ knowledge? <a name="lectnotes"></a>
 
 A working knowledge of Python is required to understand the Cobaya framework at the developer level. Users must also be familiar with the Bash language to understand Cocoa's scripts. Proficiency in C and C++ is also needed to manipulate Cosmolike and the C++ Cobaya-Cosmolike C++ interface. Finally, users need to understand the Fortran-2003 language to modify CAMB.
 
 Learning all these languages can be overwhelming, so to enable new users to do research that demands modifications on the inner workings of these codes, we include [here](cocoa_installation_libraries/LectNotes.pdf) a link to approximately 600 slides that provide an overview of Bash (slides ~1-137), C (slides ~138-371), and C++ (slides ~372-599). In the future, we aim to add lectures about Python and Fortran. 
-
-

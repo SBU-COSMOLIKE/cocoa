@@ -1,7 +1,15 @@
 #!/bin/bash
 # ------------------------------------------------------------------------------
+# setup_cocoa.sh: download every selected package and dataset.
+#
+# Run as `source setup_cocoa.sh` from this folder. It reads the selection
+# keys in set_installation_options.sh and runs the matching
+# installation_scripts/setup_*.sh and unxv_*.sh entries from the script
+# lists below. Setup MAY use the internet; compile_cocoa.sh never does,
+# so everything that must be downloaded happens here. Each finished
+# script returns 55 and is cached: a rerun repeats only unfinished or
+# changed steps (the cache rebuilds when a script list changes).
 # ------------------------------ Basic Settings --------------------------------
-# ------------------------------------------------------------------------------
 if [[ "${BASH_SOURCE[0]}" == "$0" ]]; then
   FILE="$(basename "${BASH_SOURCE[0]}")"
   MSG="\033[0;31m ${FILE} must be sourced (not executed as program)"
@@ -77,9 +85,15 @@ declare -a THEORY=("setup_hyrec2.sh"
                    "setup_cosmorec.sh"
                    "setup_camb.sh"
                    "setup_mgcamb.sh"
+                   "setup_axie_camb.sh"
                    "setup_class.sh"
                    "setup_velocileptors.sh"
                    "setup_pyfastpt.sh"
+                   "setup_bfmt.sh"
+                   "setup_pyspk.sh"
+                   "setup_bcemu.sh"
+                   "setup_fbre.sh"
+                   "setup_baccoemu.sh"
                   )
 
 declare -a ML=("setup_cosmopower.sh"
@@ -233,7 +247,7 @@ case "$mode" in
     fi
     unset -v OVERWRITE_EXISTING_COCOA_PRIVATE_PYTHON_ENV
     unset -v OVERWRITE_EXISTING_COSMOLIKE_CODE # ADDITIONAL PROTECTION
-    unset -v OVERWRITE_EXISTING_PRIVATE_CODE   # ADDITIONAL PROTECTION
+    unset -v OVERWRITE_EXISTING_PRIVATE_PROJECTS_CODE # ADDITIONAL PROTECTION
     ;;
   soft)
     # FORCE DOWNLOAD OF THEORY + ML
@@ -249,7 +263,7 @@ case "$mode" in
     fi
     unset -v OVERWRITE_EXISTING_COCOA_PRIVATE_PYTHON_ENV
     unset -v OVERWRITE_EXISTING_COSMOLIKE_CODE # ADDITIONAL PROTECTION
-    unset -v OVERWRITE_EXISTING_PRIVATE_CODE   # ADDITIONAL PROTECTION
+    unset -v OVERWRITE_EXISTING_PRIVATE_PROJECTS_CODE   # ADDITIONAL PROTECTION
     ;;
   hard)
     # FORCE DOWNLOAD OF THEORY + ML + LIKELIHOOD
@@ -265,7 +279,7 @@ case "$mode" in
     fi
     unset -v OVERWRITE_EXISTING_COCOA_PRIVATE_PYTHON_ENV
     unset -v OVERWRITE_EXISTING_COSMOLIKE_CODE # ADDITIONAL PROTECTION
-    unset -v OVERWRITE_EXISTING_PRIVATE_CODE   # ADDITIONAL PROTECTION
+    unset -v OVERWRITE_EXISTING_PRIVATE_PROJECTS_CODE   # ADDITIONAL PROTECTION
     ;;
   aggressive)
     # FORCE DOWNLOAD OF CORE + THEORY + ML + LIKELIHOOD
@@ -281,7 +295,7 @@ case "$mode" in
     fi
     unset -v OVERWRITE_EXISTING_COCOA_PRIVATE_PYTHON_ENV
     unset -v OVERWRITE_EXISTING_COSMOLIKE_CODE # ADDITIONAL PROTECTION
-    unset -v OVERWRITE_EXISTING_PRIVATE_CODE   # ADDITIONAL PROTECTION
+    unset -v OVERWRITE_EXISTING_PRIVATE_PROJECTS_CODE   # ADDITIONAL PROTECTION
     ;;
   extreme)
     # FORCE DOWNLOAD OFF ALL CODE (EXCEPT COSMOLIKE PROJECTS)
@@ -297,7 +311,7 @@ case "$mode" in
     fi
     export OVERWRITE_EXISTING_COCOA_PRIVATE_PYTHON_ENV=1
     unset -v OVERWRITE_EXISTING_COSMOLIKE_CODE # ADDITIONAL PROTECTION
-    unset -v OVERWRITE_EXISTING_PRIVATE_CODE   # ADDITIONAL PROTECTION
+    unset -v OVERWRITE_EXISTING_PRIVATE_PROJECTS_CODE  # ADDITIONAL PROTECTION
     ;;
   purge)
     # FORCE DOWNLOAD OFF ALL CODE (INCLUDING COSMOLIKE PROJECTS)
@@ -313,7 +327,7 @@ case "$mode" in
     fi
     export OVERWRITE_EXISTING_COCOA_PRIVATE_PYTHON_ENV=1
     export OVERWRITE_EXISTING_COSMOLIKE_CODE=1
-    export OVERWRITE_EXISTING_PRIVATE_CODE=1
+    export OVERWRITE_EXISTING_PRIVATE_PROJECTS_CODE=1
     ;;
   *)
     echo "Error: invalid mode: $mode" >&2

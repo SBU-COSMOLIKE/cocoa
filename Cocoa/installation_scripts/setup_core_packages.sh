@@ -1,6 +1,20 @@
 #!/bin/bash
 # ------------------------------------------------------------------------------
-# ------------------------------------------------------------------------------
+# setup_core_packages.sh: download the compiled core libraries Cocoa ships
+# (fftw, cfitsio, gsl, spdlog, armadillo, boost, carma, ...).
+#
+# Sourced, never executed (only `source` keeps its environment changes).
+# setup_cocoa.sh runs it during a full installation, and sourcing it on its
+# own redoes just this package (see the README FAQ on installing a single
+# package). Setup scripts MAY use the internet (git clone, wget, pip index);
+# the matching compile step never does, so anything that must be downloaded
+# happens here.
+#
+# Skipped (return 99) when IGNORE_CORE_INSTALLATION is set. Reruns are safe:
+# existing results are kept unless OVERWRITE_EXISTING_CORE_PACKAGES is set. On
+# failure error() names the failing step and unsets everything defined here;
+# on success the script returns 55, the value the runner caches so a finished
+# step is not repeated.
 # ------------------------------------------------------------------------------
 if [ -n "${IGNORE_CORE_INSTALLATION:-}" ]; then
   return 99
@@ -13,17 +27,24 @@ fi
 # parenthesis = run in a subshell
 ( source "${ROOTDIR:?}/installation_scripts/flags_check.sh" )  || return 1;
 
+# unset_env_vars: forget every variable the body defines. Sourced scripts
+# share the caller's shell, so anything not unset here would leak into the
+# user's environment. cdroot returns to the directory the user launched from.
 unset_env_vars () {
   unset -v URL_BASE URL FOLDER VER XZF CCIL CNAME PACKDIR PACKAGE_VERSION 
   cdroot || return 1;
 }
 
+# unset_env_funcs: forget every helper function defined below (functions leak
+# into the user's shell exactly like variables).
 unset_env_funcs () {
   unset -f cdfolder cpfolder cpfile error wgetact gitact gitact1 gitact2
   unset -f unset_env_funcs wgetact1 wgetact2
   cdroot || return 1;
 }
 
+# unset_all: the single cleanup entry point: variables, then functions, then
+# itself.
 unset_all () {
   unset_env_vars
   unset_env_funcs
@@ -31,20 +52,28 @@ unset_all () {
   cdroot || return 1;
 }
 
+# error: print which step failed (fail_script_msg names this script and the
+# message) and run the FULL cleanup. A call site whose helper already routes
+# through error() therefore uses plain `|| return 1`; adding another unset_all
+# there would run the cleanup twice.
 error () {
   fail_script_msg "$(basename "${BASH_SOURCE[0]}")" "${1}"
   unset_all || return 1
 }
 
+# cdfolder: cd that reports the target and cleans up on failure.
 cdfolder() {
   cd "${1:?}" 2>"/dev/null" || { error "CD FOLDER: ${1}"; return 1; }
 }
 
+# cpfolder: recursive copy that reports source/target and cleans up on
+# failure.
 cpfolder() {
   cp -r "${1:?}" "${2:?}"  \
     2>"/dev/null" || { error "CP FOLDER ${1} on ${2}"; return 1; }
 }
 
+# cpfile: file copy that reports source/target and cleans up on failure.
 cpfile() {
   cp "${1:?}" "${2:?}" \
     2>"/dev/null" || { error "CP FILE ${1} on ${2}"; return 1; }
@@ -101,7 +130,7 @@ wgetact1() {
   
   fi
 
-  cdfolder "${CCIL:?}" || { unset_all; return 1; }
+  cdfolder "${CCIL:?}" || return 1;
   
   if [[ ! -d "${CCIL:?}/${4:?}" && ! -d "${CCIL:?}/${1:?}" ]]; then
 
@@ -207,7 +236,7 @@ wgetact1() {
   
   fi
 
-  cdfolder "${ROOTDIR:?}" || { unset_all; return 1; }
+  cdfolder "${ROOTDIR:?}" || return 1;
 }
 
 wgetact2() {
@@ -216,7 +245,7 @@ wgetact2() {
   
   local CCIL="${ROOTDIR:?}/../cocoa_installation_libraries"
 
-  cdfolder "${CCIL:?}" || { unset_all; return 1; }
+  cdfolder "${CCIL:?}" || return 1;
 
   # --------------------------------------------------------------------------
   # In case this script runs twice -------------------------------------------
@@ -242,7 +271,7 @@ wgetact2() {
   
   fi
 
-  cdfolder "${ROOTDIR:?}" || { unset_all; return 1; }
+  cdfolder "${ROOTDIR:?}" || return 1;
 }
 
 wgetact() {
@@ -252,9 +281,9 @@ wgetact() {
   #           FINAL UNCOMPRESS DIRECTORY WITH APPROPRIATE NAME CHOSEN BY USER(4) 
   #           FINAL COMPRESSED DIRECTORY IN THE APPROPRIATE XZ FORMAT (5)
 
-  wgetact1 "${1:?}" "${2:?}" "${3:?}" "${4:?}" || { unset_all; return 1; }
+  wgetact1 "${1:?}" "${2:?}" "${3:?}" "${4:?}" || return 1;
 
-  wgetact2 "${4:?}" "${5:?}" || { unset_all; return 1; }
+  wgetact2 "${4:?}" "${5:?}" || return 1;
 
 }
 
@@ -265,7 +294,7 @@ gitact1() {
   
   local CCIL="${ROOTDIR:?}/../cocoa_installation_libraries"
 
-  cdfolder "${CCIL:?}" || { unset_all; return 1; }
+  cdfolder "${CCIL:?}" || return 1;
 
   # --------------------------------------------------------------------------
   # In case this script runs twice -------------------------------------------
@@ -290,7 +319,7 @@ gitact1() {
   
   fi
 
-  cdfolder "${ROOTDIR:?}" || { unset_all; return 1; }
+  cdfolder "${ROOTDIR:?}" || return 1;
 }
 
 gitact2() {
@@ -325,7 +354,7 @@ gitact2() {
 
   fi
 
-  cdfolder "${ROOTDIR:?}" || { unset_all; return 1; }
+  cdfolder "${ROOTDIR:?}" || return 1;
 }
 
 gitact() {
@@ -354,7 +383,7 @@ if [ -z "${IGNORE_XZ_INSTALLATION}" ]; then
 
   ptop "GETTING AND COMPILING XZ LIBRARY (CORE LIBS)" || { unset_all; return 1; }
 
-  cdfolder "${CCIL:?}" || { unset_all; return 1; }
+  cdfolder "${CCIL:?}" || return 1;
 
   #False xz file (if I am installing xz - this has to be a fake xz file): just to trigger GIT LFS
   cp xz-5.2.5.tar.gz.xz xz-5.2.5.tar.gz \
@@ -363,7 +392,7 @@ if [ -z "${IGNORE_XZ_INSTALLATION}" ]; then
   tar -xf xz-5.2.5.tar.gz.xz \
     >>${OUT1:?} 2>>${OUT2:?} ||  { error "TAR XZ TAR"; return 1; }
 
-  cdfolder "${CCIL:?}/xz-5.2.5/" || { unset_all; return 1; }
+  cdfolder "${CCIL:?}/xz-5.2.5/" || return 1;
 
   CC="${C_COMPILER:?}" ./configure --prefix="${ROOTDIR:?}/.local" \
     >>${OUT1:?} 2>>${OUT2:?} || { error "${EC11:?}"; return 1; }
@@ -401,7 +430,7 @@ if [ -z "${IGNORE_CMAKE_INSTALLATION}" ]; then
   gitact "${COCOA_CMAKE_DIR:-"${FOLDER:?}"}" \
          "${VER:?}" \
          "${URL:?}" \
-         "${XZF:?}" || { unset_all; return 1; }
+         "${XZF:?}" || return 1;
 
   unset -v URL FOLDER VER XZF PACKAGE_VERSION
 
@@ -438,7 +467,7 @@ if [ -z "${IGNORE_WGET_INSTALLATION}" ]; then
           "${COMPRESSED_FILE_EXT:?}" \
           "${URL:?}" \
           "${COCOA_WGET_DIR:-"${FILE_ROOT:?}"}" \
-          "${XZF:?}" || { unset_all; return 1; }
+          "${XZF:?}" || return 1;
 
   unset -v URL FILE_ROOT COMPRESSED_FILE_EXT XZF PACKAGE_VERSION
 
@@ -469,7 +498,7 @@ if [ -z "${IGNORE_DISTUTILS_INSTALLATION}" ]; then
   wgetact "${FILE_ROOT:?}" \
           "${COMPRESSED_FILE_EXT:?}" "${URL:?}" \
           "${COCOA_BINUTILS_DIR:-"${FILE_ROOT:?}"}" \
-          "${XZF:?}" || { unset_all; return 1; }
+          "${XZF:?}" || return 1;
 
   unset -v URL FILE_ROOT COMPRESSED_FILE_EXT XZF PACKAGE_VERSION
 
@@ -501,7 +530,7 @@ if [ -z "${IGNORE_DISTUTILS_INSTALLATION}" ]; then
           "${COMPRESSED_FILE_EXT:?}" \
           "${URL:?}" \
           "${COCOA_TEXINFO_DIR:-"${FILE_ROOT:?}"}" \
-          "${XZF:?}" || { unset_all; return 1; }
+          "${XZF:?}" || return 1;
 
   unset -v URL FILE_ROOT COMPRESSED_FILE_EXT XZF PACKAGE_VERSION
 
@@ -532,7 +561,7 @@ if [ -z "${IGNORE_OPENBLAS_INSTALLATION}" ]; then
   gitact "${COCOA_OPENBLAS_DIR:-"${FOLDER:?}"}" \
          "${VER:?}" \
          "${URL:?}" \
-         "${XZF:?}" || { unset_all; return 1; }
+         "${XZF:?}" || return 1;
 
   unset -v URL FOLDER VER XZF PACKAGE_VERSION
 
@@ -563,7 +592,7 @@ if [ -z "${IGNORE_FORTRAN_LAPACK_INSTALLATION}" ]; then
   gitact "${COCOA_LAPACK_DIR:-"${FOLDER:?}"}" \
          "${VER:?}" \
          "${URL:?}" \
-         "${XZF:?}" || { unset_all; return 1; }
+         "${XZF:?}" || return 1;
 
   unset -v URL FOLDER VER XZF PACKAGE_VERSION
 
@@ -595,7 +624,7 @@ if [ -z "${IGNORE_HDF5_INSTALLATION}" ]; then
           "${COMPRESSED_FILE_EXT:?}" \
           "${URL:?}" \
           "${COCOA_HDF5_DIR:-"${FILE_ROOT:?}"}" \
-          "${XZF:?}" || { unset_all; return 1; }
+          "${XZF:?}" || return 1;
 
   unset -v URL_BASE URL FILE_ROOT COMPRESSED_FILE_EXT XZF
 
@@ -629,7 +658,7 @@ if [ -z "${IGNORE_C_CFITSIO_INSTALLATION}" ]; then
           "${COMPRESSED_FILE_EXT:?}" \
           "${URL:?}" \
           "${COCOA_CFITSIO_DIR:-"${FILE_ROOT:?}"}" \
-          "${XZF:?}" || { unset_all; return 1; }
+          "${XZF:?}" || return 1;
 
   unset -v URL_BASE URL FILE_ROOT COMPRESSED_FILE_EXT XZF PACKAGE_VERSION
 
@@ -661,7 +690,7 @@ if [ -z "${IGNORE_C_FFTW_INSTALLATION}" ]; then
           "${COMPRESSED_FILE_EXT:?}" \
           "${URL:?}" \
           "${COCOA_FFTW_DIR:-"${FILE_ROOT:?}"}" \
-          "${XZF:?}" || { unset_all; return 1; }
+          "${XZF:?}" || return 1;
 
   unset -v URL FILE_ROOT COMPRESSED_FILE_EXT XZF PACKAGE_VERSION
 
@@ -693,7 +722,7 @@ if [ -z "${IGNORE_C_GSL_INSTALLATION}" ]; then
           "${COMPRESSED_FILE_EXT:?}" \
           "${URL:?}" \
           "${COCOA_GSL_DIR:-"${FILE_ROOT:?}"}" \
-          "${XZF:?}" || { unset_all; return 1; }
+          "${XZF:?}" || return 1;
 
   unset -v URL FILE_ROOT COMPRESSED_FILE_EXT XZF PACKAGE_VERSION
 
@@ -724,7 +753,7 @@ if [ -z "${IGNORE_CPP_SPDLOG_INSTALLATION}" ]; then
   gitact "${COCOA_SPDLOG_DIR:-"spdlog"}" \
          "${VER:?}" \
          "${URL:?}" \
-         "${XZF:?}" || { unset_all; return 1; }
+         "${XZF:?}" || return 1;
 
   unset -v URL FOLDER VER XZF
 
@@ -756,7 +785,7 @@ if [ -z "${IGNORE_CPP_ARMA_INSTALLATION}" ]; then
           "${COMPRESSED_FILE_EXT:?}" \
           "${URL:?}" \
           "${COCOA_ARMADILLO_DIR:-"${FILE_ROOT:?}"}" \
-          "${XZF:?}" || { unset_all; return 1; }
+          "${XZF:?}" || return 1;
 
   unset -v URL FILE_ROOT COMPRESSED_FILE_EXT XZF
 
@@ -790,7 +819,7 @@ if [ -z "${IGNORE_CPP_BOOST_INSTALLATION}" ]; then
           "${COMPRESSED_FILE_EXT:?}" \
           "${URL:?}" \
           "${COCOA_BOOST_DIR:-"${FILE_ROOT:?}"}" \
-          "${XZF:?}" || { unset_all; return 1; }
+          "${XZF:?}" || return 1;
 
   unset -v URL_BASE URL FILE_ROOT COMPRESSED_FILE_EXT XZF PACKAGE_VERSION
 
@@ -822,7 +851,7 @@ if [ -z "${IGNORE_CPP_CUBA_INSTALLATION}" ]; then
           "${COMPRESSED_FILE_EXT:?}" \
           "${URL:?}" \
           "${COCOA_CUBA_DIR:-"${FILE_ROOT:?}"}" \
-          "${XZF:?}" || { unset_all; return 1; }
+          "${XZF:?}" || return 1;
 
   unset -v URL FILE_ROOT COMPRESSED_FILE_EXT XZF PACKAGE_VERSION PACKDIR
 
@@ -869,7 +898,7 @@ if [ -z "${IGNORE_CPP_CARMA_INSTALLATION}" ]; then
  
   if [ ! -f "${CCIL:?}/${XZF:?}" ]; then
     
-    gitact1 "${FOLDER:?}" "${VER:?}" "${URL:?}" || { unset_all; return 1; }
+    gitact1 "${FOLDER:?}" "${VER:?}" "${URL:?}" || return 1;
 
     # ------------------------------------------------------------------------
     # move/rename include file and carma.h folder
@@ -888,7 +917,7 @@ if [ -z "${IGNORE_CPP_CARMA_INSTALLATION}" ]; then
 
     # --------------------------------------------------------------------------
     
-    gitact2 "${CNAME:?}" "${XZF:?}" || { unset_all; return 1; }
+    gitact2 "${CNAME:?}" "${XZF:?}" || return 1;
 
   fi
 

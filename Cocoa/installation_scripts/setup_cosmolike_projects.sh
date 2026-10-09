@@ -1,6 +1,19 @@
 #!/bin/bash
 # ------------------------------------------------------------------------------
-# ------------------------------------------------------------------------------
+# setup_cosmolike_projects.sh: download the Cosmolike project repositories
+# selected in set_installation_options.sh.
+#
+# Sourced, never executed (only `source` keeps its environment changes).
+# setup_cocoa.sh runs it during a full installation, and sourcing it on its
+# own redoes just this package (see the README FAQ on installing a single
+# package). Setup scripts MAY use the internet (git clone, wget, pip index);
+# the matching compile step never does, so anything that must be downloaded
+# happens here.
+#
+# Reruns are safe: existing results are kept unless
+# OVERWRITE_EXISTING_COSMOLIKE_CODE is set. On failure error() names the
+# failing step and unsets everything defined here; on success the script
+# returns 55, the value the runner caches so a finished step is not repeated.
 # ------------------------------------------------------------------------------
 if [ -z "${ROOTDIR:-}" ]; then
   pfail 'ROOTDIR'; return 1
@@ -9,17 +22,24 @@ fi
 # parenthesis = run in a subshell
 ( source "${ROOTDIR:?}/installation_scripts/flags_check.sh" )  || return 1;
 
+# unset_env_vars: forget every variable the body defines. Sourced scripts
+# share the caller's shell, so anything not unset here would leak into the
+# user's environment. cdroot returns to the directory the user launched from.
 unset_env_vars () {
   unset -v PRINTNAME FOLDER URL PACKAGE_VERSION PACKAGE_BRANCH
   cdroot || return 1;
 }
 
+# unset_env_funcs: forget every helper function defined below (functions leak
+# into the user's shell exactly like variables).
 unset_env_funcs () {
-  unset -f cdfolder cpfolder cpfile error gitact0 gitact1 gitact2 gitact3
+  unset -f cdfolder cpfolder cpfile error gitact0 gitact1 gitact2 gitact3 devurl
   unset -f unset_env_funcs
   cdroot || return 1;
 }
 
+# unset_all: the single cleanup entry point: variables, then functions, then
+# itself.
 unset_all () {
   unset_env_vars
   unset_env_funcs
@@ -27,20 +47,28 @@ unset_all () {
   cdroot || return 1;
 }
 
+# error: print which step failed (fail_script_msg names this script and the
+# message) and run the FULL cleanup. A call site whose helper already routes
+# through error() therefore uses plain `|| return 1`; adding another unset_all
+# there would run the cleanup twice.
 error () {
   fail_script_msg "$(basename "${BASH_SOURCE[0]}")" "${1}"
   unset_all || return 1
 } 
 
+# cdfolder: cd that reports the target and cleans up on failure.
 cdfolder() {
   cd "${1:?}" 2>"/dev/null" || { error "CD FOLDER: ${1}"; return 1; }
 }
 
+# cpfolder: recursive copy that reports source/target and cleans up on
+# failure.
 cpfolder() {
   cp -r "${1:?}" "${2:?}"  \
     2>"/dev/null" || { error "CP FOLDER ${1} on ${2}"; return 1; }
 }
 
+# cpfile: file copy that reports source/target and cleans up on failure.
 cpfile() {
   cp "${1:?}" "${2:?}" \
     2>"/dev/null" || { error "CP FILE ${1} on ${2}"; return 1; }
@@ -91,7 +119,7 @@ gitact1() {
       >>${OUT1:?} 2>>${OUT2:?} || { error "${EC15:?}"; return 1; }
   fi
     
-  cdfolder "${ROOTDIR:?}" || { unset_all; return 1; }
+  cdfolder "${ROOTDIR:?}" || return 1;
 }
 
 gitact2() {  
@@ -100,7 +128,7 @@ gitact2() {
   local ARGS="--all --tags --prune"
   
   if [ -d "${PACKDIR:?}" ]; then
-    cdfolder "${PACKDIR:?}" || { unset_all; return 1; }
+    cdfolder "${PACKDIR:?}" || return 1;
     
     # unshallow the repo if necessary before check out a specific commit/tag
     if [ "$("${GIT:?}" rev-parse --is-shallow-repository)" = "true" ]; then
@@ -128,7 +156,7 @@ gitact2() {
   
   fi
     
-  cdfolder "${ROOTDIR}" || { unset_all; return 1; }
+  cdfolder "${ROOTDIR}" || return 1;
 }
 
 gitact3() {  
@@ -137,7 +165,7 @@ gitact3() {
   local ARGS="--all --tags --prune"
 
   if [ -d "${PACKDIR:?}" ]; then
-    cdfolder "${PACKDIR:?}" || { unset_all; return 1; }
+    cdfolder "${PACKDIR:?}" || return 1;
 
     # unshallow the repo if necessary before check out a specific commit/tag
     if [ "$("${GIT:?}" rev-parse --is-shallow-repository)" = "true" ]; then
@@ -170,7 +198,18 @@ gitact3() {
     fi
   fi
     
-  cdfolder "${ROOTDIR}" || { unset_all; return 1; }
+  cdfolder "${ROOTDIR}" || return 1;
+}
+
+devurl() {
+  # SWITCH_TO_DEV_MODE=1: rewrite GitHub https URLs to their ssh form
+  local U="${1:?}"
+  if [ -n "${SWITCH_TO_DEV_MODE:-}" ]; then
+    case "${U}" in
+      https://*github.com/*) U="git@github.com:${U#*github.com/}" ;;
+    esac
+  fi
+  echo "${U}"
 }
 
 # ---------------------------------------------------------------------------
@@ -193,26 +232,27 @@ if [ -z "${IGNORE_COSMOLIKE_LSST_Y1_CODE}" ]; then
   FOLDER="${LSST_Y1_NAME:-"lsst_y1"}"
 
   URL="${LSST_Y1_URL:-"https://github.com/CosmoLike/cocoa_lsst_y1.git"}"
+  URL=$(devurl "${URL:?}")
 
   if [ -n "${LSST_Y1_GIT_COMMIT:-}" ]; then
   
-    gitact0 "${FOLDER:?}" "${URL:?}" || { unset_all; return 1; }
+    gitact0 "${FOLDER:?}" "${URL:?}" || return 1;
   
-    gitact2 "${FOLDER:?}" "${LSST_Y1_GIT_COMMIT:?}" || { unset_all; return 1; }
+    gitact2 "${FOLDER:?}" "${LSST_Y1_GIT_COMMIT:?}" || return 1;
   
   elif [ -n "${LSST_Y1_GIT_BRANCH:-}" ]; then 
   
-    gitact1 "${FOLDER:?}" "${URL:?}" "${LSST_Y1_GIT_BRANCH:?}" || { unset_all; return 1; }
+    gitact1 "${FOLDER:?}" "${URL:?}" "${LSST_Y1_GIT_BRANCH:?}" || return 1;
   
   elif [ -n "${LSST_Y1_GIT_TAG:-}" ]; then 
   
-    gitact0 "${FOLDER:?}" "${URL:?}" || { unset_all; return 1; }
+    gitact0 "${FOLDER:?}" "${URL:?}" || return 1;
   
-    gitact3 "${FOLDER:?}" "${LSST_Y1_GIT_TAG:?}" || { unset_all; return 1; }
+    gitact3 "${FOLDER:?}" "${LSST_Y1_GIT_TAG:?}" || return 1;
   
   else
   
-    gitact0 "${FOLDER:?}" "${URL:?}" || { unset_all; return 1; }
+    gitact0 "${FOLDER:?}" "${URL:?}" || return 1;
   
   fi
 
@@ -234,26 +274,27 @@ if [ -z "${IGNORE_COSMOLIKE_DES_Y3_CODE}" ]; then
   FOLDER="${DES_Y3_NAME:-"des_y3"}"
 
   URL="${DES_Y3_URL:-"https://github.com/CosmoLike/cocoa_des_y3.git"}"
+  URL=$(devurl "${URL:?}")
 
   if [ -n "${DES_Y3_GIT_COMMIT:-}" ]; then
   
-    gitact0 "${FOLDER:?}" "${URL:?}" || { unset_all; return 1; }
+    gitact0 "${FOLDER:?}" "${URL:?}" || return 1;
   
-    gitact2 "${FOLDER:?}" "${DES_Y3_GIT_COMMIT:?}" || { unset_all; return 1; }
+    gitact2 "${FOLDER:?}" "${DES_Y3_GIT_COMMIT:?}" || return 1;
   
   elif [ -n "${DES_Y3_GIT_BRANCH:-}" ]; then 
   
-    gitact1 "${FOLDER:?}" "${URL:?}" "${DES_Y3_GIT_BRANCH:?}" || { unset_all; return 1; }
+    gitact1 "${FOLDER:?}" "${URL:?}" "${DES_Y3_GIT_BRANCH:?}" || return 1;
   
   elif [ -n "${DES_Y3_GIT_TAG:-}" ]; then 
   
-    gitact0 "${FOLDER:?}" "${URL:?}" || { unset_all; return 1; }
+    gitact0 "${FOLDER:?}" "${URL:?}" || return 1;
   
-    gitact3 "${FOLDER:?}" "${DES_Y3_GIT_TAG:?}" || { unset_all; return 1; }
+    gitact3 "${FOLDER:?}" "${DES_Y3_GIT_TAG:?}" || return 1;
   
   else
   
-    gitact0 "${FOLDER:?}" "${URL:?}" || { unset_all; return 1; }
+    gitact0 "${FOLDER:?}" "${URL:?}" || return 1;
   
   fi
 
@@ -275,26 +316,27 @@ if [ -z "${IGNORE_COSMOLIKE_ROMAN_FOURIER_CODE}" ]; then
   FOLDER="${ROMAN_FOURIER_NAME:-"roman_fourier"}"
 
   URL="${ROMAN_FOURIER_URL:-"https://github.com/CosmoLike/cocoa_roman_fourier.git"}"
+  URL=$(devurl "${URL:?}")
 
   if [ -n "${ROMAN_FOURIER_GIT_COMMIT:-}" ]; then
   
-    gitact0 "${FOLDER:?}" "${URL:?}" || { unset_all; return 1; }
+    gitact0 "${FOLDER:?}" "${URL:?}" || return 1;
    
-    gitact2 "${FOLDER:?}" "${ROMAN_FOURIER_GIT_COMMIT:?}" || { unset_all; return 1; }
+    gitact2 "${FOLDER:?}" "${ROMAN_FOURIER_GIT_COMMIT:?}" || return 1;
   
   elif [ -n "${ROMAN_FOURIER_GIT_BRANCH:-}" ]; then 
   
-    gitact1 "${FOLDER:?}" "${URL:?}" "${ROMAN_FOURIER_GIT_BRANCH:?}" || { unset_all; return 1; }
+    gitact1 "${FOLDER:?}" "${URL:?}" "${ROMAN_FOURIER_GIT_BRANCH:?}" || return 1;
   
   elif [ -n "${ROMAN_FOURIER_GIT_TAG:-}" ]; then 
   
-    gitact0 "${FOLDER:?}" "${URL:?}" || { unset_all; return 1; }
+    gitact0 "${FOLDER:?}" "${URL:?}" || return 1;
    
-    gitact3 "${FOLDER:?}" "${ROMAN_FOURIER_GIT_TAG:?}" || { unset_all; return 1; }
+    gitact3 "${FOLDER:?}" "${ROMAN_FOURIER_GIT_TAG:?}" || return 1;
   
   else
   
-    gitact0 "${FOLDER:?}" "${URL:?}" || { unset_all; return 1; }
+    gitact0 "${FOLDER:?}" "${URL:?}" || return 1;
   
   fi
 
@@ -316,26 +358,27 @@ if [ -z "${IGNORE_COSMOLIKE_ROMAN_REAL_CODE}" ]; then
   FOLDER="${ROMAN_REAL_NAME:-"roman_real"}"
 
   URL="${ROMAN_REAL_URL:-"https://github.com/CosmoLike/cocoa_roman_real.git"}"
+  URL=$(devurl "${URL:?}")
 
   if [ -n "${ROMAN_REAL_GIT_COMMIT:-}" ]; then
   
-    gitact0 "${FOLDER:?}" "${URL:?}" || { unset_all; return 1; }
+    gitact0 "${FOLDER:?}" "${URL:?}" || return 1;
   
-    gitact2 "${FOLDER:?}" "${ROMAN_REAL_GIT_COMMIT:?}" || { unset_all; return 1; }
+    gitact2 "${FOLDER:?}" "${ROMAN_REAL_GIT_COMMIT:?}" || return 1;
   
   elif [ -n "${ROMAN_REAL_GIT_BRANCH:-}" ]; then 
   
-    gitact1 "${FOLDER:?}" "${URL:?}" "${ROMAN_REAL_GIT_BRANCH:?}" || { unset_all; return 1; }
+    gitact1 "${FOLDER:?}" "${URL:?}" "${ROMAN_REAL_GIT_BRANCH:?}" || return 1;
   
   elif [ -n "${ROMAN_REAL_GIT_TAG:-}" ]; then 
   
-    gitact0 "${FOLDER:?}" "${URL:?}" || { unset_all; return 1; }
+    gitact0 "${FOLDER:?}" "${URL:?}" || return 1;
   
-    gitact3 "${FOLDER:?}" "${ROMAN_REAL_GIT_TAG:?}" || { unset_all; return 1; }
+    gitact3 "${FOLDER:?}" "${ROMAN_REAL_GIT_TAG:?}" || return 1;
   
   else
   
-    gitact0 "${FOLDER:?}" "${URL:?}" || { unset_all; return 1; }
+    gitact0 "${FOLDER:?}" "${URL:?}" || return 1;
   
   fi
 
@@ -354,29 +397,30 @@ if [ -z "${IGNORE_COSMOLIKE_DESXPLANCK_CODE}" ]; then
 
   ptop "GETTING ${PRINTNAME:?}" || { unset_all; return 1; }
 
-  FOLDER="${DESXPLANCK_NAME:-"desy1xplanck"}"
+  FOLDER="${DESXPLANCK_GIT_NAME:-"desy1xplanck"}"
 
   URL="${DESXPLANCK_URL:-"https://github.com/CosmoLike/cocoa_desy1xplanck.git"}"
+  URL=$(devurl "${URL:?}")
 
   if [ -n "${DESXPLANCK_GIT_COMMIT:-}" ]; then
 
-    gitact0 "${FOLDER:?}" "${URL:?}" || { unset_all; return 1; }
+    gitact0 "${FOLDER:?}" "${URL:?}" || return 1;
     
-    gitact2 "${FOLDER:?}" "${DESXPLANCK_GIT_COMMIT:?}"  || { unset_all; return 1; }
+    gitact2 "${FOLDER:?}" "${DESXPLANCK_GIT_COMMIT:?}"  || return 1;
 
   elif [ -n "${DESXPLANCK_GIT_BRANCH:-}" ]; then 
 
-    gitact1 "${FOLDER:?}" "${URL:?}" "${DESXPLANCK_GIT_BRANCH:?}" || { unset_all; return 1; }
+    gitact1 "${FOLDER:?}" "${URL:?}" "${DESXPLANCK_GIT_BRANCH:?}" || return 1;
 
   elif [ -n "${DESXPLANCK_GIT_TAG:-}" ]; then 
 
-    gitact0 "${FOLDER:?}" "${URL:?}" || { unset_all; return 1; }
+    gitact0 "${FOLDER:?}" "${URL:?}" || return 1;
     
-    gitact3 "${FOLDER:?}" "${DESXPLANCK_GIT_TAG:?}" || { unset_all; return 1; }
+    gitact3 "${FOLDER:?}" "${DESXPLANCK_GIT_TAG:?}" || return 1;
 
   else
 
-    gitact0 "${FOLDER:?}" "${URL:?}" || { unset_all; return 1; }
+    gitact0 "${FOLDER:?}" "${URL:?}" || return 1;
 
   fi
 
@@ -398,26 +442,111 @@ if [ -z "${IGNORE_COSMOLIKE_ROMAN_KL_CODE}" ]; then
   FOLDER="${ROMAN_KL_NAME:-"roman_kl"}"
 
   URL="${ROMAN_KL_URL:-"https://github.com/CosmoLike/cocoa_roman_kl.git"}"
+  URL=$(devurl "${URL:?}")
 
   if [ -n "${ROMAN_KL_GIT_COMMIT:-}" ]; then
 
-    gitact0 "${FOLDER:?}" "${URL:?}" || { unset_all; return 1; }
+    gitact0 "${FOLDER:?}" "${URL:?}" || return 1;
     
-    gitact2 "${FOLDER:?}" "${ROMAN_KL_GIT_COMMIT:?}"  || { unset_all; return 1; }
+    gitact2 "${FOLDER:?}" "${ROMAN_KL_GIT_COMMIT:?}"  || return 1;
 
   elif [ -n "${ROMAN_KL_GIT_BRANCH:-}" ]; then 
 
-    gitact1 "${FOLDER:?}" "${URL:?}" "${ROMAN_KL_GIT_BRANCH:?}" || { unset_all; return 1; }
+    gitact1 "${FOLDER:?}" "${URL:?}" "${ROMAN_KL_GIT_BRANCH:?}" || return 1;
 
   elif [ -n "${ROMAN_KL_GIT_TAG:-}" ]; then 
 
-    gitact0 "${FOLDER:?}" "${URL:?}" || { unset_all; return 1; }
+    gitact0 "${FOLDER:?}" "${URL:?}" || return 1;
     
-    gitact3 "${FOLDER:?}" "${ROMAN_KL_GIT_TAG:?}" || { unset_all; return 1; }
+    gitact3 "${FOLDER:?}" "${ROMAN_KL_GIT_TAG:?}" || return 1;
 
   else
 
-    gitact0 "${FOLDER:?}" "${URL:?}" || { unset_all; return 1; }
+    gitact0 "${FOLDER:?}" "${URL:?}" || return 1;
+
+  fi
+
+  pbottom "GETTING ${PRINTNAME:?}" || { unset_all; return 1; }
+
+fi
+
+# ----------------------------------------------------------------------------
+# ------------------------------- DES CLUSTER --------------------------------
+# ----------------------------------------------------------------------------
+
+if [ -z "${IGNORE_COSMOLIKE_DES_CLUSTER_CODE}" ]; then 
+  
+  # Name to be printed on this shell script messages
+  PRINTNAME="DES_CLUSTER"
+
+  ptop "GETTING ${PRINTNAME:?}" || { unset_all; return 1; }
+
+  FOLDER="${DES_CLUSTER_NAME:-"des_cluster"}"
+
+  URL="${DES_CLUSTER_URL:-"https://github.com/CosmoLike/cocoa_des_cluster.git"}"
+  URL=$(devurl "${URL:?}")
+
+  if [ -n "${DES_CLUSTER_GIT_COMMIT:-}" ]; then
+
+    gitact0 "${FOLDER:?}" "${URL:?}" || return 1;
+    
+    gitact2 "${FOLDER:?}" "${DES_CLUSTER_GIT_COMMIT:?}"  || return 1;
+
+  elif [ -n "${DES_CLUSTER_GIT_BRANCH:-}" ]; then 
+
+    gitact1 "${FOLDER:?}" "${URL:?}" "${DES_CLUSTER_GIT_BRANCH:?}" || return 1;
+
+  elif [ -n "${DES_CLUSTER_GIT_TAG:-}" ]; then 
+
+    gitact0 "${FOLDER:?}" "${URL:?}" || return 1;
+    
+    gitact3 "${FOLDER:?}" "${DES_CLUSTER_GIT_TAG:?}" || return 1;
+
+  else
+
+    gitact0 "${FOLDER:?}" "${URL:?}" || return 1;
+
+  fi
+
+  pbottom "GETTING ${PRINTNAME:?}" || { unset_all; return 1; }
+
+fi
+
+# ----------------------------------------------------------------------------
+# ---------------------------------- DES Y6 ----------------------------------
+# ----------------------------------------------------------------------------
+
+if [ -z "${IGNORE_COSMOLIKE_DES_Y6_CODE}" ]; then 
+  
+  # Name to be printed on this shell script messages
+  PRINTNAME="DES_Y6"
+
+  ptop "GETTING ${PRINTNAME:?}" || { unset_all; return 1; }
+
+  FOLDER="${DES_Y6_NAME:-"des_y6"}"
+
+  URL="${DES_Y6_URL:-"https://github.com/CosmoLike/cocoa_des_y6.git"}"
+  URL=$(devurl "${URL:?}")
+
+  if [ -n "${DES_Y6_GIT_COMMIT:-}" ]; then
+
+    gitact0 "${FOLDER:?}" "${URL:?}" || return 1;
+    
+    gitact2 "${FOLDER:?}" "${DES_Y6_GIT_COMMIT:?}"  || return 1;
+
+  elif [ -n "${DES_Y6_GIT_BRANCH:-}" ]; then 
+
+    gitact1 "${FOLDER:?}" "${URL:?}" "${DES_Y6_GIT_BRANCH:?}" || return 1;
+
+  elif [ -n "${DES_Y6_GIT_TAG:-}" ]; then 
+
+    gitact0 "${FOLDER:?}" "${URL:?}" || return 1;
+    
+    gitact3 "${FOLDER:?}" "${DES_Y6_GIT_TAG:?}" || return 1;
+
+  else
+
+    gitact0 "${FOLDER:?}" "${URL:?}" || return 1;
 
   fi
 
