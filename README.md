@@ -26,8 +26,7 @@
     2. [FAQ: How can users compile a single external module (not involving Cosmolike)?](#appendix_compile_separately)
     3. [FAQ: How can users install Cosmolike projects?](#appendix_compile_cosmolike_separately)
     4. [FAQ: How can users test Cosmolike projects?](#appendix_test_cosmolike_projects)
-    4. [FAQ: How can users run Cocoa with Docker?](#appendix_jupyter_whovian)
-    6. [FAQ: How can users set the appropriate environment for ML?](#ml_emulators)
+    5. [FAQ: How can users set the appropriate environment for ML?](#ml_emulators)
 12. [Advanced Appendices](#appendix_additional)
     1. [FAQ: How can users download additional likelihood data? (external readme)](Cocoa/external_modules/data)
     2. [FAQ: Where do users find common FAQs about external modules? (external readme)](Cocoa/external_modules/code)
@@ -44,8 +43,6 @@ Besides integrating [Cobaya](https://github.com/CobayaSampler) and [CosmoLike](h
 Our scripts never install packages or Python modules in a global folder such as `$HOME/.local`. Here, `$HOME` denotes a shell environment variable that points to the user's home folder. Doing so would force cocoa packages to be global to the user, possibly breaking environments. Our scripts enable users to work on multiple Cocoa instances simultaneously, similar to what was possible with [CosmoMC](https://github.com/cmbant/CosmoMC). 
 
 This Readme file presents basic and advanced instructions for installing all [Cobaya](https://github.com/CobayaSampler) and [CosmoLike](https://github.com/CosmoLike) components **on Linux** or **macOS-arm**.
-
-We provide the Docker image [whovian-cocoa](https://hub.docker.com/r/vivianmiranda/whovian-cocoa) to facilitate the installation of Cocoa on Windows. 
 
 # Installation of core packages <a name="required_packages_conda"></a>
 
@@ -1215,95 +1212,6 @@ Maintainers redefine the snapshot after a deliberate change to the data files, e
 
 > [!NOTE]
 > `--overwrite`: delete the existing `frozen/` folder, rebuild it from the current project, and rewrite the manifest (the script refuses to run without this flag). Review the printed reference $\chi^2$ values before committing: they define what every later test run compares against.
-
-## :interrobang: FAQ: How can users run Cocoa with Docker? <a name="appendix_jupyter_whovian"></a>
-
-We provide the Docker image [whovian-cocoa](https://hub.docker.com/r/vivianmiranda/whovian-cocoa) to facilitate installing Cocoa on Windows and macOS. This appendix assumes that users have already installed the Docker Engine on their local PC. For instructions on installing the Docker engine on specific operating systems, refer to [Docker's official documentation](https://docs.docker.com/engine/install/). 
-
- **Step :one:**: Create a folder and go to the location on the host computer where you want to provide access to the Docker container, as shown below. 
-
-     mkdir -p cocoa_docker
-     cd ./cocoa_docker
-
- **Step :two:**: Download the Docker image *whovian-cocoa*, name the associated container `cocoa2025` (flag `--name cocoa2025` in the command below), and run the container for the first time, type:
-
-    docker run --platform linux/amd64 --hostname cocoa --name cocoa2025 -it -p 8888:8888 -v $(pwd):/home/whovian/host/ -v ~/.ssh:/home/whovian/.ssh:ro vivianmiranda/whovian-cocoa:thin
-
-> [!Warning] 
-> There is a weird bug on macOS that Mathplotlib does not work unless you add the flags `-e EXPERIMENTAL_DOCKER_DESKTOP_FORCE_QEMU=1 -e PYTHONUNBUFFERED=1` 
->  right after `docker run --platform linux/amd64`
->  
-
-This is a large image, approximately 13GB, as it already contains the conda cocoa environment. Users can now proceed to the [Installation and Compilation of external modules](#cobaya_base_code) section to continue the installation. 
-
-> [!TIP]
-> Once installation is complete, the user must learn how to **start** and **exit** the Docker container. Assuming the user maintained the container name `cocoa2025` set on the flag `--name cocoa2025`, type:
->    
->      docker start -ai cocoa2025
->
->  to restart the container.
-
-> [!TIP]
-> To run Jupyter Notebooks within the *whovian-cocoa* Docker container installed on a local machine, type the following command:
->
->      jupyter notebook --no-browser --port=8888
->
-> The terminal will show a message similar to the following template:
->
->      [... NotebookApp] Writing notebook server cookie secret to /home/whovian/.local/share/jupyter/runtime/notebook_cookie_secret
->      [... NotebookApp] WARNING: The notebook server is listening on all IP addresses and not using encryption. This is not recommended.
->      [... NotebookApp] Serving notebooks from local directory: /home/whovian/host
->      [... NotebookApp] Jupyter Notebook 6.1.1 is running at:
->      [... NotebookApp] http://f0a13949f6b5:8888/?token=XXX
->      [... NotebookApp] or http://127.0.0.1:8888/?token=XXX
->      [... NotebookApp] Use Control-C to stop this server and shut down all kernels (twice to skip confirmation).
->
-> Now go to the local internet browser and type `http://127.0.0.1:8888/?token=XXX`, where XXX is the previously saved token displayed on the line
-> 
->     [... NotebookApp] or http://127.0.0.1:8888/?token=XXX  
-      
-> [!TIP]
-> To run the Jupyter Notebook on the *whovian-cocoa* docker container installed on a remote server, adjust the command below
->
->     ssh your_username@your_sever.com -L 8888:localhost:8888
->
-> before typing `http://127.0.0.1:8888/?token=XXX` on the local desktop/laptop. This will bind the server port `8888` to the local port `8888`.
-> 
->     [... NotebookApp] or http://127.0.0.1:8888/?token=XXX  
-
-> [!TIP]
-> To delete a particular container, assuming the container name `cocoa2025`, type
->
->      docker rm -f cocoa2025
->
-
-> [!Tip]
-> The flag `-v $(pwd):/home/whovian/host/` in the `docker run` command ensures that files in the host computer located within the folder where the Docker container was initialized are accessible inside the container.
-
-> [!Warning]
-> Do not allow the Docker container to have system-wide access to your files. Accidents happen, especially when dealing with dangerous bash commands such as `rm` (deletion).
-
-> [!NOTE]
-> The recipe of the *whovian-cocoa* image is maintained at `cocoa_installation_libraries/docker/`.
-> To rebuild and publish the image (developers only), type
->
->     cd ./cocoa/cocoa_installation_libraries/docker
->
-> and
->
->     docker build . --build-arg COCOA_TAG=v5.08 -t vivianmiranda/whovian-cocoa # replace the tag with the Cocoa version whose yml seeds the conda env
->
-> and
->
->     docker push vivianmiranda/whovian-cocoa
->
-> To publish the `:thin` variant, run the container, install and compile Cocoa inside it, and type
->
->     docker commit <containerid> vivianmiranda/whovian-cocoa:thin # docker ps -a shows the container id
->
-> and
->
->     docker push vivianmiranda/whovian-cocoa:thin
 
 ## :interrobang: FAQ: How can users set the appropriate environment for ML? <a name="ml_emulators"></a>
 
