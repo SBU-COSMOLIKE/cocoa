@@ -16,17 +16,18 @@
 
 9. [Appendices about Conda](#appendix_conda)
     1. [FAQ: How can users install Conda?](#overview_miniforge)
-    2. [FAQ: How can users install cocoa conda environment via conda-lock (better reproducibility)?](#install_conda_env_condalock)
-    3. [FAQ: How can users deal with Conda conflicts (MacOS): a possible solution](#macos_solve_conda_conficts)
+    2. [FAQ: How can users install the Cocoa Conda environment via conda-lock (better reproducibility)?](#install_conda_env_condalock)
+    3. [FAQ: How can users deal with Conda conflicts (macOS): a possible solution](#macos_solve_conda_conficts)
 10. [Appendices about Git](#appendix_git)
     1. [FAQ: How can developers develop from a Git tag?](#dev_from_tag)
     2. [FAQ: How can developers push changes to the Cocoa main branch?](#push_main)
 11. [Appendices about Cocoa run](#appendix_cocoa_run)    
     1. [FAQ: How can users debug Cocoa Installation? Suggested steps](#running_wrong)
     2. [FAQ: How can users compile a single external module (not involving Cosmolike)?](#appendix_compile_separately)
-    3. [FAQ: How can users install Cosmolike projects?](#appendix_compile_cosmolike_separately)
-    4. [FAQ: How can users test Cosmolike projects?](#appendix_test_cosmolike_projects)
+    3. [FAQ: How can users install Cosmolike projects?](#appendix_compile_cosmolik
+    4. [FAQ: How can users run Cocoa with Docker?](#appendix_jupyter_whovian)
     5. [FAQ: How can users set the appropriate environment for ML?](#ml_emulators)
+
 12. [Advanced Appendices](#appendix_additional)
     1. [FAQ: How can users download additional likelihood data? (external readme)](Cocoa/external_modules/data)
     2. [FAQ: Where do users find common FAQs about external modules? (external readme)](Cocoa/external_modules/code)
@@ -36,26 +37,23 @@
 
 # Overview <a name="overview"></a>
 
-Cocoa allows users to run [CosmoLike](https://github.com/CosmoLike) routines inside the [Cobaya](https://github.com/CobayaSampler) framework. [CosmoLike](https://github.com/CosmoLike) can analyze data from the [Dark Energy Survey](https://www.darkenergysurvey.org) and simulate future multi-probe analyses for LSST and Roman Space Telescope. 
+Cocoa allows users to run [CosmoLike](https://github.com/CosmoLike) routines inside the [Cobaya](https://github.com/CobayaSampler) framework. [CosmoLike](https://github.com/CosmoLike) can analyze data from the [Dark Energy Survey](https://www.darkenergysurvey.org) and simulate future multi-probe analyses for LSST and the Roman Space Telescope. 
 
 Besides integrating [Cobaya](https://github.com/CobayaSampler) and [CosmoLike](https://github.com/CosmoLike), Cocoa introduces shell scripts that allow users to containerize [Cobaya](https://github.com/CobayaSampler), the Boltzmann codes, and multiple likelihoods. The container structure of Cocoa ensures that users can adopt consistent versions for the Fortran/C/C++ compilers and libraries across multiple machines. Such a systematic approach greatly simplifies the debugging process. 
 
-Our scripts never install packages or Python modules in a global folder such as `$HOME/.local`. Here, `$HOME` denotes a shell environment variable that points to the user's home folder. Doing so would force cocoa packages to be global to the user, possibly breaking environments. Our scripts enable users to work on multiple Cocoa instances simultaneously, similar to what was possible with [CosmoMC](https://github.com/cmbant/CosmoMC). 
+Our scripts never install packages or Python modules in a global folder such as `$HOME/.local`. Here, `$HOME` denotes a shell environment variable that points to the user's home folder. Doing so would force Cocoa packages to be global to the user, possibly breaking environments. Our scripts enable users to work on multiple Cocoa instances simultaneously, similar to what was possible with [CosmoMC](https://github.com/cmbant/CosmoMC). 
 
-This Readme file presents basic and advanced instructions for installing all [Cobaya](https://github.com/CobayaSampler) and [CosmoLike](https://github.com/CosmoLike) components **on Linux** or **macOS-arm**.
+This README file presents basic and advanced instructions for installing all [Cobaya](https://github.com/CobayaSampler) and [CosmoLike](https://github.com/CosmoLike) components **on Linux** or **macOS-arm**.
 
 # Installation of core packages <a name="required_packages_conda"></a>
 
 Core packages include compilers and numerical libraries that users typically do not modify.
 
-
 **Step :zero:** All the commands in this README assume a Bash shell. If your terminal is using zsh, switch to Bash now by typing
-
 
     bash
 
 **Step :one:**: Download the corresponding `yml` file
-
 
   - Linux
 
@@ -71,7 +69,6 @@ Core packages include compilers and numerical libraries that users typically do 
     Then, download the `yml` file matching the chosen version.
 
         wget https://raw.githubusercontent.com/SBU-COSMOLIKE/cocoa/refs/heads/main/cocoapy311-osxarm-base.yml
-
 
 **Step :two:**: Create the Cocoa environment,
 
@@ -110,9 +107,6 @@ and activate it
 Users can now proceed to the **next section**.
 
 > [!TIP]
-> We advise users to avoid repositories managed by `Anaconda` due to licensing restrictions. See the Appendix [FAQ: How can we install Conda?](#overview_miniforge)
-
-> [!TIP]
 > If conda create hangs or fails, there are two possible solutions.
 >
 > 1. Install mamba and redo the creation of the cocoa env, explicitly selecting mamba as the dependency solver (e.g., Linux version)
@@ -148,7 +142,8 @@ Cocoa does not install all the available external modules by default. If the use
 
     source compile_cocoa.sh
     
-This script compiles external modules selected for installation on `set_installation_options.sh` (e.g., CAMB) and does not require internet access. Code compilation is CPU-intensive; therefore, running  `compile_cocoa.sh` on a cluster login node may violate HPC policy. Users should then run `setup_cocoa.sh` in a login node and `compile_cocoa.sh` on an interactive compute node.
+This script compiles external modules selected for installation on `set_installation_options.sh` (e.g., CAMB) and does not require internet access. 
+Code compilation is CPU-intensive; therefore, running  `compile_cocoa.sh` on a cluster login node may violate HPC policy. 
 
 Users can now proceed to **the next section**.
 
@@ -183,7 +178,8 @@ We assume that users are still in the Conda cocoa environment from the previous 
 Users will see a terminal like this: `$(cocoa)(.local)`. *This is a feature, not a bug*!
 
 > [!NOTE]
-> *This is a feature, not a bug*! Why did we choose to work with two distinct shell environments, `(cocoa)` and `(.local)`? Our scripts enable users to work on multiple Cocoa instances, similar to what was possible with [CosmoMC](https://github.com/cmbant/CosmoMC). In each instance, our scripts install packages at
+> *This is a feature, not a bug*! Why did we choose to work with two distinct shell environments, `(cocoa)` and `(.local)`? Our scripts enable users to work on multiple Cocoa instances.
+> In each instance, our scripts install packages at
 >
 >      Cocoa/.local/bin
 >      Cocoa/.local/include
@@ -279,9 +275,6 @@ Cocoa provides several Cosmolike projects, not all of which are installed by def
         mpirun -n 4 --oversubscribe \
           cobaya-run ./projects/lsst_y1/EXAMPLE_MCMC1.yaml -f
 
-> [!TIP]
-> Each Cosmolike project ships unit tests under its `tests/` folder. To run them after an installation or a code change, see the appendix [FAQ: How can users test Cosmolike projects?](#appendix_test_cosmolike_projects).
-
 ### Running Jupyter Notebooks
 
 Assuming Cocoa is installed on a local (not remote!) machine, type the command below after step 2️⃣ to run Jupyter Notebooks.
@@ -302,13 +295,12 @@ Assuming Cocoa is installed on a local (not remote!) machine, type the command b
 
  The project `lsst-y1` contains Jupyter notebook examples located at `projects/lsst_y1`.
 
-
 # Running ML emulators <a name="cobaya_base_code_examples_emul"></a>
 
 Cocoa contains a few transformer- and CNN-based neural network emulators capable of simulating the CMB, cosmolike outputs, matter power spectrum, and distances. We provide a few scripts that exemplify their API. To run them, users ensure the following lines are commented out in `set_installation_options.sh` before running the `setup_cocoa.sh` and `compile_cocoa.sh`. *By default, these lines should be commented out, but it is worth checking*.
 
       [Adapted from Cocoa/set_installation_options.sh shell script] 
-      # insert the # symbol (i.e., unset these environmental keys  on `set_installation_options.sh`)
+      # insert the # symbol (i.e., unset these environmental keys in `set_installation_options.sh`)
       #export IGNORE_EMULTRF_CODE=1              #SaraivanovZhongZhu (SZZ) transformer/CNN-based emulators
       #export IGNORE_EMULTRF_DATA=1            
       #export IGNORE_LIPOP_LIKELIHOOD_CODE=1     # to run EXAMPLE_EMUL_(EVALUATE/MCMC/NAUTILUS/EMCEE1).yaml
@@ -319,9 +311,6 @@ Cocoa contains a few transformer- and CNN-based neural network emulators capable
       #export IGNORE_POLYCHORD_SAMPLER_CODE=1    # to run PROJECTS/EXAMPLE/EXAMPLE_EMUL_POLY1.yaml
       #export IGNORE_GETDIST_CODE=1              # to run EXAMPLE_TENSION_METRICS.ipynb
       #export IGNORE_TENSIOMETER_CODE=1          # to run EXAMPLE_TENSION_METRICS.ipynb
-          
-> [!TIP]
-> We provide a few SLURM job script examples in the `projects/example/script` folder that help users to run the examples below on an HPC system.
 
 Now, users must follow all the steps below.
 
@@ -391,18 +380,26 @@ Now, users must follow all the steps below.
           cobaya-run ./projects/example/EXAMPLE_EMUL_POLY1.yaml -r
     
 > [!NOTE]
-> **Running on more than one node.** The flag `--mca btl vader,tcp,self` works unchanged across
-> nodes (shared memory within a node, TCP between nodes). The commands that can run on more
-> than one node already include the flags below.
+> **Running on more than one node.**
 >
-> 1. `--mca btl_tcp_if_exclude lo,docker0,virbr0,ib0`: stop TCP from selecting an interface
->    that is not routable between compute nodes.
-> 2. `-x PATH -x LD_LIBRARY_PATH (...)`: forward Cocoa's environment to ranks on remote nodes
->    (needed under ssh-based launchers; Slurm forwards it automatically).
-> 3. `--map-by numa:pe=${OMP_NUM_THREADS}`: reserve, on each rank, the cores its OpenMP threads
->    will use. On Slurm, keep `ntasks-per-node` × `cpus-per-task` within the cores per node.
-> 4. `--mca mpi_yield_when_idle 1`: make waiting MPI processes give up the CPU instead of
->    burning 100% of a core; harmless when cores are not oversubscribed.
+> 1. **Network interface.** TCP must use an interface routable between compute
+>    nodes. A common exclusion list is
+>    `--mca btl_tcp_if_exclude lo,docker0,virbr0,ib0`; adapt it to the cluster.
+>    Keep `ib0` if routable IP-over-InfiniBand is the intended network. These
+>    examples exchange parameter vectors and scalar scores, so communication
+>    volume is small; actual scaling still depends on the machine.
+> 2. **Environment.** Remote ranks need the same Cocoa paths and libraries:
+>    `ROOTDIR`, `PATH`, `LD_LIBRARY_PATH`, `PYTHONPATH`, `CONDA_PREFIX`, OpenMP
+>    and BLAS settings, and `CLIK_PATH`/`CLIK_DATA`/`CLIK_PLUGIN` when used.
+>    Slurm normally exports the submitting environment (`--export=ALL`).
+>    Explicit `-x` options also forward these variables with SSH launchers.
+>    Activate Cocoa before launching; build/download flags do not replace
+>    runtime paths. All nodes must see the same files at the same paths.
+> 3. **Slurm geometry.** Keep `ntasks-per-node × cpus-per-task` within the
+>    allocated physical cores per node. Set `OMP_NUM_THREADS` to
+>    `SLURM_CPUS_PER_TASK` and use `--map-by numa:pe=${OMP_NUM_THREADS}`.
+>    The minimization, profile and Nautilus pool reserves one MPI rank as
+>    coordinator; the remaining ranks evaluate the model.
 
 The `Nautilus`, `Minimizer`, `Profile`, and `Emcee` scripts below contain an internally defined `yaml_string` that specifies priors, 
 likelihoods, and the theory code, all following Cobaya Conventions.
@@ -613,7 +610,7 @@ likelihoods, and the theory code, all following Cobaya Conventions.
 - **Scan**: 
 
   This profile code has a different MPI strategy. It scans one parameter on the entire prior,
-  with each MPI being assigned to one minimization (not Emcee walker!). This is a strategy when probing 
+  with each MPI being assigned to one minimization (not an Emcee walker!). This is a strategy when probing 
   beyond-LCDM parameters with oscillatory behavior (e.g., Monodromic Dark Energy).
 
     - Linux
@@ -648,7 +645,7 @@ likelihoods, and the theory code, all following Cobaya Conventions.
   that exemplify how emulators can be used to quickly assess the tension between data sets.
   All Tension metrics were computed using the package `Tensiometer`.
 
-  The plot below, taken from `EXAMPLE_TENSION_METRICS.ipynb`, exemplifies the tension between CMB+BAO vs. Type Ia SN.
+  The plot below, taken from `EXAMPLE_TENSION_METRICS.ipynb`, exemplifies the tension between CMB+BAO and Type Ia SN.
 
 <p align="center">
 <img width="790" height="333" alt="Unknown" src="https://github.com/user-attachments/assets/b5ef808e-0efa-4bb9-852a-854f6531e3ed" />
@@ -673,7 +670,7 @@ likelihoods, and the theory code, all following Cobaya Conventions.
 
 # Running Hybrid Cosmolike-ML emulators <a name="cobaya_base_code_examples_emul2"></a>
 
-Our main line of research involves emulators that simulate the entire Cosmolike data vectors, and each project (LSST, Roman, DES) contains its own README with emulator examples. The speed of such emulators is incredible, especially when GPUs are available, and our emulators do take advantage of the CPU-GPU integration on Apple MX chips. For example, the average timing of lsst-y1 cosmic shear data vector emulation is around 0.005s ($\sim$ 200828 evaluations in $\sim$ 850.5 seconds) on a macOS M2 Pro.
+Our main line of research involves emulators that simulate the entire Cosmolike data vectors, and each project (LSST, Roman, DES) contains its own README with emulator examples. The speed of such emulators is incredible, especially when GPUs are available, and our emulators do take advantage of the CPU-GPU integration on Apple MX chips. Measure the emulator/exact runtime ratio with the same likelihood and numerical settings on the target machine.
 
 While the data vector emulators are incredibly fast, there is an intermediate approach that emulates only the Boltzmann outputs (comoving distance, linear and nonlinear matter power spectrum). This hybrid-ML case can offer greater flexibility, especially in the initial phases of a research project, as changes to the modeling of nuisance parameters or to the assumed galaxy distributions do not require retraining of the network. 
 
@@ -740,9 +737,9 @@ Now, users must follow all the steps below.
 Details on the matter power spectrum emulator designs will be presented in the [emulator_code](https://github.com/CosmoLike/emulators_code) repository. Basically, we apply standard neural network techniques to generalize the *syren-new* Eq. 6 of [arXiv:2410.14623](https://arxiv.org/abs/2410.14623) formula for the linear power spectrum (w0waCDM with a fixed neutrino mass of $0.06$ eV) to new models, extended ranges, or higher precision. Similarly, we use networks to generalize the *syren-Halofit* LCDM nonlinear boost fit (Eq. 11 of [arXiv:2402.17492](https://arxiv.org/abs/2402.17492)).
 
 > [!NOTE] 
-> Users can decide not to correct the *syren-new* formula for the linear power spectrum (flag in the yaml). Although we have not conducted extensive studies of the caveats of the syren-new approximation, it appears sufficient for w0waCDM forecasts when combined with the Euclid Emulator to compute the nonlinear boost.
+> Users can decide not to correct the *syren-new* formula for the linear power spectrum (flag in the YAML). Although we have not conducted extensive studies of the caveats of the syren-new approximation, it appears sufficient for w0waCDM forecasts when combined with the Euclid Emulator to compute the nonlinear boost.
 >
-> For back-of-the-envelope LCDM calculations (e.g., to test cosmolike features), users can also choose not to correct the *syren-Halofit* formula for the LCDM nonlinear boost (see figure below). In this case, the overhead on top of cosmolike computations is minimum, at the order of $0.01$ seconds on a macOS M2Pro laptop. 
+> For back-of-the-envelope LCDM calculations (e.g., to test cosmolike features), users can also choose not to correct the *syren-Halofit* formula for the LCDM nonlinear boost (see figure below). In this case, the overhead on top of cosmolike computations is minimal, at the order of $0.01$ seconds on a macOS M2Pro laptop. 
 >
 > <p align="center">
 >  <span style="display:flex; justify-content:center; gap:16px; flex-wrap:wrap;">
@@ -818,36 +815,33 @@ and
           && conda config --set channel_priority strict \
           && conda init bash
 
-> [!Note]
-> The strict use of Miniforge and conda-forge packages appears to mitigate the significant licensing issue involving Anaconda packages and academic/research institutions.
-
 **Step :three:**: After running this command, you will see a message in the terminal that ends with the statement *For changes to take effect, close and re-open your current shell*. Then, type
 
     source ~/.bashrc
 
 After that, the `conda` command will be available.
 
-## :interrobang: FAQ: How can users install conda env via conda-lock? <a name="install_conda_env_condalock"></a>
+## :interrobang: FAQ: How can users install the Cocoa Conda conda env via conda-lock? <a name="install_conda_env_condalock"></a>
 
 We advise users to maintain *exact reproducibility* (across time) of the Cocoa conda environment by installing it via `conda-lock`, following the slightly more convoluted instructions below.
 
 **Step :one:** Install the package `conda-lock` in a private conda environment to avoid conflicts.
  
-     conda create -n lockenv -c conda-forge python=3.10 conda-lock=2.* wget
+     conda create -n lockenv -c conda-forge python=3.11 conda-lock=2.* wget
 
 and
  
      conda activate lockenv
 
-**Step :two:** Download the appropriate conda-lock compatible `yml` file. As in the section [Installation of core packages](#required_packages_conda), replace the tag `v5.08` in the URL with the Cocoa version that will be cloned (tags older than `v4.11.4` carry the `cocoapy310` prefix).
+**Step :two:** Download the appropriate conda-lock compatible `yml` file. As in the section [Installation of core packages](#required_packages_conda), replace the tag `v5.09` in the URL with the Cocoa version that will be cloned (tags older than `v4.11.4` carry the `cocoapy310` prefix).
 
    - Linux
   
-         wget https://raw.githubusercontent.com/CosmoLike/cocoa/refs/tags/v5.08/cocoapy311-linux.yml
+         wget https://raw.githubusercontent.com/CosmoLike/cocoa/refs/tags/v5.09/cocoapy311-linux.yml
 
    - macOS (arm)
      
-         wget https://raw.githubusercontent.com/CosmoLike/cocoa/refs/tags/v5.08/cocoapy311-osxarm.yml
+         wget https://raw.githubusercontent.com/CosmoLike/cocoa/refs/tags/v5.09/cocoapy311-osxarm.yml
 
 **Step :three:** Create the conda environment
 
@@ -863,11 +857,11 @@ and
 
      conda activate cocoa
 
-## :interrobang: FAQ: How can users deal with Conda conflicts (MacOS): a possible solution <a name="macos_solve_conda_conficts"></a>
+## :interrobang: FAQ: How can users deal with Conda conflicts (macOS): a possible solution <a name="macos_solve_conda_conficts"></a>
 
 During the Arizona Winter School (January 2026), we noted that some students with macOS struggled to get Conda to work (conflicts). If this is the case for you, try the steps below instead
 
-**Step :one:** Create a new base environment, as your base may have legacy packages that can create incompatibilities (note here slightly modified conda command)
+**Step :one:** Create a new base environment, as your base may have legacy packages that can create incompatibilities (note: slightly modified conda command)
  
      conda create --solver=libmamba --strict-channel-priority --override-channels -c conda-forge --name base2
 
@@ -875,15 +869,15 @@ and
 
      conda activate base2
 
-**Step :two:** Now install wget and download a looser version of the yml file (note here slightly modified conda command). As in the section [Installation of core packages](#required_packages_conda), replace the tag `v5.08` in the URL with the Cocoa version that will be cloned (tags older than `v4.11.4` carry the `cocoapy310` prefix).
+**Step :two:** Now install wget and download a looser version of the yml file (note here slightly modified conda command). As in the section [Installation of core packages](#required_packages_conda), replace the tag `v5.09` in the URL with the Cocoa version that will be cloned (tags older than `v4.11.4` carry the `cocoapy310` prefix).
 
      conda install -y wget --solver=libmamba --strict-channel-priority --override-channels -c conda-forge
 
 and
 
-     wget https://raw.githubusercontent.com/CosmoLike/cocoa/refs/tags/v5.08/cocoapy311-osxarm-loose.yml
+     wget https://raw.githubusercontent.com/CosmoLike/cocoa/refs/tags/v5.09/cocoapy311-osxarm-loose.yml
 
-**Step :three:** Create the cocoa conda env using a looser yml (note here slightly modified conda command)
+**Step :three:** Create the cocoa conda env using a looser yml (note: slightly modified conda command)
 
     conda env create --solver=libmamba --name cocoa -f cocoapy311-osxarm-loose.yml
 
@@ -968,7 +962,7 @@ The `main` branch is protected: *a commit in the main branch should contain an a
 > [!TIP]
 > If the branch `xyzdev` already exists, use the `git switch` command without the `-c` flag. 
 
-**Step :two:**: develop the proposed changes. We advise developers to commit frequently. In your branch, a commit does not need to be atomic, changing the code from one working state to another well-tested, meaningful working state. Developers can push to the server via the command.
+**Step :two:**: develop the proposed changes. We advise developers to commit frequently. In your branch, a commit does not need to be atomic, i.e., changing the code from one working state to another well-tested and meaningful working state. Developers can push to the server via the command.
 
     git push -u origin xyzdev   # run on the xyzdev branch
 
@@ -1003,7 +997,7 @@ and
     git switch -c xyzdev   # run on the main branch
 
 > [!NOTE]
-> The capital `-D` (force) flag is required: because of the squash, git cannot detect that the branch was merged, so the lowercase `-d` would refuse to delete it.
+> The capital `-D` (force) flag is required because, due to the squash merge, git cannot detect that the branch was merged, so the lowercase `-d` would refuse to delete it.
 
 > [!Warning]
 > If the old `xyzdev` still exists on the server, delete it there before pushing the recreated branch — on the GitHub branches page, or with `git push origin --delete xyzdev`. Never force-push over a stale branch.
@@ -1012,7 +1006,7 @@ and
 
 ## :interrobang: FAQ: How can users debug Cocoa Installation? Suggested steps <a name="running_wrong"></a>
 
-**Step :one:**: define the `COCOA_OUTPUT_VERBOSE` and `COSMOLIKE_DEBUG_MODE` flags on `set_installation_options.sh` to obtain a more detailed output, as shown below (for even more output, define `COCOA_OUTPUT_DEBUG` as well)
+**Step :one:**: define the `COCOA_OUTPUT_VERBOSE` and `COSMOLIKE_DEBUG_MODE` flags on `set_installation_options.sh` to obtain more detailed output, as shown below (for even more output, define `COCOA_OUTPUT_DEBUG` as well)
   
       [Adapted from Cocoa/set_installation_options.sh shell script] 
       # ------------------------------------------------------------------------------
@@ -1033,7 +1027,7 @@ and
 
 ## :interrobang: FAQ: How can users compile a single external module (not involving Cosmolike)? <a name="appendix_compile_separately"></a>
 
-To download and compile only a single module (e.g., `CAMB`), users must directly run the associated bash scripts in `Cocoa/installation_scripts/` directly (e.g., `setup_camb.sh` and `compile_camb.sh`).  
+To download and compile only a single module (e.g., `CAMB`), users must run the associated bash scripts in `Cocoa/installation_scripts/` directly (e.g., `setup_camb.sh` and `compile_camb.sh`).  
 
 Users must also ensure the appropriate keys in `set_installation_options.sh` are unset, as shown below.
 
@@ -1076,7 +1070,7 @@ In addition to `setup` and `compile` scripts, Cocoa contains `unxv` scripts that
 
 The script `set_installation_options.sh` selects which Cosmolike projects
 are installed. A commented `IGNORE_*_CODE` key enables a project; an active
-key skips it.
+key skips it; that file is the single source of truth for the selection.
 
      [Adapted from Cocoa/set_installation_options.sh shell script]
      #export IGNORE_COSMOLIKE_LSST_Y1_CODE=1
@@ -1086,16 +1080,18 @@ key skips it.
      #export IGNORE_COSMOLIKE_ROMAN_REAL_CODE=1
      export IGNORE_COSMOLIKE_ROMAN_KL_CODE=1
      export IGNORE_COSMOLIKE_DES_CLUSTER_CODE=1
-     # WARNING: des_y6 is not production ready.
+     # WARNING: des_y6 is not production-ready.
      export IGNORE_COSMOLIKE_DES_Y6_CODE=1
      (...)
      export ROMAN_REAL_URL="https://github.com/CosmoLike/cocoa_roman_real.git"
      export ROMAN_REAL_NAME="roman_real"
-     export ROMAN_REAL_GIT_TAG="v5.07"
+     export ROMAN_REAL_GIT_TAG="v5.09"
 
 Each released project is pinned to a tag. To select another revision, set
 only one of its `GIT_COMMIT`, `GIT_BRANCH` or `GIT_TAG` keys: a commit takes
-precedence over a branch, and a branch over a tag.
+precedence over a branch, and a branch over a tag. DES Y6 is disabled by
+default and not production-ready; its key block pins a tag like the
+released projects.
 
 Covariance generation is a separate build option, disabled for all projects
 by default. To enable it for Roman real, comment out
@@ -1140,49 +1136,94 @@ In case users only want to compile a single Cosmolike project (let's say the `ro
 
       source ./projects/roman_real/scripts/compile_roman_real.sh
      
-## :interrobang: FAQ: How can users test Cosmolike projects? <a name="appendix_test_cosmolike_projects"></a>
+## :interrobang: FAQ: How can users run Cocoa with Docker? <a name="appendix_jupyter_whovian"></a>
 
-Every Cosmolike project separates its tests into `tests/data_vector/` and
-`tests/covariance/`. Most likelihood users need the data-vector tests, which
-include the following checks:
+We provide the Docker image [whovian-cocoa](https://hub.docker.com/r/vivianmiranda/whovian-cocoa) to facilitate installing Cocoa on Windows and macOS. This appendix assumes that users have already installed the Docker Engine on their local PC. For instructions on installing the Docker Engine on specific operating systems, refer to [Docker's official documentation](https://docs.docker.com/engine/install/). 
 
-- $\chi^2$: the $\chi^2$ of each likelihood at a fixed reference point must stay within 0.2 of the value stored in `tests/frozen/reference_chi2.json`; a moved value means code or data changed the numbers.
-- race condition: the same point is evaluated on its own and then again after nine other cosmologies, with the test modules forcing `OMP_NUM_THREADS=4` internally; the two $\chi^2$ values must agree to $10^{-4}$. Leftover internal state or colliding OpenMP threads break the agreement.
-- accuracy (`test_accuracy.py`; advisory, no pass/fail): the numerical settings are raised one accuracy parameter at a time, then all at once. Each check prints the $\Delta\chi^2$ between the high-accuracy and the default evaluations: the numerical error of the default settings.
+ **Step :one:**: Create a folder and go to the location on the host computer where you want to provide access to the Docker container, as shown below. 
 
-To run the tests of a project, follow the steps below.
+     mkdir -p cocoa_docker
+     cd ./cocoa_docker
 
-**Step :one:**: from the Cocoa main folder `cocoa/Cocoa`, activate the Conda cocoa environment and source `start_cocoa.sh`
+ **Step :two:**: Download the Docker image *whovian-cocoa*, name the associated container `cocoa2025` (flag `--name cocoa2025` in the command below), and run the container for the first time, type:
 
-     conda activate cocoa
+    docker run --platform linux/amd64 --hostname cocoa --name cocoa2025 -it -p 8888:8888 -v $(pwd):/home/whovian/host/ -v ~/.ssh:/home/whovian/.ssh:ro vivianmiranda/whovian-cocoa:thin
 
-and
+> [!Warning] 
+> There is a weird bug on macOS that Matplotlib does not work unless you add the flags `-e EXPERIMENTAL_DOCKER_DESKTOP_FORCE_QEMU=1 -e PYTHONUNBUFFERED=1` 
+>  right after `docker run --platform linux/amd64`
+>  
 
-     source start_cocoa.sh
+This is a large image, approximately 13GB, as it already contains the conda cocoa environment. Users can now proceed to the [Installation and Compilation of external modules](#cobaya_base_code) section to continue the installation. 
 
-**Step :two:**: run the tests of a project (below, the `lsst_y1` project)
+> [!TIP]
+> Once installation is complete, the user must learn how to **start** and **exit** the Docker container. Assuming the user maintained the container name `cocoa2025` set on the flag `--name cocoa2025`, type:
+>    
+>      docker start -ai cocoa2025
+>
+>  to restart the container.
 
-     python -m pytest ./projects/lsst_y1/tests/data_vector
+> [!TIP]
+> To run Jupyter Notebooks within the *whovian-cocoa* Docker container installed on a local machine, type the following command:
+>
+>      jupyter notebook --no-browser --port=8888
+>
+> The terminal will show a message similar to the following template:
+>
+>      [... NotebookApp] Writing notebook server cookie secret to /home/whovian/.local/share/jupyter/runtime/notebook_cookie_secret
+>      [... NotebookApp] WARNING: The notebook server is listening on all IP addresses and not using encryption. This is not recommended.
+>      [... NotebookApp] Serving notebooks from local directory: /home/whovian/host
+>      [... NotebookApp] Jupyter Notebook 6.1.1 is running at:
+>      [... NotebookApp] http://f0a13949f6b5:8888/?token=XXX
+>      [... NotebookApp] or http://127.0.0.1:8888/?token=XXX
+>      [... NotebookApp] Use Control-C to stop this server and shut down all kernels (twice to skip confirmation).
+>
+> Now go to the local internet browser and type `http://127.0.0.1:8888/?token=XXX`, where XXX is the previously saved token displayed on the line
+> 
+>     [... NotebookApp] or http://127.0.0.1:8888/?token=XXX  
+      
+> [!TIP]
+> To run the Jupyter Notebook on the *whovian-cocoa* Docker container installed on a remote server, adjust the command below
+>
+>     ssh your_username@your_sever.com -L 8888:localhost:8888
+>
+> before typing `http://127.0.0.1:8888/?token=XXX` on the local desktop/laptop. This will bind the server port `8888` to the local port `8888`.
+> 
+>     [... NotebookApp] or http://127.0.0.1:8888/?token=XXX  
+
+> [!TIP]
+> To delete a particular container, assuming the container name `cocoa2025`, type
+>
+>      docker rm -f cocoa2025
+>
+
+> [!Tip]
+> The flag `-v $(pwd):/home/whovian/host/` in the `docker run` command ensures that files in the host computer located within the folder where the Docker container was initialized are accessible inside the container.
+
+> [!Warning]
+> Do not allow the Docker container to have system-wide access to your files. Accidents happen, especially when dealing with dangerous bash commands such as `rm` (deletion).
 
 > [!NOTE]
-> `--ignore ./projects/lsst_y1/tests/data_vector/test_accuracy.py`: skip the accuracy checks, whose high-accuracy evaluations take minutes each. The remaining tests take a few minutes.
-
-To check covariance generation separately, enable the project's covariance
-build option, recompile, and run:
-
-     python -m pytest ./projects/lsst_y1/tests/covariance
-
-The project's [test guide](https://github.com/SBU-COSMOLIKE/cocoa_lsst_y1/tree/main/tests)
-describes the checks and their requirements.
-
-The tests' own snapshot under `tests/frozen/` holds the cobaya configurations fully expanded (every option and every parameter written out, so editing the likelihood default yaml files cannot change what the tests evaluate), the tests' own copy of the data files, and synthetic data vectors generated at the reference point, so each $\chi^2$ sits at its minimum. The file `tests/manifest_sha256.json` stores a SHA-256 hash of every file of the snapshot, and each test refuses to run when one was edited. Users can therefore change the live data and examples freely without breaking the tests.
-
-Maintainers redefine the snapshot after a deliberate change to the data files, examples, or likelihood defaults:
-
-     python ./projects/lsst_y1/tests/generate_frozen_reference.py --overwrite
-
-> [!NOTE]
-> `--overwrite`: delete the existing `frozen/` folder, rebuild it from the current project, and rewrite the manifest (the script refuses to run without this flag). Review the printed reference $\chi^2$ values before committing: they define what every later test run compares against.
+> The recipe of the *whovian-cocoa* image is maintained at `cocoa_installation_libraries/docker/`.
+> To rebuild and publish the image (developers only), type
+>
+>     cd ./cocoa/cocoa_installation_libraries/docker
+>
+> and
+>
+>     docker build . --platform linux/amd64 --build-arg COCOA_TAG=v5.09 -t vivianmiranda/whovian-cocoa # replace the tag with the Cocoa version whose yml seeds the conda env
+>
+> and
+>
+>     docker push vivianmiranda/whovian-cocoa
+>
+> To publish the `:thin` variant, run the container, install and compile Cocoa inside it, and type
+>
+>     docker commit <containerid> vivianmiranda/whovian-cocoa:thin # docker ps -a shows the container id
+>
+> and
+>
+>     docker push vivianmiranda/whovian-cocoa:thin
 
 ## :interrobang: FAQ: How can users set the appropriate environment for ML? <a name="ml_emulators"></a>
 
