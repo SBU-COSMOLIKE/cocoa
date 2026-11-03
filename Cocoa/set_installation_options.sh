@@ -23,7 +23,7 @@ esac
 # ------------------------------------------------------------------------------
 # VERBOSE AS DEBUG TOOL --------------------------------------------------------
 # ------------------------------------------------------------------------------
-#export COCOA_OUTPUT_VERBOSE=1
+export COCOA_OUTPUT_VERBOSE=1
 #export COCOA_OUTPUT_DEBUG=1 # turn on bash strict mode (set -exo pipefail) on  
                              # instalation_scripts/setup/compile_x.sh scripts 
 
@@ -172,7 +172,6 @@ export ROMAN_REAL_GIT_BRANCH="main"
 export COSMOLIKE_URL="https://github.com/SBU-COSMOLIKE/cocoa-cosmolike-core.git"
 export COSMOLIKE_NAME="cosmolike_core"
 export COSMOLIKE_GIT_BRANCH="main"
-
 
 export ROMAN_KL_URL="https://github.com/SBU-COSMOLIKE/cocoa_roman_kl.git"
 export ROMAN_KL_NAME="roman_kl"
