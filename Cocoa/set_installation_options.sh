@@ -166,7 +166,7 @@ export LSST_Y1_GIT_BRANCH="main"
 
 # WARNING: the lssty1xdesi repository address below is a placeholder
 # until its first push; confirm it before unsetting the IGNORE key.
-export LSSTY1XDESI_URL="https://github.com/SBU-COSMOLIKE/cocoa_lssty1xdesi.git"
+export LSSTY1XDESI_URL="https://github.com/SBU-COSMOLIKE/lssty1xdesi.git"
 export LSSTY1XDESI_NAME="lssty1xdesi"
 export LSSTY1XDESI_GIT_BRANCH="main"
 
