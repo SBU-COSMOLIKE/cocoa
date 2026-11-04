@@ -244,16 +244,54 @@ if [ -z "${IGNORE_COSMOLIKE_LSST_Y1_CODE}" ]; then
   
     gitact1 "${FOLDER:?}" "${URL:?}" "${LSST_Y1_GIT_BRANCH:?}" || return 1;
   
-  elif [ -n "${LSST_Y1_GIT_TAG:-}" ]; then 
-  
+  elif [ -n "${LSST_Y1_GIT_TAG:-}" ]; then
+
     gitact0 "${FOLDER:?}" "${URL:?}" || return 1;
-  
+
     gitact3 "${FOLDER:?}" "${LSST_Y1_GIT_TAG:?}" || return 1;
-  
+
   else
-  
+
     gitact0 "${FOLDER:?}" "${URL:?}" || return 1;
-  
+
+  fi
+
+  pbottom "GETTING ${PRINTNAME:?}" || { unset_all; return 1; }
+
+fi
+
+if [ -z "${IGNORE_COSMOLIKE_LSSTY1XDESI_CODE}" ]; then
+
+  # Name to be printed on this shell script messages
+  PRINTNAME="LSSTY1XDESI"
+
+  ptop "GETTING ${PRINTNAME:?}" || { unset_all; return 1; }
+
+  FOLDER="${LSSTY1XDESI_NAME:-"lssty1xdesi"}"
+
+  URL="${LSSTY1XDESI_URL:-"https://github.com/SBU-COSMOLIKE/cocoa_lssty1xdesi.git"}"
+  URL=$(devurl "${URL:?}")
+
+  if [ -n "${LSSTY1XDESI_GIT_COMMIT:-}" ]; then
+
+    gitact0 "${FOLDER:?}" "${URL:?}" || return 1;
+
+    gitact2 "${FOLDER:?}" "${LSSTY1XDESI_GIT_COMMIT:?}" || return 1;
+
+  elif [ -n "${LSSTY1XDESI_GIT_BRANCH:-}" ]; then
+
+    gitact1 "${FOLDER:?}" "${URL:?}" "${LSSTY1XDESI_GIT_BRANCH:?}" || return 1;
+
+  elif [ -n "${LSSTY1XDESI_GIT_TAG:-}" ]; then
+
+    gitact0 "${FOLDER:?}" "${URL:?}" || return 1;
+
+    gitact3 "${FOLDER:?}" "${LSSTY1XDESI_GIT_TAG:?}" || return 1;
+
+  else
+
+    gitact0 "${FOLDER:?}" "${URL:?}" || return 1;
+
   fi
 
   pbottom "GETTING ${PRINTNAME:?}" || { unset_all; return 1; }

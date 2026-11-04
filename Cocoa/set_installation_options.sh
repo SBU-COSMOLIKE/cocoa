@@ -86,6 +86,8 @@ export IGNORE_COSMOLIKE_ROMAN_FOURIER_CODE=1
 #export IGNORE_COSMOLIKE_ROMAN_REAL_CODE=1
 export IGNORE_COSMOLIKE_ROMAN_KL_CODE=1
 export IGNORE_COSMOLIKE_DES_CLUSTER_CODE=1
+# WARNING: lssty1xdesi is under active development.
+export IGNORE_COSMOLIKE_LSSTY1XDESI_CODE=1
 # WARNING: des_y6 is not production ready.
 export IGNORE_COSMOLIKE_DES_Y6_CODE=1
 
@@ -96,6 +98,7 @@ export IGNORE_COSMOLIKE_DES_Y6_CODE=1
 # Comment its export here to keep covariance generation enabled across sessions.
 # ------------------------------------------------------------------------------
 export IGNORE_COSMOLIKE_LSST_Y1_COVARIANCE=1
+export IGNORE_COSMOLIKE_LSSTY1XDESI_COVARIANCE=1
 export IGNORE_COSMOLIKE_ROMAN_REAL_COVARIANCE=1
 export IGNORE_COSMOLIKE_ROMAN_FOURIER_COVARIANCE=1
 export IGNORE_COSMOLIKE_ROMAN_KL_COVARIANCE=1
@@ -160,6 +163,12 @@ export DESXPLANCK_GIT_BRANCH="main"
 export LSST_Y1_URL="https://github.com/SBU-COSMOLIKE/cocoa_lsst_y1.git"
 export LSST_Y1_NAME="lsst_y1"
 export LSST_Y1_GIT_BRANCH="main"
+
+# WARNING: the lssty1xdesi repository address below is a placeholder
+# until its first push; confirm it before unsetting the IGNORE key.
+export LSSTY1XDESI_URL="https://github.com/SBU-COSMOLIKE/cocoa_lssty1xdesi.git"
+export LSSTY1XDESI_NAME="lssty1xdesi"
+export LSSTY1XDESI_GIT_BRANCH="main"
 
 export ROMAN_FOURIER_URL="https://github.com/SBU-COSMOLIKE/cocoa_roman_fourier.git"
 export ROMAN_FOURIER_NAME="roman_fourier"
