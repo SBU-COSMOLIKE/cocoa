@@ -141,8 +141,9 @@ export USE_SPT_CLIK_PLANCK=1
 # With 1e-3 the nonlinear P(k) jitters by ~0.3% between nearby cosmologies, and
 # finite-difference Fisher derivatives move with the step size. An installed
 # CAMB gets the patch only when re-cloned (OVERWRITE_EXISTING_CAMB_CODE=1).
+# Set by default: final-version Fisher forecasts need stable derivatives.
 # ------------------------------------------------------------------------------
-#export PATCH_CAMB_HALOFIT_TOLERANCE=1
+export PATCH_CAMB_HALOFIT_TOLERANCE=1
 
 # ------------------------------------------------------------------------------
 # ------------------------------------------------------------------------------
