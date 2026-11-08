@@ -1794,6 +1794,11 @@ notebook wrapper or a notebook. The points that matter from this side:
 
 Use these defaults in every plotting script, notebook cell or study
 figure written for the maintainer; deviations get rejected by eye.
+The `figures` skill holds the complete figure style (colorblind-safe
+palette with redundant encodings, legend placement enforced in code,
+paper and note layouts, captions, the plot-folder contract); read it
+before drawing any figure. The rules below are its README and study
+part.
 
 Notebook setup (the cell of every `EXAMPLE_EVALUATE*.ipynb`):
 
