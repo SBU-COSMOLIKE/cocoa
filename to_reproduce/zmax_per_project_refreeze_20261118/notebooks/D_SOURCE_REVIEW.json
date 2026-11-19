@@ -1,0 +1,201 @@
+{
+  "scope": "Read-only source review during C; no cosmology evaluated and no installed source changed.",
+  "wrappers": [
+    {
+      "project": "lsst_y1",
+      "path": "/Users/vivianmiranda/data/COCOA/november2026/sbu_cosmolike/cocoa/Cocoa/projects/lsst_y1/interface/cosmolike_lsst_y1_notebook_wrappers.py",
+      "sha256": "1a78546b733fb26cf1b680d49e357efa5c79b438e663b1fd5a495437e45be9d2",
+      "fisher_setter_calls": [
+        {
+          "function": "get_dv",
+          "line": 1161,
+          "arguments": {
+            "AccuracyBoost": "AccuracyBoost",
+            "CLAccuracyBoost": "AccuracyBoost",
+            "CLIntegrationAccuracy": "0",
+            "CAMBAccuracyBoost": "1.0",
+            "kmax": "5.0",
+            "k_per_logint": "10"
+          }
+        }
+      ]
+    },
+    {
+      "project": "roman_real",
+      "path": "/Users/vivianmiranda/data/COCOA/november2026/sbu_cosmolike/cocoa/Cocoa/projects/roman_real/interface/cosmolike_roman_real_notebook_wrappers.py",
+      "sha256": "ed7e2dc53795e1614f2e01acba484a7ab730153efbcf8f78bc842837f5470781",
+      "fisher_setter_calls": [
+        {
+          "function": "get_dv",
+          "line": 1069,
+          "arguments": {
+            "AccuracyBoost": "AccuracyBoost",
+            "CLAccuracyBoost": "AccuracyBoost",
+            "CLIntegrationAccuracy": "0",
+            "CAMBAccuracyBoost": "1.0",
+            "kmax": "10.0",
+            "k_per_logint": "10"
+          }
+        },
+        {
+          "function": "get_dv_w0wa",
+          "line": 1344,
+          "arguments": {
+            "AccuracyBoost": "AccuracyBoost",
+            "CLAccuracyBoost": "AccuracyBoost",
+            "CLIntegrationAccuracy": "0",
+            "CAMBAccuracyBoost": "1.0",
+            "kmax": "10.0",
+            "k_per_logint": "10"
+          }
+        },
+        {
+          "function": "get_dv_3x2pt",
+          "line": 1413,
+          "arguments": {
+            "AccuracyBoost": "AccuracyBoost",
+            "CLAccuracyBoost": "AccuracyBoost",
+            "CLIntegrationAccuracy": "0",
+            "CAMBAccuracyBoost": "1.0",
+            "kmax": "10.0",
+            "k_per_logint": "10"
+          }
+        }
+      ]
+    },
+    {
+      "project": "roman_fourier",
+      "path": "/Users/vivianmiranda/data/COCOA/november2026/sbu_cosmolike/cocoa/Cocoa/projects/roman_fourier/interface/cosmolike_roman_fourier_notebook_wrappers.py",
+      "sha256": "3e9d12cc5ef7bc0c759c3d054b2cee6af2d87bc5621f187511c0c474dab2a675",
+      "fisher_setter_calls": [
+        {
+          "function": "get_dv",
+          "line": 1093,
+          "arguments": {
+            "AccuracyBoost": "AccuracyBoost",
+            "CLAccuracyBoost": "1.0",
+            "CLIntegrationAccuracy": "0",
+            "CAMBAccuracyBoost": "None",
+            "kmax": "None",
+            "k_per_logint": "None"
+          }
+        }
+      ]
+    },
+    {
+      "project": "roman_kl",
+      "path": "/Users/vivianmiranda/data/COCOA/november2026/sbu_cosmolike/cocoa/Cocoa/projects/roman_kl/interface/cosmolike_roman_kl_notebook_wrappers.py",
+      "sha256": "a2fca6e03b7a98e16a8fb521c21b1f9be6e7712642393d2d6a16010b12b01656",
+      "fisher_setter_calls": [
+        {
+          "function": "get_dv",
+          "line": 1261,
+          "arguments": {
+            "AccuracyBoost": "AccuracyBoost",
+            "CLAccuracyBoost": "1.0",
+            "CLIntegrationAccuracy": "0",
+            "CAMBAccuracyBoost": "None",
+            "kmax": "None",
+            "k_per_logint": "None"
+          }
+        }
+      ]
+    },
+    {
+      "project": "des_y3",
+      "path": "/Users/vivianmiranda/data/COCOA/november2026/sbu_cosmolike/cocoa/Cocoa/projects/des_y3/interface/cosmolike_des_y3_notebook_wrappers.py",
+      "sha256": "bca467813e72300af026656353b918d295e9c6021834411c3cabc99455e85951",
+      "fisher_setter_calls": [
+        {
+          "function": "get_dv",
+          "line": 1221,
+          "arguments": {
+            "AccuracyBoost": "AccuracyBoost",
+            "CLAccuracyBoost": "AccuracyBoost",
+            "CLIntegrationAccuracy": "0",
+            "CAMBAccuracyBoost": "1.0",
+            "kmax": "5.0",
+            "k_per_logint": "10"
+          }
+        },
+        {
+          "function": "get_dv_3x2pt",
+          "line": 1270,
+          "arguments": {
+            "AccuracyBoost": "AccuracyBoost",
+            "CLAccuracyBoost": "AccuracyBoost",
+            "CLIntegrationAccuracy": "0",
+            "CAMBAccuracyBoost": "1.0",
+            "kmax": "5.0",
+            "k_per_logint": "10"
+          }
+        }
+      ]
+    },
+    {
+      "project": "desy1xplanck",
+      "path": "/Users/vivianmiranda/data/COCOA/november2026/sbu_cosmolike/cocoa/Cocoa/projects/desy1xplanck/interface/cosmolike_desy1xplanck_notebook_wrappers.py",
+      "sha256": "01945bf07d25ca5975cca23fa346f2c4ba8dfccf63be06f08cf30f62b6f3a8a3",
+      "fisher_setter_calls": [
+        {
+          "function": "get_dv",
+          "line": 1215,
+          "arguments": {
+            "AccuracyBoost": "AccuracyBoost",
+            "CLAccuracyBoost": "AccuracyBoost",
+            "CLIntegrationAccuracy": "0",
+            "CAMBAccuracyBoost": "1.0",
+            "kmax": "7.5",
+            "k_per_logint": "10"
+          }
+        }
+      ]
+    },
+    {
+      "project": "des_cluster",
+      "path": "/Users/vivianmiranda/data/COCOA/november2026/sbu_cosmolike/cocoa/Cocoa/projects/des_cluster/interface/cosmolike_des_cluster_notebook_wrappers.py",
+      "sha256": "07c9b06d5878ec591be4719416f17ac70cf406c263c240a773e5cb1a07b4b0c6",
+      "fisher_setter_calls": []
+    }
+  ],
+  "sources": [
+    {
+      "path": "/Users/vivianmiranda/data/COCOA/november2026/sbu_cosmolike/cocoa/Cocoa/external_modules/code/cosmolike_core/cosmolike_notebook_utils/fisher.py",
+      "sha256": "2ee803aafba0afc5eaade00e8e114ef8312e170100c4233d9079a011c12ad3e2"
+    },
+    {
+      "path": "/Users/vivianmiranda/data/COCOA/november2026/sbu_cosmolike/cocoa/Cocoa/external_modules/code/cosmolike_core/cosmolike/cosmo2D_scuts.c",
+      "sha256": "d0f6617bebf1a7578cfcc08b698431992a09957a66c7978b7754d47907ca32f8"
+    },
+    {
+      "path": "/Users/vivianmiranda/data/COCOA/november2026/sbu_cosmolike/cocoa/Cocoa/external_modules/code/cosmolike_core/cosmolike/structs.c",
+      "sha256": "36a494608a8ef4ff80b09e3aedad2cf06bab8818185a59503400511a9143823b"
+    },
+    {
+      "path": "/Users/vivianmiranda/data/COCOA/november2026/sbu_cosmolike/cocoa/Cocoa/external_modules/code/cosmolike_core/cosmolike/cosmo2D_cluster.c",
+      "sha256": "1ca58c4b01e627c525c346fa723acf94f46aef71af33d9be746931dbe26bfdb8"
+    },
+    {
+      "path": "/Users/vivianmiranda/data/COCOA/november2026/sbu_cosmolike/cocoa/Cocoa/.local/lib/python3.11/site-packages/derivkit/adaptive_fit.py",
+      "sha256": "68e3bcc798a287ac77727a59aee3372501ddc1cb6687d70a0f6e854805fa3401"
+    },
+    {
+      "path": "/Users/vivianmiranda/data/COCOA/november2026/sbu_cosmolike/cocoa/Cocoa/.local/lib/python3.11/site-packages/derivkit/__init__.py",
+      "sha256": "a958a6d7934f042d352f4f636396bd6753b93280c6ab7753dff11f130698a2b5"
+    },
+    {
+      "path": "/Users/vivianmiranda/data/COCOA/november2026/sbu_cosmolike/cocoa/Cocoa/.local/lib/python3.11/site-packages/derivkit/plotutils/plot_kit.py",
+      "sha256": "27bff533ef979a679c6004ff5a7cfcc460b417bb5e8c8b7f3f771ffc97ba726d"
+    },
+    {
+      "path": "/Users/vivianmiranda/data/COCOA/november2026/sbu_cosmolike/cocoa/Cocoa/.local/lib/python3.11/site-packages/derivkit/plotutils/plot_style.py",
+      "sha256": "2a2273bbffe1e4a276258ebe814c92e3bb02f7ffde50ae0f36b3bb170775cf5f"
+    }
+  ],
+  "plan_sha256": "8683f6fd728c9d9f4f936b250815fcc49311acbb811880986ac2b948abe61a15",
+  "render": {
+    "tables": 1,
+    "paragraphs": 26,
+    "html_bytes": 11465
+  }
+}
