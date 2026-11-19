@@ -41,7 +41,6 @@ features, Low bugs, Low features.
 - OPEN **MEDIUM** **NEW FUNCTIONALITY** — [Cache the Fourier non-Limber band-center corrections](#open-fourier-nonlimber-cache)
 - OPEN **MEDIUM** **NEW FUNCTIONALITY** — [Rewrite analytic covariances in an isolated module](#open-covariance-rewrite)
 - OPEN **MEDIUM** **NEW FUNCTIONALITY** — [Project endpoint refreezes, notebooks and numerical follow-ups](#open-project-endpoint-refreeze)
-- OPEN **MEDIUM** **NEW FUNCTIONALITY** — [Independent 3PCF bridge background-derivative checks](#open-threepcf-background-check)
 
 
 - CLOSED **MEDIUM** **NEW FUNCTIONALITY** — [Modernize the DES Y6 project](#closed-des-y6-modernization)
@@ -491,18 +490,23 @@ The work queue runs serially with six OpenMP workers and BLAS fixed to one.
 
 The endpoint defaults to four and rejects nonfinite values or values below
 four. LSST Y1 and Roman real use 4.5, Roman Fourier uses 5.0, and the DES
-projects use 4.0. Roman KL and LSST Y1 with DESI retain 4.5. LSST Y1, DES Y3
-and DES with Planck refreezes are committed as `57b50d5`, `f429b69` and
-`ec63a45`. Their validation covers 115, 108 and 91 quick-test cases,
+projects use 4.0. Roman KL and LSST Y1 with DESI retain 4.5. LSST Y1, DES Y3,
+DES with Planck and DES cluster refreezes are committed as `57b50d5`,
+`f429b69`, `ec63a45` and `eb6fc9d`. Their validation covers 115, 108, 91 and
+73 quick-test cases,
 respectively. The initial LSST missing-GSL build failure passed on a
 targeted retry in the normal Cocoa build environment.
 
 ### What is already in place
 
 Each project retains fixed-input endpoint comparisons separately from
-cumulative differences against older frozen references. DES growth-sampling
-changes explain only part of its historical drift; the residual remains
-recorded. Frozen physical parameters, points and priors are preserved even
+cumulative differences against older frozen references. A separate private
+CAMB comparison recovers every historical shear value in six DES/cluster
+cases using the appropriate growth convention and older halofit tolerance.
+DES Y3 retains an explicitly Limber galaxy-lensing residual, and clustering
+residuals remain. The installed CAMB is unchanged; numerical agreement does
+not identify the unrecorded historical binary. Frozen physical parameters,
+points and priors are preserved even
 when live example defaults differ. Eleven notebooks have prepared settings,
 Fisher tolerance restoration and checked structure; full execution remains
 separate from those preparation checks.
@@ -526,48 +530,6 @@ retain the ordered A/C/D/E queue, hashes, logs and exceptions. Durable
 project commits retain their tests and reference records. The shared
 derivative context is core `87195ee`; the test thread override and DESI
 vector handling are core `7a3ae44`.
-
-</details>
-
-<a id="open-threepcf-background-check"></a>
-## Independent 3PCF bridge background-derivative checks
-
-### High-level summary
-
-Test the bridge's numerical conversion from chi(z) to dz/dchi against a
-known analytic derivative, and measure its effect on controlled intrinsic-
-alignment observables. A transfer round trip tests array ownership but
-cannot establish the accuracy of the derivative stencil itself.
-
-### Current status
-
-Test preparation is in progress. The analytic geometry is
-chi(z)=3000 z/(1+0.35z) Mpc/h, whose inverse derivative is
-(1+0.35z)^2/3000 h/Mpc. This is a numerical geometry fixture, not a
-self-consistent cosmological model.
-
-### What is already in place
-
-The bridge's public C input structure contains its actual Jacobian. A small
-test-only C copier compiled against the public header can read those arrays
-without duplicating the structure layout in Python. The source, power and
-line-of-sight settings stay fixed while the background grid is refined.
-
-### What is missing
-
-Add the permanent test, distinguish interior from endpoint errors, compare
-bridged and exact-Jacobian IA observables, and record production-like node
-counts separately from the controlled convergence sequence. Validation must
-use an agreed gap in the serial numerical queue. Production C files remain
-unchanged for this test.
-
-<details>
-<summary>Technical record</summary>
-
-This is item 5 of the user's supplied 3PCF follow-up handoff. Its test belongs
-in `Cocoa/projects/des_3pcf/tests/test_bridge_background_analytic.py`.
-The already-validated private strict extension from the supplied-bispectrum
-work supplies the C implementation under test.
 
 </details>
 
@@ -912,6 +874,24 @@ porting precedent any WHM work would build on.
 </details>
 
 # Closed tickets
+
+## 2026-11-19 — Independent 3PCF bridge background derivative
+
+DES 3PCF `d9f2a1e` adds the permanent analytic-geometry test and its
+[measured record](../../Cocoa/projects/des_3pcf/tests/studies/bridge_background_analytic.md).
+All five cases pass in strict and UBSan builds with identical measurements.
+A test-only C reader uses the public header, so the check observes the
+bridge's actual Jacobian without duplicating its layout in Python.
+
+For chi(z)=3000 z/(1+0.35z), the maximum interior Jacobian error falls from
+2.958e-4 to 4.764e-6 between 41 and 321 nodes. The observer endpoint remains
+first order, decreasing from 1.75e-2 to 2.1875e-3. With source and projection
+grids fixed, the largest toy IA error falls from 8.638e-5 to 1.345e-6.
+Production-like TATT and BACCO grid checks also converge, and all fifteen
+paired input-archive hashes agree across builds. These are controlled
+uniform-background tests, not survey-level Fisher accuracy bounds. The
+direct CAMB route instead supplies H(z)/(299792.458 h); it does not use
+this finite-difference Jacobian. No native implementation was changed.
 
 ## 2026-11-19 — Optional supplied BiHalofit baseline and NFW documentation
 
