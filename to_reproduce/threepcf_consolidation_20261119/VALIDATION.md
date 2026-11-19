@@ -1,8 +1,8 @@
 # Three-point consolidation: numerical acceptance
 
 The interpolation consolidation passes the full NLA and TATT comparisons.
-Shared smoothing passes the NLA comparison and sampling refinement with
-the higher-accuracy inputs described below; TATT checks are in progress.
+Shared smoothing passes the NLA and TATT comparisons with the
+higher-accuracy inputs described below. NLA sampling refinement also passes.
 These are distinct
 changes: replacing interpolation machinery can preserve a physical model,
 whereas removing the old power normalization also changes which spectrum
@@ -113,6 +113,17 @@ delta chi-squared is 6.74e-9. Comparing four-times directly with eight-times
 sampling gives maximum changes of 0.00516%, 0.0354%, and 0.0356% in those
 three quantities, respectively. These maxima include both derivative steps;
 all two-point stencil rows remain bitwise identical.
+
+The corresponding TATT comparison evaluates 20 parameters and all 121
+stencil points at four-times shared sampling. Its mean delta chi-squared
+is 1.55056e-8. The larger/smaller derivative steps give maximum weighted
+derivative changes of 0.00605%/0.00826%, marginalized-error changes of
+0.0541%/0.0354%, and pair-FoM changes of 0.0581%/0.0441%. Every criterion
+passes and every two-point stencil row is bitwise identical. The full
+record is `highaccuracy_tatt_shared4_comparison.json`. Following the user's
+request to limit additional work, no separate full TATT eight-times
+forecast was run; the completed NLA refinement check is not relabeled as
+a TATT refinement result.
 
 This agreement does not establish that every forecasted error is itself
 step-converged. On these inputs the largest marginalized-error change
