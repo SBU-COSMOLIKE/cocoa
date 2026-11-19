@@ -493,7 +493,9 @@ The work queue runs serially with six OpenMP workers and BLAS fixed to one.
 The endpoint defaults to four and rejects nonfinite values or values below
 four. LSST Y1 and Roman real use 4.5, Roman Fourier uses 5.0, and the DES
 projects use 4.0. Roman KL and LSST Y1 with DESI retain 4.5. Seven project
-refreezes are committed; LSST Y1 with DESI remains in progress.
+refreezes are committed. The remaining LSST Y1 with DESI checks are paused
+until tonight at the user's request; its completed comparisons and resume
+boundary are preserved. The notebook queue proceeds during that deferral.
 
 | Project | Refreeze commit | Quick-test outcome |
 |---|---|---|
@@ -547,8 +549,10 @@ bound the error of one computed forecast or remove smooth derivative bias.
 
 ### What is missing
 
-Finish the remaining refreezes, then run and inspect the notebooks. After
-that, investigate derivkit's wa column and style mutation, the Fisher color
+Finish and inspect the eleven notebooks, which are now running serially.
+Resume the remaining DESI refreeze tonight from its saved checkpoint;
+do not repeat its completed 200-model comparison. After the notebook queue,
+investigate derivkit's wa column and style mutation, the Fisher color
 order, squared wrapper accuracy boosts, cluster early-exit control, Roman
 real's slow halo reference and the DESI E3 one-loop RSD check. Finally rebuild
 DES 3PCF, repeat its ten-point CLI timings with CAMB excluded, and rerun its
@@ -564,6 +568,11 @@ retain the ordered A/C/D/E queue, hashes, logs and exceptions. Durable
 project commits retain their tests and reference records. The shared
 derivative context is core `87195ee`; the test thread override and DESI
 vector handling are core `7a3ae44`.
+The [DESI resume record](../../to_reproduce/zmax_per_project_refreeze_20261118/projects/lssty1xdesi/RESUME.md)
+identifies the 98 remaining quick cases and the completed comparisons.
+The [follow-up source review](../../to_reproduce/zmax_per_project_refreeze_20261118/notebooks/D_SOURCE_REVIEW.md)
+records the different wrapper boost paths, derivkit's near-zero sampling
+scale and plotting side effect, and the interpretation of response plots.
 
 </details>
 
