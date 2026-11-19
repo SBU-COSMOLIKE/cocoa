@@ -1,7 +1,9 @@
 # Three-point consolidation: numerical acceptance
 
 The interpolation consolidation passes the full NLA and TATT comparisons.
-Adoption of shared smoothing variances has not passed. These are distinct
+Shared smoothing passes the NLA comparison and sampling refinement with
+the higher-accuracy inputs described below; TATT checks are in progress.
+These are distinct
 changes: replacing interpolation machinery can preserve a physical model,
 whereas removing the old power normalization also changes which spectrum
 the three-point model uses.
@@ -56,6 +58,67 @@ the old Gaussian-radius solve and quadrature while retaining this old
 normalization. Replaying archived CAMB arrays isolates these differences
 without repeating the Boltzmann calculation. Exact replay is checked
 before drawing conclusions from that diagnostic.
+
+The frozen-input replay reproduced every saved array exactly, including
+all 103 complete joint vectors and both Fisher matrices. The refined local
+reference uses 8000 variance nodes, 16000 slope nodes and a relative radius
+stopping tolerance of 1e-10. Relative to the old settings, its mean changes
+by only 6.64e-9 in delta chi-squared, but a pair FoM changes by up to 2.21%.
+Shared sampling at twice baseline still differs from this refined local
+reference by up to 5.04% in a pair FoM. The local calculation is sensitive
+to numerical refinement, but this refinement does not resolve the failed
+acceptance comparison.
+
+The unchanged two-point h derivative changes by 1.60% when the finite-
+difference step halves, measured with the two-point covariance block.
+The corresponding aperture h derivative changes by 0.587% for the refined
+local calculation and 2.54% for shared sampling at twice baseline. These
+blockwise norms diagnose step sensitivity; they do not replace the full
+joint covariance in the acceptance calculation. The complete column
+values are in `derivative_step_diagnosis.json`.
+
+## Identifying the normalization effect
+
+Cold cubic upsampling of the power and growth inputs changes shared results
+by less than 0.045% in any pair FoM. It does not resolve the discrepancy.
+Applying the old normalization explicitly to shared smoothing, as a
+diagnostic only, gives agreement with the refined local result within
+0.014% per derivative and 0.172% per pair FoM. All fixed-step criteria pass
+in that matched-normalization comparison. The production shared adapter
+continues to preserve the input amplitude.
+
+A second input preparation uses CAMB AccuracyBoost 2, k_per_logint 50 and
+1025 uniform log-k output samples, while keeping the solved cutoff at
+5/Mpc. Across its entire NLA stencil, the old normalization multiplier
+ranges from 0.9999998589 to 1.0000000558. Shared smoothing at four-times
+sampling, without any amplitude correction, then agrees with the refined
+local calculation as follows:
+
+| Quantity | Larger derivative step | Smaller derivative step |
+| --- | ---: | ---: |
+| Largest weighted derivative change | 0.00598% | 0.00797% |
+| Largest marginalized-error change | 0.0523% | 0.0295% |
+| Largest pair-FoM change | 0.0541% | 0.0299% |
+
+The mean delta chi-squared is 1.55e-8, and all two-point rows are bitwise
+identical. This comparison passes the original fixed-step criteria. The
+older, less accurate input calculations remain recorded above; their
+failure was not erased by regenerating their reference arrays.
+
+Increasing shared sampling from four to eight times the baseline intervals
+also passes. Against the same refined reference, the eight-times calculation
+changes each weighted derivative by at most 0.00981%, each marginalized
+error by at most 0.0649%, and each pair FoM by at most 0.0651%. The mean
+delta chi-squared is 6.74e-9. Comparing four-times directly with eight-times
+sampling gives maximum changes of 0.00516%, 0.0354%, and 0.0356% in those
+three quantities, respectively. These maxima include both derivative steps;
+all two-point stencil rows remain bitwise identical.
+
+This agreement does not establish that every forecasted error is itself
+step-converged. On these inputs the largest marginalized-error change
+under step halving is about 2.8% in both calculations. The dark-energy
+pair FoM changes by about 0.15--0.17%. The shared-versus-local comparison
+must remain distinct from a claim of final forecast accuracy.
 
 ## Component and ordinary-interface checks
 
