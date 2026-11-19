@@ -40,6 +40,8 @@ features, Low bugs, Low features.
 - OPEN **MEDIUM** **BUG** — [Cache-key hardening for in-process reconfiguration](#open-cache-key-hardening)
 - OPEN **MEDIUM** **NEW FUNCTIONALITY** — [Cache the Fourier non-Limber band-center corrections](#open-fourier-nonlimber-cache)
 - OPEN **MEDIUM** **NEW FUNCTIONALITY** — [Rewrite analytic covariances in an isolated module](#open-covariance-rewrite)
+- OPEN **MEDIUM** **NEW FUNCTIONALITY** — [Project endpoint refreezes, notebooks and numerical follow-ups](#open-project-endpoint-refreeze)
+- OPEN **MEDIUM** **NEW FUNCTIONALITY** — [Independent 3PCF bridge background-derivative checks](#open-threepcf-background-check)
 
 
 - CLOSED **MEDIUM** **NEW FUNCTIONALITY** — [Modernize the DES Y6 project](#closed-des-y6-modernization)
@@ -475,6 +477,100 @@ The raw timing and validation logs remain in the external reference folder.
 
 </details>
 
+<a id="open-project-endpoint-refreeze"></a>
+## Project endpoint refreezes, notebooks and numerical follow-ups
+
+### High-level summary
+
+Expose the non-Limber redshift endpoint as a project YAML parameter, retain
+the requested per-project numerical settings, regenerate frozen tests, and
+execute the example notebooks with reviewed figures and Fisher-noise tables.
+The work queue runs serially with six OpenMP workers and BLAS fixed to one.
+
+### Current status
+
+The endpoint defaults to four and rejects nonfinite values or values below
+four. LSST Y1 and Roman real use 4.5, Roman Fourier uses 5.0, and the DES
+projects use 4.0. Roman KL and LSST Y1 with DESI retain 4.5. LSST Y1, DES Y3
+and DES with Planck refreezes are committed as `57b50d5`, `f429b69` and
+`ec63a45`. Their validation covers 115, 108 and 91 quick-test cases,
+respectively. The initial LSST missing-GSL build failure passed on a
+targeted retry in the normal Cocoa build environment.
+
+### What is already in place
+
+Each project retains fixed-input endpoint comparisons separately from
+cumulative differences against older frozen references. DES growth-sampling
+changes explain only part of its historical drift; the residual remains
+recorded. Frozen physical parameters, points and priors are preserved even
+when live example defaults differ. Eleven notebooks have prepared settings,
+Fisher tolerance restoration and checked structure; full execution remains
+separate from those preparation checks.
+
+### What is missing
+
+Finish the remaining refreezes, then run and inspect the notebooks. After
+that, investigate derivkit's wa column and style mutation, the Fisher color
+order, squared wrapper accuracy boosts, cluster early-exit control, Roman
+real's slow halo reference and the DESI E3 one-loop RSD check. Finally rebuild
+DES 3PCF, repeat its ten-point CLI timings with CAMB excluded, and rerun its
+notebooks. Prior eight-worker timings remain historical; current runs use
+at most six workers. No push is authorized.
+
+<details>
+<summary>Technical record</summary>
+
+The local [execution plan](../../to_reproduce/zmax_per_project_refreeze_20261118/PLAN.md)
+and [report](../../to_reproduce/zmax_per_project_refreeze_20261118/REPORT.md)
+retain the ordered A/C/D/E queue, hashes, logs and exceptions. Durable
+project commits retain their tests and reference records. The shared
+derivative context is core `87195ee`; the test thread override and DESI
+vector handling are core `7a3ae44`.
+
+</details>
+
+<a id="open-threepcf-background-check"></a>
+## Independent 3PCF bridge background-derivative checks
+
+### High-level summary
+
+Test the bridge's numerical conversion from chi(z) to dz/dchi against a
+known analytic derivative, and measure its effect on controlled intrinsic-
+alignment observables. A transfer round trip tests array ownership but
+cannot establish the accuracy of the derivative stencil itself.
+
+### Current status
+
+Test preparation is in progress. The analytic geometry is
+chi(z)=3000 z/(1+0.35z) Mpc/h, whose inverse derivative is
+(1+0.35z)^2/3000 h/Mpc. This is a numerical geometry fixture, not a
+self-consistent cosmological model.
+
+### What is already in place
+
+The bridge's public C input structure contains its actual Jacobian. A small
+test-only C copier compiled against the public header can read those arrays
+without duplicating the structure layout in Python. The source, power and
+line-of-sight settings stay fixed while the background grid is refined.
+
+### What is missing
+
+Add the permanent test, distinguish interior from endpoint errors, compare
+bridged and exact-Jacobian IA observables, and record production-like node
+counts separately from the controlled convergence sequence. Validation must
+use an agreed gap in the serial numerical queue. Production C files remain
+unchanged for this test.
+
+<details>
+<summary>Technical record</summary>
+
+This is item 5 of the user's supplied 3PCF follow-up handoff. Its test belongs
+in `Cocoa/projects/des_3pcf/tests/test_bridge_background_analytic.py`.
+The already-validated private strict extension from the supplied-bispectrum
+work supplies the C implementation under test.
+
+</details>
+
 <a id="open-cfastpt-gb2-ia-bias"></a>
 ## IA x higher-order-bias (gb2) cross terms in cfastpt
 
@@ -816,6 +912,42 @@ porting precedent any WHM work would build on.
 </details>
 
 # Closed tickets
+
+## 2026-11-19 — Optional supplied BiHalofit baseline and NFW documentation
+
+Core `1fa68b0` and DES 3PCF `1086ce5` add the positive absolute-bispectrum
+table, Python equation producer, Cobaya Theory adapter and optional YAML
+selector. The default remains internal. Strict and UBSan validation covered
+the 767-test snapshot; final producer and frozen-input checks passed 57 in
+each build. All 344 default-output array comparisons are byte-identical.
+
+The permanent frozen four-row joint test measures a squared covariance-
+weighted difference of 1.62e-5 at its fine resolution. The separate 480-row
+fiducial NLA comparison gives a data chi-squared change of -0.0831549 with
+49/193/97/33 baseline nodes, and keeps all 400 two-point entries byte-identical.
+Its squared vector difference is 0.000799865; these are different statistics.
+The actual Cobaya/CAMB provider graph passes A/A/B/A cache checks. Neither
+comparison establishes Fisher-derivative convergence across the prior.
+
+The [project guide](../../Cocoa/projects/des_3pcf/BIHALOFIT_PYTHON.md) links
+durable inputs, results and commands. Core `90a1b3a` explains the persistent
+universal NFW table and the separate per-halo angular shear spline, including
+their numerical controls and ownership. That documentation-only change
+passes rendering and link checks. Installed DES 3PCF rebuilding remains in
+the ordered execution ticket above; the route was validated in isolated
+strict/debug builds. No default switch or push was made.
+
+## 2026-11-19 — Retained standalone 3PCF FFTW plans
+
+Core `f9ccd3b` adds retained double-Bessel owners without changing the
+existing one-shot API. Strict and UBSan builds each pass 94 tests. Private
+instrumentation counts twenty plan creations/destructions for ten one-shot
+calls, versus two creations with no intervening destruction for ten calls
+through one retained owner. Padding initialization, state changes, multiple
+owners and one/four/six-worker comparisons are checked. The finite-triangle
+forecast already retained its plans, so these checks are not a forecast
+speedup claim. The durable record is
+`cosmolike_core/dev_scripts/threepcf_fft_plan_check/RUN_RECORD.md`.
 
 ## 2026-10-07 — Covariance CLI timings with dense power tables
 
