@@ -580,6 +580,11 @@ reference. The ordered project refreeze/notebook queue above remains active.
 Its follow-up D includes the cluster early-exit setting, and E includes the
 installed DES 3PCF rebuild, timings and notebook runs.
 
+Bridge ownership/cache changes, the adapter style pass, typed empty-array
+allocation and removal of redundant allocation checks have prepared source
+and test changes. Compiled validation is pending in the serial slot after
+the DESI refreeze; these items remain open until those checks complete.
+
 ### What is already in place
 
 The core has power-table variance functions and a shared dimensionless NFW
@@ -597,6 +602,11 @@ consolidations preserve derivative accuracy or improve runtime.
   0.5% in marginalized errors and pair figures of merit, stable under
   further refinement. Removing the separate sigma8 normalization is a
   scientific change that must pass those checks.
+  The source review also separates scale-dependent growth from amplitude
+  normalization and an inconsistent Gaussian-tail derivative. The
+  [variance reuse record](../../to_reproduce/threepcf_supplied_baseline_20261119/VARIANCE_REUSE_REVIEW.md)
+  identifies the immutable-array boundary and existing comparison inputs;
+  it contains no numerical acceptance result.
 - Separate immutable model construction from IA-only and feedback-amplitude
   query changes, with A/B/A invalidation and retained-old-owner tests.
 - Finish the NFW domain/cache checks and remaining consolidation described
