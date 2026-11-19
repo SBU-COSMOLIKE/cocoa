@@ -41,6 +41,7 @@ features, Low bugs, Low features.
 - OPEN **MEDIUM** **NEW FUNCTIONALITY** — [Cache the Fourier non-Limber band-center corrections](#open-fourier-nonlimber-cache)
 - OPEN **MEDIUM** **NEW FUNCTIONALITY** — [Rewrite analytic covariances in an isolated module](#open-covariance-rewrite)
 - OPEN **MEDIUM** **NEW FUNCTIONALITY** — [Project endpoint refreezes, notebooks and numerical follow-ups](#open-project-endpoint-refreeze)
+- OPEN **MEDIUM** **NEW FUNCTIONALITY** — [Remaining 3PCF integration follow-ups](#open-threepcf-integration-followups)
 
 
 - CLOSED **MEDIUM** **NEW FUNCTIONALITY** — [Modernize the DES Y6 project](#closed-des-y6-modernization)
@@ -530,6 +531,70 @@ retain the ordered A/C/D/E queue, hashes, logs and exceptions. Durable
 project commits retain their tests and reference records. The shared
 derivative context is core `87195ee`; the test thread override and DESI
 vector handling are core `7a3ae44`.
+
+</details>
+
+<a id="open-threepcf-integration-followups"></a>
+## Remaining 3PCF integration follow-ups
+
+### High-level summary
+
+Consolidate the remaining shared numerical work and separate expensive
+3PCF table preparation from changes to query parameters. Preserve the
+physical input conventions, retained-model lifetimes and explicit cache
+invalidation. The supplied-baseline route, independent background check
+and NFW documentation are complete and recorded in Closed tickets.
+
+### Current status
+
+The user's second integration handoff lists additional work beyond those
+completed changes. Check each item against the current source before
+implementing it: the handoff describes a moving branch, not a new numerical
+reference. The ordered project refreeze/notebook queue above remains active.
+Its follow-up D includes the cluster early-exit setting, and E includes the
+installed DES 3PCF rebuild, timings and notebook runs.
+
+### What is already in place
+
+The core has power-table variance functions and a shared dimensionless NFW
+evaluator. The bridge copies its inputs, compares state contents and retains
+old owners safely. The Python bispectrum producer reuses unchanged
+cosmological inputs. These facts do not establish that the proposed further
+consolidations preserve derivative accuracy or improve runtime.
+
+### What is missing
+
+- Replace module-local variance and normalization work with the shared
+  power-table functions after reviewing the completed uniform-grid seam.
+  The handoff requires joint-mean squared covariance-weighted displacement
+  at most 0.01, derivative-column error at most 1e-3, and changes below
+  0.5% in marginalized errors and pair figures of merit, stable under
+  further refinement. Removing the separate sigma8 normalization is a
+  scientific change that must pass those checks.
+- Separate immutable model construction from IA-only and feedback-amplitude
+  query changes, with A/B/A invalidation and retained-old-owner tests.
+- Finish the NFW domain/cache checks and remaining consolidation described
+  by its plan. SIMD work for NFW and feedback preparation requires a quiet
+  machine and measured benefit before adoption.
+- Review the C++ adapters' comparisons, argument explanations and pi
+  constants; remove allocator checks that are unreachable under the house
+  allocator contract; audit and document typed allocator zero counts.
+  Keep each numerical or ownership change separately testable.
+- Respect the handoff's separate ownership of the uncommitted DES 3PCF
+  Makefile lines. Build with them, but do not include them incidentally in
+  another change's commit.
+- Retain the upstream-preparation flags for their requested later pass:
+  unused covariance workspace members, mutable array access inside released
+  GIL scopes, error-string vocabulary and the named local-variable changes.
+
+<details>
+<summary>Technical record</summary>
+
+The copied [integration handoff](../../to_reproduce/threepcf_supplied_baseline_20261119/FOLLOWUPS_HANDOFF.txt)
+retains the original item numbers, ownership constraints and sequencing.
+The [NFW plan](../../to_reproduce/nfw_sharing_review_20261118/IMPLEMENTATION_PLAN.md)
+separates correctness checks from performance experiments. This ticket does
+not authorize a default change, push, or the separately gated DESI stage.
 
 </details>
 
