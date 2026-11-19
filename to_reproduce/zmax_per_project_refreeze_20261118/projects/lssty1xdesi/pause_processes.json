@@ -1,0 +1,41 @@
+{
+  "time": 1795090906.678577,
+  "reason": "User requested postponing remaining DESI work until tonight.",
+  "queue_pid": 89113,
+  "processes": [
+    {
+      "pid": 13986,
+      "ppid": 89113,
+      "pgid": 89113,
+      "program": "/Users/vivianmiranda/data/COCOA/november2026/sbu_cosmolike/cocoa/Cocoa/.local/bin/python"
+    },
+    {
+      "pid": 25834,
+      "ppid": 13986,
+      "pgid": 89113,
+      "program": "/Users/vivianmiranda/data/COCOA/november2026/sbu_cosmolike/cocoa/Cocoa/.local/bin/python"
+    },
+    {
+      "pid": 89113,
+      "ppid": 3278,
+      "pgid": 89113,
+      "program": "Cocoa/.local/bin/python"
+    }
+  ],
+  "signals": [
+    {
+      "pid": 25834,
+      "signal": "SIGINT"
+    },
+    {
+      "pid": 13986,
+      "signal": "SIGINT"
+    }
+  ],
+  "post_stop_check": {
+    "time": 1795090919.74956,
+    "ps_returncode": 1,
+    "remaining": "",
+    "heavy_lock_exists": false
+  }
+}

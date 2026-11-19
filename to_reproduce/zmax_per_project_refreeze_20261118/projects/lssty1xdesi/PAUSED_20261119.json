@@ -1,0 +1,709 @@
+{
+  "status": "deferred_at_user_request",
+  "recorded": 1795091001.166348,
+  "interrupted_test": "data_vector/test_accuracy_baryons.py::TestBaryonAccuracyAdvisory::test_bf0_one_knob_at_a_time",
+  "completed_tests": [
+    {
+      "class": "data_vector.test_accuracy.TestAccuracyAdvisory",
+      "name": "test_a0_one_knob_at_a_time",
+      "status": "passed",
+      "messages": []
+    },
+    {
+      "class": "data_vector.test_accuracy.TestAccuracyAdvisory",
+      "name": "test_a0_one_knob_at_a_time_example2",
+      "status": "passed",
+      "messages": []
+    },
+    {
+      "class": "data_vector.test_accuracy.TestAccuracyAdvisory",
+      "name": "test_a0_one_knob_at_a_time_example3",
+      "status": "passed",
+      "messages": []
+    },
+    {
+      "class": "data_vector.test_accuracy.TestAccuracyAdvisory",
+      "name": "test_a0_one_knob_at_a_time_example4",
+      "status": "passed",
+      "messages": []
+    },
+    {
+      "class": "data_vector.test_accuracy.TestAccuracyAdvisory",
+      "name": "test_a1_full_vector_nla",
+      "status": "passed",
+      "messages": []
+    },
+    {
+      "class": "data_vector.test_accuracy.TestAccuracyAdvisory",
+      "name": "test_a2_full_vector_dz0p02_nla",
+      "status": "passed",
+      "messages": []
+    },
+    {
+      "class": "data_vector.test_accuracy.TestAccuracyAdvisory",
+      "name": "test_a3_full_vector_dz0p05_nla",
+      "status": "passed",
+      "messages": []
+    },
+    {
+      "class": "data_vector.test_accuracy.TestAccuracyAdvisory",
+      "name": "test_a4_full_vector_dz0p20_nla",
+      "status": "passed",
+      "messages": []
+    },
+    {
+      "class": "data_vector.test_accuracy.TestAccuracyAdvisory",
+      "name": "test_ax99_nmodels",
+      "status": "accepted_accuracy_threshold_failure",
+      "messages": [
+        "AssertionError: [(0, 1.3373662597087104), (2, 5.409755022440281), (4, 1.322259166065268), (6, 1.1873191094172264), (8, 0.38082197130151185), (10, 1.563374280895474), (12, 0.269406298827492), (14, 9.202862068259954), (17, 0.22870782593189778), (18, 4.652541565764778), (20, 6.2597145278742), (22, 1.1453407337087071), (24, 10.553495268356311), (26, 4.173923197959054), (28, 50.52502115366643), (30, 1.48818616853549), (32, 0.8771127423399114), (34, 1.4406786988504332), (36, 1.3515877359975472), (37, 0.3051922273679122), (38, 2.2108118212299326), (40, 0.8899239257466312), (42, 3.7983968520487634), (44, 6.214092965947591), (46, 0.23667008667200978), (49, 0.2559014958805962)] is not false : models with |delta chi2| >= 0.2: 0 (seed 137): +1.3374, 2 (seed 139): +5.4098, 4 (seed 141): +1.3223, 6 (seed 143): +1.1873, 8 (seed 145): +0.3808, 10 (seed 147): +1.5634, 12 (seed 149): +0.2694, 14 (seed 151): +9.2029, 17 (seed 154): +0.2287, 18 (seed 155): +4.6525, 20 (seed 157): +6.2597, 22 (seed 159): +1.1453, 24 (seed 161): +10.5535, 26 (seed 163): +4.1739, 28 (seed 165): +50.5250, 30 (seed 167): +1.4882, 32 (seed 169): +0.8771, 34 (seed 171): +1.4407, 36 (seed 173): +1.3516, 37 (seed 174): +0.3052, 38 (seed 175): +2.2108, 40 (seed 177): +0.8899, 42 (seed 179): +3.7984, 44 (seed 181): +6.2141, 46 (seed 183): +0.2367, 49 (seed 186): +0.2559"
+      ]
+    },
+    {
+      "class": "data_vector.test_accuracy.TestAccuracyAdvisory",
+      "name": "test_ax99_nmodels_example2",
+      "status": "accepted_accuracy_threshold_failure",
+      "messages": [
+        "AssertionError: [(0, 0.8931142753035165), (2, 6.0151423848079455), (4, 1.210321723600156), (6, 1.2982581627521939), (8, 0.47770357853403855), (10, 1.8766564658873133), (14, 8.517234199761086), (18, 6.344226493260175), (20, 5.3656483605809004), (22, 0.8810119292952125), (24, 20.61475365210668), (26, 2.9032481112656328), (28, 36.33277398603677), (30, 1.259406772063116), (32, 0.6016228086298971), (34, 1.0447194255155206), (36, 1.0221552871571162), (37, 0.26035480558644347), (38, 3.4050671870257103), (40, 0.680403604118876), (42, 5.170781332383942), (44, 5.930552879125603), (47, 0.2106117776247125)] is not false : models with |delta chi2| >= 0.2: 0 (seed 137): +0.8931, 2 (seed 139): +6.0151, 4 (seed 141): +1.2103, 6 (seed 143): +1.2983, 8 (seed 145): +0.4777, 10 (seed 147): +1.8767, 14 (seed 151): +8.5172, 18 (seed 155): +6.3442, 20 (seed 157): +5.3656, 22 (seed 159): +0.8810, 24 (seed 161): +20.6148, 26 (seed 163): +2.9032, 28 (seed 165): +36.3328, 30 (seed 167): +1.2594, 32 (seed 169): +0.6016, 34 (seed 171): +1.0447, 36 (seed 173): +1.0222, 37 (seed 174): +0.2604, 38 (seed 175): +3.4051, 40 (seed 177): +0.6804, 42 (seed 179): +5.1708, 44 (seed 181): +5.9306, 47 (seed 184): +0.2106"
+      ]
+    },
+    {
+      "class": "data_vector.test_accuracy.TestAccuracyAdvisory",
+      "name": "test_ax99_nmodels_example3",
+      "status": "accepted_accuracy_threshold_failure",
+      "messages": [
+        "AssertionError: [(2, 4.08761909611434), (4, 0.9902364750230223), (6, 0.3056801015194054), (10, 0.7981746195598629), (14, 10.388495628369208), (16, 3.7732054265049353), (20, 1.198028118206869), (22, 0.6366282400737014), (24, 0.3361814259351338), (28, 0.2554903206891102), (30, 2.2817292585344555), (32, 0.7911416143414445), (34, 1.7742338709797236), (36, 0.45804088686917455), (38, 0.4914719327444028), (40, 0.43956085815152035), (44, 1.4255918086106736)] is not false : models with |delta chi2| >= 0.2: 2 (seed 139): +4.0876, 4 (seed 141): +0.9902, 6 (seed 143): +0.3057, 10 (seed 147): +0.7982, 14 (seed 151): +10.3885, 16 (seed 153): +3.7732, 20 (seed 157): +1.1980, 22 (seed 159): +0.6366, 24 (seed 161): +0.3362, 28 (seed 165): +0.2555, 30 (seed 167): +2.2817, 32 (seed 169): +0.7911, 34 (seed 171): +1.7742, 36 (seed 173): +0.4580, 38 (seed 175): +0.4915, 40 (seed 177): +0.4396, 44 (seed 181): +1.4256"
+      ]
+    },
+    {
+      "class": "data_vector.test_accuracy.TestAccuracyAdvisory",
+      "name": "test_ax99_nmodels_example4",
+      "status": "accepted_accuracy_threshold_failure",
+      "messages": [
+        "AssertionError: [(2, 0.7330105385346971), (6, 0.2047976227356061), (10, 0.3183903927075458), (14, 1.519522275773593), (18, 0.2633935311268445), (20, 0.6932168559511083), (24, 1.2475013262172905), (26, 0.4748504542626125), (28, 4.7186785114623735), (30, 0.2060946584479897), (34, 0.23076112814992228), (36, 0.2639411238583695), (38, 0.33083766596666314), (42, 0.2257961619979285), (44, 0.9444988023416594)] is not false : models with |delta chi2| >= 0.2: 2 (seed 139): +0.7330, 6 (seed 143): +0.2048, 10 (seed 147): +0.3184, 14 (seed 151): +1.5195, 18 (seed 155): +0.2634, 20 (seed 157): +0.6932, 24 (seed 161): +1.2475, 26 (seed 163): +0.4749, 28 (seed 165): +4.7187, 30 (seed 167): +0.2061, 34 (seed 171): +0.2308, 36 (seed 173): +0.2639, 38 (seed 175): +0.3308, 42 (seed 179): +0.2258, 44 (seed 181): +0.9445"
+      ]
+    }
+  ],
+  "collected_test_count": 110,
+  "remaining_test_count": 98,
+  "xml_contains_anonymous_setup_only_case": true,
+  "xml_sha256": "25a0c3e8bfb2de3204ed507fa25d14ced846321600099b8c726a68f1bec368d6",
+  "log_sha256": "3c763e2405da3276ebe47d4d323ecb82b03d8e154ed9d897590c07c12c17faf0",
+  "completed_phases": [
+    "configs",
+    "endpoint_blocks",
+    "references",
+    "baryons",
+    "nmodels",
+    "constants"
+  ],
+  "frozen_manifest_audit": {
+    "count": 91,
+    "mismatches": [],
+    "files": [
+      {
+        "file": "frozen/EXAMPLE_EMUL2_EVALUATE1.yaml",
+        "expected": "cb199b16e55caa37b4a903bfe6f2a0075c59d1157cd922b247d6b2c80196c5ed",
+        "actual": "cb199b16e55caa37b4a903bfe6f2a0075c59d1157cd922b247d6b2c80196c5ed",
+        "matches": true
+      },
+      {
+        "file": "frozen/EXAMPLE_EVALUATE1.yaml",
+        "expected": "23eb76bf56859faa8f58c5c2b883788442c164b3debbd0d6d333eae9840e3ad9",
+        "actual": "23eb76bf56859faa8f58c5c2b883788442c164b3debbd0d6d333eae9840e3ad9",
+        "matches": true
+      },
+      {
+        "file": "frozen/EXAMPLE_EVALUATE2.yaml",
+        "expected": "b19d8e0facb2bb91b11fd52077c84457ba8b9abebef681b4bf540ce4b3a93834",
+        "actual": "b19d8e0facb2bb91b11fd52077c84457ba8b9abebef681b4bf540ce4b3a93834",
+        "matches": true
+      },
+      {
+        "file": "frozen/EXAMPLE_EVALUATE3.yaml",
+        "expected": "21ef6427c21f586b53e7023c7cbfb048f0dd25c228ea029db91fba542cd133b6",
+        "actual": "21ef6427c21f586b53e7023c7cbfb048f0dd25c228ea029db91fba542cd133b6",
+        "matches": true
+      },
+      {
+        "file": "frozen/EXAMPLE_EVALUATE4.yaml",
+        "expected": "fd06fa0e6e697e33afbbb535a7d248791c240676fb4e858e6be3ad8d27412d95",
+        "actual": "fd06fa0e6e697e33afbbb535a7d248791c240676fb4e858e6be3ad8d27412d95",
+        "matches": true
+      },
+      {
+        "file": "frozen/data/baryon_baccoemu.dataset",
+        "expected": "f08e1d36422ebf911b74203fca1b6538b0a8594b7daa0bbca6ac24c65634832b",
+        "actual": "f08e1d36422ebf911b74203fca1b6538b0a8594b7daa0bbca6ac24c65634832b",
+        "matches": true
+      },
+      {
+        "file": "frozen/data/baryon_baccoemu.modelvector",
+        "expected": "588598051b88e2589a44d5026ec0d7b9cfe01ee7064ba1a57c8b551b64aea801",
+        "actual": "588598051b88e2589a44d5026ec0d7b9cfe01ee7064ba1a57c8b551b64aea801",
+        "matches": true
+      },
+      {
+        "file": "frozen/data/baryon_bcemu.dataset",
+        "expected": "bdd114e8f9ac8b1b179dac77b869cefd75c7edde72de69f5c112b602d88392fc",
+        "actual": "bdd114e8f9ac8b1b179dac77b869cefd75c7edde72de69f5c112b602d88392fc",
+        "matches": true
+      },
+      {
+        "file": "frozen/data/baryon_bcemu.modelvector",
+        "expected": "b9dfa0f332fb86acf56587fa73416b5973dd2570b94fba36c9f72505853ae682",
+        "actual": "b9dfa0f332fb86acf56587fa73416b5973dd2570b94fba36c9f72505853ae682",
+        "matches": true
+      },
+      {
+        "file": "frozen/data/baryon_bcemu2025.dataset",
+        "expected": "c267a47f8bc313c896d187164cb9180a233fe3089f5904f38f78b31821452e1b",
+        "actual": "c267a47f8bc313c896d187164cb9180a233fe3089f5904f38f78b31821452e1b",
+        "matches": true
+      },
+      {
+        "file": "frozen/data/baryon_bcemu2025.modelvector",
+        "expected": "47b3bbe504f1164b16d5386139fcb82b1d371b556e0ba5b341399a8ed2d08107",
+        "actual": "47b3bbe504f1164b16d5386139fcb82b1d371b556e0ba5b341399a8ed2d08107",
+        "matches": true
+      },
+      {
+        "file": "frozen/data/baryon_flamingo.dataset",
+        "expected": "0003650710e467537815bc5fcdad2eeb30a395c2983d4f60bcfcabf13ab2cfe1",
+        "actual": "0003650710e467537815bc5fcdad2eeb30a395c2983d4f60bcfcabf13ab2cfe1",
+        "matches": true
+      },
+      {
+        "file": "frozen/data/baryon_flamingo.modelvector",
+        "expected": "04c522fa7406d72fd6fa1924dc2297586318e76d303690c9f772c298cf4c4c62",
+        "actual": "04c522fa7406d72fd6fa1924dc2297586318e76d303690c9f772c298cf4c4c62",
+        "matches": true
+      },
+      {
+        "file": "frozen/data/baryon_spk_akino.dataset",
+        "expected": "72cef09d8cbfef9912049da879b9ceb500b6f791946517e2a4f1aa66068786f9",
+        "actual": "72cef09d8cbfef9912049da879b9ceb500b6f791946517e2a4f1aa66068786f9",
+        "matches": true
+      },
+      {
+        "file": "frozen/data/baryon_spk_akino.modelvector",
+        "expected": "b8c0070956ea10c6f1f2cefc134207dfde8afce7d82b014d1bd28bdafee7f2cb",
+        "actual": "b8c0070956ea10c6f1f2cefc134207dfde8afce7d82b014d1bd28bdafee7f2cb",
+        "matches": true
+      },
+      {
+        "file": "frozen/data/baryon_spk_double_power_law.dataset",
+        "expected": "415a6bb0cf3bb510452a4310bc1938149ad50bc93200d45c54e7be80d3f4c0fa",
+        "actual": "415a6bb0cf3bb510452a4310bc1938149ad50bc93200d45c54e7be80d3f4c0fa",
+        "matches": true
+      },
+      {
+        "file": "frozen/data/baryon_spk_double_power_law.modelvector",
+        "expected": "c9e523cc64ae911fc39aa9ccce7e5674418eccfa19fd9160473cf4b61df7162d",
+        "actual": "c9e523cc64ae911fc39aa9ccce7e5674418eccfa19fd9160473cf4b61df7162d",
+        "matches": true
+      },
+      {
+        "file": "frozen/data/baryon_spk_power_law.dataset",
+        "expected": "568902808dc3f1d63b8918e9d1937b1f79f5f90daea8f530254b15f1c9fe7a75",
+        "actual": "568902808dc3f1d63b8918e9d1937b1f79f5f90daea8f530254b15f1c9fe7a75",
+        "matches": true
+      },
+      {
+        "file": "frozen/data/baryon_spk_power_law.modelvector",
+        "expected": "cb01d7c6e1cac2fbc9d2c0250e87effc069f94eebc50b2c84af3284d44691baa",
+        "actual": "cb01d7c6e1cac2fbc9d2c0250e87effc069f94eebc50b2c84af3284d44691baa",
+        "matches": true
+      },
+      {
+        "file": "frozen/data/baryons_logPkR.h5",
+        "expected": "1ab5cc0604925089787dd775740b368db2a83a0d10c88af54f3b3f4bfa33570d",
+        "actual": "1ab5cc0604925089787dd775740b368db2a83a0d10c88af54f3b3f4bfa33570d",
+        "matches": true
+      },
+      {
+        "file": "frozen/data/calculate_mask.py",
+        "expected": "e198af0255ab6c7b5affc6f2798a3678a2f65dceb605749affe60c491121775f",
+        "actual": "e198af0255ab6c7b5affc6f2798a3678a2f65dceb605749affe60c491121775f",
+        "matches": true
+      },
+      {
+        "file": "frozen/data/example1_lssty1xdesi_theory_emul.modelvector",
+        "expected": "258a9a7ab2acf0a52426059bbc4887e8aced62c3d26e8b4b6b56ae36c263708a",
+        "actual": "258a9a7ab2acf0a52426059bbc4887e8aced62c3d26e8b4b6b56ae36c263708a",
+        "matches": true
+      },
+      {
+        "file": "frozen/data/lssty1xdesi_M1_GGL0.05.dataset",
+        "expected": "5a1384d529be39c53276c003c7881fbce8b3c458a09ba95a4a680b4b1e32d7dc",
+        "actual": "5a1384d529be39c53276c003c7881fbce8b3c458a09ba95a4a680b4b1e32d7dc",
+        "matches": true
+      },
+      {
+        "file": "frozen/data/lssty1xdesi_M1_GGLOLAP0.05.mask",
+        "expected": "9d28394a2ae9174c53227e5ac1da74c22bdada7344db252efe12684ec93ff481",
+        "actual": "9d28394a2ae9174c53227e5ac1da74c22bdada7344db252efe12684ec93ff481",
+        "matches": true
+      },
+      {
+        "file": "frozen/data/lssty1xdesi_M2_GGL0.05.dataset",
+        "expected": "2acf163928834366cc94410a3ea76c3d2722da52e777f37cc2c42bd63422f490",
+        "actual": "2acf163928834366cc94410a3ea76c3d2722da52e777f37cc2c42bd63422f490",
+        "matches": true
+      },
+      {
+        "file": "frozen/data/lssty1xdesi_M2_GGLOLAP0.05.mask",
+        "expected": "cdd8defb1d5e01951871a180c3e91598bd6656cc019ad815a5799cd084f7d415",
+        "actual": "cdd8defb1d5e01951871a180c3e91598bd6656cc019ad815a5799cd084f7d415",
+        "matches": true
+      },
+      {
+        "file": "frozen/data/lssty1xdesi_M3_GGL0.05.dataset",
+        "expected": "208e588fc8586c083ad5a097d0b54ccc2409c5ec73f836575892eb7521829626",
+        "actual": "208e588fc8586c083ad5a097d0b54ccc2409c5ec73f836575892eb7521829626",
+        "matches": true
+      },
+      {
+        "file": "frozen/data/lssty1xdesi_M3_GGLOLAP0.05.mask",
+        "expected": "5bb53abe8b5f359f45cfc08068d7f5e02784e613c146b154f18e3b09b6777925",
+        "actual": "5bb53abe8b5f359f45cfc08068d7f5e02784e613c146b154f18e3b09b6777925",
+        "matches": true
+      },
+      {
+        "file": "frozen/data/lssty1xdesi_M4_GGL0.05.dataset",
+        "expected": "a2f621d20f2ffcfa109c9e89eca3d3b3e0502197f71c1aa24dea2b4495524e3b",
+        "actual": "a2f621d20f2ffcfa109c9e89eca3d3b3e0502197f71c1aa24dea2b4495524e3b",
+        "matches": true
+      },
+      {
+        "file": "frozen/data/lssty1xdesi_M4_GGLOLAP0.05.mask",
+        "expected": "3c5a3b29d26cc838d80a9abf91c3b24b5d879cc6bc848f3f6b15d154664a6a99",
+        "actual": "3c5a3b29d26cc838d80a9abf91c3b24b5d879cc6bc848f3f6b15d154664a6a99",
+        "matches": true
+      },
+      {
+        "file": "frozen/data/lssty1xdesi_M5_GGL0.05.dataset",
+        "expected": "21f2ba9d61187ac664c628350daea3002739ccc57b2580df31e5dd88d8ea5f8d",
+        "actual": "21f2ba9d61187ac664c628350daea3002739ccc57b2580df31e5dd88d8ea5f8d",
+        "matches": true
+      },
+      {
+        "file": "frozen/data/lssty1xdesi_M5_GGLOLAP0.05.mask",
+        "expected": "69d3931d9dac04e9ae42d0e4926b41948770cd289424f0c43278df547ca91bef",
+        "actual": "69d3931d9dac04e9ae42d0e4926b41948770cd289424f0c43278df547ca91bef",
+        "matches": true
+      },
+      {
+        "file": "frozen/data/lssty1xdesi_M6_GGL0.05.dataset",
+        "expected": "43c7b633388cd016e57002017f96ee0a6eed89761325f8c5995ffed84c7ec7a2",
+        "actual": "43c7b633388cd016e57002017f96ee0a6eed89761325f8c5995ffed84c7ec7a2",
+        "matches": true
+      },
+      {
+        "file": "frozen/data/lssty1xdesi_M6_GGLOLAP0.05.mask",
+        "expected": "c02849eb2cd2d6c6ccd4a3508013ae79695e24a0550c9b58b257f1954d8d4d9a",
+        "actual": "c02849eb2cd2d6c6ccd4a3508013ae79695e24a0550c9b58b257f1954d8d4d9a",
+        "matches": true
+      },
+      {
+        "file": "frozen/data/lssty1xdesi_cov",
+        "expected": "49469cec16a97b8860b59d95e2736207ad659d27c79c2a755d53276936fb0e2e",
+        "actual": "49469cec16a97b8860b59d95e2736207ad659d27c79c2a755d53276936fb0e2e",
+        "matches": true
+      },
+      {
+        "file": "frozen/data/lssty1xdesi_desi_dr1_dz0p02.dataset",
+        "expected": "c71dad274751aff78103234e4335afb4ce292394c6e9108b82ebdf86a6e3a247",
+        "actual": "c71dad274751aff78103234e4335afb4ce292394c6e9108b82ebdf86a6e3a247",
+        "matches": true
+      },
+      {
+        "file": "frozen/data/lssty1xdesi_desi_dr1_dz0p02.mask",
+        "expected": "03985d9277afd09bbeacc4896ecf53af235d90de3c3e7a3556e19e1e7793f274",
+        "actual": "03985d9277afd09bbeacc4896ecf53af235d90de3c3e7a3556e19e1e7793f274",
+        "matches": true
+      },
+      {
+        "file": "frozen/data/lssty1xdesi_desi_dr1_dz0p02.nz",
+        "expected": "30c6968e05690298bca290733c81c1ed9b70e3242bd7896c483ee05dd1ed8f4e",
+        "actual": "30c6968e05690298bca290733c81c1ed9b70e3242bd7896c483ee05dd1ed8f4e",
+        "matches": true
+      },
+      {
+        "file": "frozen/data/lssty1xdesi_desi_dr1_dz0p02_bins.txt",
+        "expected": "cf20733275251c0ce8be32026299dca852102abf47c3f72468692c5f4a323ca7",
+        "actual": "cf20733275251c0ce8be32026299dca852102abf47c3f72468692c5f4a323ca7",
+        "matches": true
+      },
+      {
+        "file": "frozen/data/lssty1xdesi_desi_dr1_dz0p02_cov",
+        "expected": "36904c80de3359c27cf44e413b8646d03a00f84cea4d6e3236614f24dc0ff818",
+        "actual": "36904c80de3359c27cf44e413b8646d03a00f84cea4d6e3236614f24dc0ff818",
+        "matches": true
+      },
+      {
+        "file": "frozen/data/lssty1xdesi_desi_dr1_dz0p02_fid.datavector",
+        "expected": "2886dbaa4928993f9d396d6e98bcaf153ee9160bd5a493e6fe36cd9419ed1158",
+        "actual": "2886dbaa4928993f9d396d6e98bcaf153ee9160bd5a493e6fe36cd9419ed1158",
+        "matches": true
+      },
+      {
+        "file": "frozen/data/lssty1xdesi_desi_dr1_dz0p02_ngal.txt",
+        "expected": "6a0e2f167534f36c155bab7eb61164bf581aef7ad68d381db38cc0b6e47859ac",
+        "actual": "6a0e2f167534f36c155bab7eb61164bf581aef7ad68d381db38cc0b6e47859ac",
+        "matches": true
+      },
+      {
+        "file": "frozen/data/lssty1xdesi_desi_dr1_dz0p02_pairs.txt",
+        "expected": "d260c3e0edb37d51e69c22d81dee047810f8f7d236cd1667c28cc8a1d97fd3e2",
+        "actual": "d260c3e0edb37d51e69c22d81dee047810f8f7d236cd1667c28cc8a1d97fd3e2",
+        "matches": true
+      },
+      {
+        "file": "frozen/data/lssty1xdesi_desi_dr1_dz0p05.dataset",
+        "expected": "6823bd167ff0be7a425163b549b1b2d1634cec2b8c1c5bcf3ddba8be037e1f98",
+        "actual": "6823bd167ff0be7a425163b549b1b2d1634cec2b8c1c5bcf3ddba8be037e1f98",
+        "matches": true
+      },
+      {
+        "file": "frozen/data/lssty1xdesi_desi_dr1_dz0p05.mask",
+        "expected": "eb4f970b6ae6fb0a9f392dbf142cbdf5294664f9510860ccd753ffa1218dc551",
+        "actual": "eb4f970b6ae6fb0a9f392dbf142cbdf5294664f9510860ccd753ffa1218dc551",
+        "matches": true
+      },
+      {
+        "file": "frozen/data/lssty1xdesi_desi_dr1_dz0p05.nz",
+        "expected": "1f87ed0fb52a3ae235211f929870083c334063cf6fb480acd9dc303239de474b",
+        "actual": "1f87ed0fb52a3ae235211f929870083c334063cf6fb480acd9dc303239de474b",
+        "matches": true
+      },
+      {
+        "file": "frozen/data/lssty1xdesi_desi_dr1_dz0p05_bins.txt",
+        "expected": "11f505a15c904f278a774a36fc788872d178f3e70bd16edfd1aa65d6a64ecbc6",
+        "actual": "11f505a15c904f278a774a36fc788872d178f3e70bd16edfd1aa65d6a64ecbc6",
+        "matches": true
+      },
+      {
+        "file": "frozen/data/lssty1xdesi_desi_dr1_dz0p05_cov",
+        "expected": "3756f1aeb4c77a22c7e2fc8f0f2edf335e06d19a3c69cee4d1f2cdb517537740",
+        "actual": "3756f1aeb4c77a22c7e2fc8f0f2edf335e06d19a3c69cee4d1f2cdb517537740",
+        "matches": true
+      },
+      {
+        "file": "frozen/data/lssty1xdesi_desi_dr1_dz0p05_fid.datavector",
+        "expected": "a68e78cc24e6308fc36bf85c4ff97991e728ba64fa32bedbc55c322ce196a1d7",
+        "actual": "a68e78cc24e6308fc36bf85c4ff97991e728ba64fa32bedbc55c322ce196a1d7",
+        "matches": true
+      },
+      {
+        "file": "frozen/data/lssty1xdesi_desi_dr1_dz0p05_ngal.txt",
+        "expected": "caabc86d14a2d5f67388b1935f5e3a03bc27778406e98de94310b5dfe86400d3",
+        "actual": "caabc86d14a2d5f67388b1935f5e3a03bc27778406e98de94310b5dfe86400d3",
+        "matches": true
+      },
+      {
+        "file": "frozen/data/lssty1xdesi_desi_dr1_dz0p05_pairs.txt",
+        "expected": "b207c90435e9feb53362214510905e3ca2165c0822dd3172722adf7bfbda2e6e",
+        "actual": "b207c90435e9feb53362214510905e3ca2165c0822dd3172722adf7bfbda2e6e",
+        "matches": true
+      },
+      {
+        "file": "frozen/data/lssty1xdesi_desi_dr1_dz0p20.dataset",
+        "expected": "e0c1330ceed2c1a078b73f03e8cb9aa2ec0721157c10d49b4897c2eb302db82f",
+        "actual": "e0c1330ceed2c1a078b73f03e8cb9aa2ec0721157c10d49b4897c2eb302db82f",
+        "matches": true
+      },
+      {
+        "file": "frozen/data/lssty1xdesi_desi_dr1_dz0p20.mask",
+        "expected": "ad9e28fa40c4829fb1763b22be5e77f01e6cbe53a7e35d120101dd2b7b267d26",
+        "actual": "ad9e28fa40c4829fb1763b22be5e77f01e6cbe53a7e35d120101dd2b7b267d26",
+        "matches": true
+      },
+      {
+        "file": "frozen/data/lssty1xdesi_desi_dr1_dz0p20.nz",
+        "expected": "9d07a04507212ce6a96e90439a9a6ad5114cf06ea60456ca6fbadeb924af86ef",
+        "actual": "9d07a04507212ce6a96e90439a9a6ad5114cf06ea60456ca6fbadeb924af86ef",
+        "matches": true
+      },
+      {
+        "file": "frozen/data/lssty1xdesi_desi_dr1_dz0p20_bins.txt",
+        "expected": "86108631c3161047db12eabb9ed764d70faad46964de8e8bcd0a935b3bc4baa3",
+        "actual": "86108631c3161047db12eabb9ed764d70faad46964de8e8bcd0a935b3bc4baa3",
+        "matches": true
+      },
+      {
+        "file": "frozen/data/lssty1xdesi_desi_dr1_dz0p20_cov",
+        "expected": "89e8c80cfb4cf0ce8e8db0943a44c32f12f47fc147c4b50e724bb451843ad731",
+        "actual": "89e8c80cfb4cf0ce8e8db0943a44c32f12f47fc147c4b50e724bb451843ad731",
+        "matches": true
+      },
+      {
+        "file": "frozen/data/lssty1xdesi_desi_dr1_dz0p20_fid.datavector",
+        "expected": "07ef28723bbedd8358b2731a68f5e7f633c435da3557c95735866194dbd787a1",
+        "actual": "07ef28723bbedd8358b2731a68f5e7f633c435da3557c95735866194dbd787a1",
+        "matches": true
+      },
+      {
+        "file": "frozen/data/lssty1xdesi_desi_dr1_dz0p20_ngal.txt",
+        "expected": "0e77b317f6207f805089879b1f3bb3824ff97fa5aab86ee3078c9d91451f2b56",
+        "actual": "0e77b317f6207f805089879b1f3bb3824ff97fa5aab86ee3078c9d91451f2b56",
+        "matches": true
+      },
+      {
+        "file": "frozen/data/lssty1xdesi_desi_dr1_dz0p20_pairs.txt",
+        "expected": "14c3096d9a0a7aacafeaf34aef68713f1e175b53786abcbf4d41802eba8bd736",
+        "actual": "14c3096d9a0a7aacafeaf34aef68713f1e175b53786abcbf4d41802eba8bd736",
+        "matches": true
+      },
+      {
+        "file": "frozen/data/lssty1xdesi_desi_dr3.dataset",
+        "expected": "90804e38b18f07a1a7cddcd4f48e0ba7c834a5fd92babae112f9dacc9faedebf",
+        "actual": "90804e38b18f07a1a7cddcd4f48e0ba7c834a5fd92babae112f9dacc9faedebf",
+        "matches": true
+      },
+      {
+        "file": "frozen/data/lssty1xdesi_desi_dr3.mask",
+        "expected": "34650c072fd1aabb7c21d779e36fef21b0a4207d7c11ef7c59e7cdebd335f210",
+        "actual": "34650c072fd1aabb7c21d779e36fef21b0a4207d7c11ef7c59e7cdebd335f210",
+        "matches": true
+      },
+      {
+        "file": "frozen/data/lssty1xdesi_desi_dr3.nz",
+        "expected": "a480f4d2b183713985dfd3ae936e4493bcb15dbe1aeb3dc4ab66a928b6bc11a4",
+        "actual": "a480f4d2b183713985dfd3ae936e4493bcb15dbe1aeb3dc4ab66a928b6bc11a4",
+        "matches": true
+      },
+      {
+        "file": "frozen/data/lssty1xdesi_desi_dr3_bins.txt",
+        "expected": "e90da4b1ea28ebaac0a7cee11c7eadb1956da809b60519fec5cef93fd6cd849e",
+        "actual": "e90da4b1ea28ebaac0a7cee11c7eadb1956da809b60519fec5cef93fd6cd849e",
+        "matches": true
+      },
+      {
+        "file": "frozen/data/lssty1xdesi_desi_dr3_cov",
+        "expected": "6f81b62b8a33be800905e60b3f25543ce8b21a86e11d83de0c2002c616503595",
+        "actual": "6f81b62b8a33be800905e60b3f25543ce8b21a86e11d83de0c2002c616503595",
+        "matches": true
+      },
+      {
+        "file": "frozen/data/lssty1xdesi_desi_dr3_ells.txt",
+        "expected": "9f9aac251d3eb27e0d96212b8ed6874d7d6d6e664cbb5c8f90741b87f11a2cca",
+        "actual": "9f9aac251d3eb27e0d96212b8ed6874d7d6d6e664cbb5c8f90741b87f11a2cca",
+        "matches": true
+      },
+      {
+        "file": "frozen/data/lssty1xdesi_desi_dr3_fid.datavector",
+        "expected": "32b4051e027bfc90e8d0db4830a175f94f912db9c3089d33375cfbfb4bb25cec",
+        "actual": "32b4051e027bfc90e8d0db4830a175f94f912db9c3089d33375cfbfb4bb25cec",
+        "matches": true
+      },
+      {
+        "file": "frozen/data/lssty1xdesi_desi_dr3_ngal.txt",
+        "expected": "3106ceb3eb3ddc5d7b39b27320b9fa0580d950864c4321cb3ca24a802d3f8da5",
+        "actual": "3106ceb3eb3ddc5d7b39b27320b9fa0580d950864c4321cb3ca24a802d3f8da5",
+        "matches": true
+      },
+      {
+        "file": "frozen/data/lssty1xdesi_desi_dr3_pairs.txt",
+        "expected": "49d6cf539316089a871e815767a521bae0cd60c9acc6448189c750138ba74275",
+        "actual": "49d6cf539316089a871e815767a521bae0cd60c9acc6448189c750138ba74275",
+        "matches": true
+      },
+      {
+        "file": "frozen/data/lssty1xdesi_desi_dr3_sacc.datavector",
+        "expected": "27bf7bbdae7a1a0ab750ff6c0cf3b7f1993ebac8aacf0f8c1a8d4133a8894693",
+        "actual": "27bf7bbdae7a1a0ab750ff6c0cf3b7f1993ebac8aacf0f8c1a8d4133a8894693",
+        "matches": true
+      },
+      {
+        "file": "frozen/data/lssty1xdesi_desi_dr3_windows.npz",
+        "expected": "4301c74e5650828d2711686ca330ce7eb5c113bf0e9a5782d1bf5a685393d8a8",
+        "actual": "4301c74e5650828d2711686ca330ce7eb5c113bf0e9a5782d1bf5a685393d8a8",
+        "matches": true
+      },
+      {
+        "file": "frozen/data/lssty1xdesi_lens.nz",
+        "expected": "dcdd1b15476287ffdd7091d605a684ac2c7807728ad2147155b2632f1280b256",
+        "actual": "dcdd1b15476287ffdd7091d605a684ac2c7807728ad2147155b2632f1280b256",
+        "matches": true
+      },
+      {
+        "file": "frozen/data/lssty1xdesi_lsst_y1_3x2pt.dataset",
+        "expected": "66c5dac9ab8436f39730dbe7cec37413827346445926d8f71b82623382236a77",
+        "actual": "66c5dac9ab8436f39730dbe7cec37413827346445926d8f71b82623382236a77",
+        "matches": true
+      },
+      {
+        "file": "frozen/data/lssty1xdesi_lsst_y1_3x2pt.mask",
+        "expected": "63e4b822d0ce9fbd36fb22d10f11386c0bf5b0a7eb7eba119527110184bcfe4b",
+        "actual": "63e4b822d0ce9fbd36fb22d10f11386c0bf5b0a7eb7eba119527110184bcfe4b",
+        "matches": true
+      },
+      {
+        "file": "frozen/data/lssty1xdesi_lsst_y1_3x2pt_cov",
+        "expected": "30a0595830029532b9a2dc12efc5ecb40cb5dbfcde6c05864c20b36c0cd6415c",
+        "actual": "30a0595830029532b9a2dc12efc5ecb40cb5dbfcde6c05864c20b36c0cd6415c",
+        "matches": true
+      },
+      {
+        "file": "frozen/data/lssty1xdesi_lsst_y1_3x2pt_fid.datavector",
+        "expected": "0055b2b20c0431e101f81a6072104755fa37d8847a48ac53745560d15fc5cead",
+        "actual": "0055b2b20c0431e101f81a6072104755fa37d8847a48ac53745560d15fc5cead",
+        "matches": true
+      },
+      {
+        "file": "frozen/data/lssty1xdesi_ones.dataset",
+        "expected": "1c2f1432390cb3dc59011fde135c585470c46354cce5d798dbbdb3ea3fa92b9d",
+        "actual": "1c2f1432390cb3dc59011fde135c585470c46354cce5d798dbbdb3ea3fa92b9d",
+        "matches": true
+      },
+      {
+        "file": "frozen/data/lssty1xdesi_source.nz",
+        "expected": "de0bd0ee395ade11ca08af7fbee3b414528ff4c628fda8c56a1da76befe995f8",
+        "actual": "de0bd0ee395ade11ca08af7fbee3b414528ff4c628fda8c56a1da76befe995f8",
+        "matches": true
+      },
+      {
+        "file": "frozen/data/lssty1xdesi_theory.modelvector",
+        "expected": "30325683f40b027a5fe9c17d11a4919d3eaf3901291160344251fd12c7a43cb1",
+        "actual": "30325683f40b027a5fe9c17d11a4919d3eaf3901291160344251fd12c7a43cb1",
+        "matches": true
+      },
+      {
+        "file": "frozen/data/lssty1xdesi_theory_TATT.modelvector",
+        "expected": "e3b6759549869bfe19951afe30dee2254e46eafab0d38b0479eb74759cdf8222",
+        "actual": "e3b6759549869bfe19951afe30dee2254e46eafab0d38b0479eb74759cdf8222",
+        "matches": true
+      },
+      {
+        "file": "frozen/data/ones.mask",
+        "expected": "929a72103ca195fe60e42ddaafe2557b56ad614a15781c1277b3e9cfdf9f86fd",
+        "actual": "929a72103ca195fe60e42ddaafe2557b56ad614a15781c1277b3e9cfdf9f86fd",
+        "matches": true
+      },
+      {
+        "file": "frozen/data/pca.txt",
+        "expected": "52b50538e307c1ee8787266fc022dc9366c75b3a92045ddd01c455a4d0d75de5",
+        "actual": "52b50538e307c1ee8787266fc022dc9366c75b3a92045ddd01c455a4d0d75de5",
+        "matches": true
+      },
+      {
+        "file": "frozen/frozen_config_emul2_example1.py",
+        "expected": "7f5f8aa550a680a7854281ce709f4ef28401f75b202dfaffefe3ea2d8abe37d5",
+        "actual": "7f5f8aa550a680a7854281ce709f4ef28401f75b202dfaffefe3ea2d8abe37d5",
+        "matches": true
+      },
+      {
+        "file": "frozen/frozen_config_example1.py",
+        "expected": "5a01e79b21044d5ef6fd7a7b61ba2e9b3d384511f08fe4cf00539a899389adc1",
+        "actual": "5a01e79b21044d5ef6fd7a7b61ba2e9b3d384511f08fe4cf00539a899389adc1",
+        "matches": true
+      },
+      {
+        "file": "frozen/frozen_config_example2.py",
+        "expected": "ba8e8b81727df4acd2f7ba2e31256daaf51986a7afa16dabd2cdab9700c715ef",
+        "actual": "ba8e8b81727df4acd2f7ba2e31256daaf51986a7afa16dabd2cdab9700c715ef",
+        "matches": true
+      },
+      {
+        "file": "frozen/frozen_config_example3.py",
+        "expected": "6b1a8cf5954eb158e1b2df4124d89c7dc499841687f11458e3908131b84bedcb",
+        "actual": "6b1a8cf5954eb158e1b2df4124d89c7dc499841687f11458e3908131b84bedcb",
+        "matches": true
+      },
+      {
+        "file": "frozen/frozen_config_example4.py",
+        "expected": "ee25b737f6bbdb3e7612a01af300e2415ab4969bcf4517deeb4a724511501298",
+        "actual": "ee25b737f6bbdb3e7612a01af300e2415ab4969bcf4517deeb4a724511501298",
+        "matches": true
+      },
+      {
+        "file": "frozen/nmodels_example1.npz",
+        "expected": "3980679441d08717cc7f8096c6729c869645659953866ee76472d663767fe43c",
+        "actual": "3980679441d08717cc7f8096c6729c869645659953866ee76472d663767fe43c",
+        "matches": true
+      },
+      {
+        "file": "frozen/nmodels_example2.npz",
+        "expected": "240feafd9bec28430d4dbb36fdf5a7c7bc6e02099677a992a70ff431a5426fd1",
+        "actual": "240feafd9bec28430d4dbb36fdf5a7c7bc6e02099677a992a70ff431a5426fd1",
+        "matches": true
+      },
+      {
+        "file": "frozen/nmodels_example3.npz",
+        "expected": "5030ecefe6d3c6b1d37025f96349dc972120a584d986088c24a1744500f4cdb1",
+        "actual": "5030ecefe6d3c6b1d37025f96349dc972120a584d986088c24a1744500f4cdb1",
+        "matches": true
+      },
+      {
+        "file": "frozen/nmodels_example4.npz",
+        "expected": "d06a674cc49acef73b9218c30b0c973af26a27a612e3e2514a1da29d0c16ea3a",
+        "actual": "d06a674cc49acef73b9218c30b0c973af26a27a612e3e2514a1da29d0c16ea3a",
+        "matches": true
+      },
+      {
+        "file": "frozen/reference_chi2.json",
+        "expected": "0940703755ab19792bc6ede35a9c9e643bba8c657fa1519a68c079a9ca6f989f",
+        "actual": "0940703755ab19792bc6ede35a9c9e643bba8c657fa1519a68c079a9ca6f989f",
+        "matches": true
+      }
+    ]
+  },
+  "fingerprint": {
+    "interface/cosmolike_lssty1xdesi_interface.so": "73ed73e9b5c45b6865fb5eb101dc83787673026d529a2eafb2bb5c7d4db67c07",
+    "tests/manifest_sha256.json": "d06997dc35c56fa2474eaae4036f4545d1705861f9743cf226208fd979110bfc",
+    "tests/cocoa_test_utils.py": "f762644862b5b1516c5a8348df6a93763b9c57a6f6bf3466ef3fb1f6a919ef5a",
+    "likelihood/__init__.py": "f4c663a371ea6c0e515fdd4c1e07d826cc09bb5b3ff9b3551c2be0de52adbcc5",
+    "likelihood/_cosmolike_prototype_base.py": "867c795b00d5859fa6c53bdbe9c868803aebd2781a9f4206af25ed792c1b8729",
+    "likelihood/combo_2x2pt.py": "f90250d29eef0bde00c5ffc56b1668991c62a669e0c1601cc7f6d7158ff99cfd",
+    "likelihood/combo_3x2pt.py": "04b055e533aec28fd5091aacadbdc9d61a511d0d8e3fec4331790d2371682cc0",
+    "likelihood/combo_xi_gg.py": "02e8a7abffd74e16070e5f97ebb373223c41be8b9277e90e6c1d206a3f94434b",
+    "likelihood/combo_xi_ggl.py": "8de586a41f9de50e17ba083cadc6527306b2b0fdb6027c66d095fa8599a2526e",
+    "likelihood/cosmic_shear.py": "c97a5ac3acfa29b668faf729c0f5fe42ff66f1474ea55cd8fc40cd8604d75de6",
+    "likelihood/desi_cl.py": "8b3b630341c0a663f3c63d5db93b389142b30cb5a30e9c69ba4fb86eafe728f0",
+    "likelihood/desi_cl_dr1_dz0p02.py": "497088c65426ef884074ff7738b97964b1e9185a1ea1fa945b88bb67313dc950",
+    "likelihood/desi_cl_dr1_dz0p02_model_b.py": "53314694c5105248f701e6baeae8dd48b0eb2a2b98eaec2cf47c7e74401dbd92",
+    "likelihood/desi_cl_dr1_dz0p05.py": "07139fde2382edbdd34e048556f2beb17005faf2cc94692989b9ae139c208a29",
+    "likelihood/desi_cl_dr1_dz0p05_model_b.py": "9a31c953aa4f5a70dbe9a4169bce403a6a892d859a822e1c9b5e04a3734cae94",
+    "likelihood/desi_cl_dr1_dz0p20.py": "7674a9a0a52d650e35e26c668811064af73b0f1dd585d017f38786fe0758a5c7",
+    "likelihood/desi_cl_dr1_dz0p20_model_b.py": "b06e79ed04bbd8129f052bdcfafe4669619e8bf10a37794922b75cdaed63e1e8",
+    "likelihood/desi_cl_model_b.py": "b32b5bc84fd767c2c6af591c2d08909afc58b24dff24687c515672c6d85e05df",
+    "likelihood/lsst_y1_3x2pt.py": "d58d2a5f4179bd3f5fdb9262cecb303282671dd72dc153abc00008cf633432e1",
+    "likelihood/combo_2x2pt.yaml": "3444aa98829e51884864e506f3c383459efb2b90dc8b9f26df3a5a65ee664a8d",
+    "likelihood/combo_3x2pt.yaml": "67a9cfe04834c33e66f2e3127f0edd61c28344ae0bce6a893964e64ef64a1f15",
+    "likelihood/combo_xi_gg.yaml": "e81ea1d41fde0ba4cbe2a0bb0e28c1e88cf5b28c3665603bf4888154a00a9b2e",
+    "likelihood/combo_xi_ggl.yaml": "a9b0696882c5c5fed92aefa96dbd6cd525956212edd30c4d8744c156e00dfd21",
+    "likelihood/cosmic_shear.yaml": "35ffef471fc20c9d5a5f63d13702b64de7914be62953d45d42d8230d97eaa5a5",
+    "likelihood/desi_cl.yaml": "cdbd4c1a69f0e1e5feb487240f556fb93f8ff48794c4562df2fe489189832ae0",
+    "likelihood/desi_cl_dr1_dz0p02.yaml": "d001bb39656f5465b92cb19b39e0c86576e6093631b257a4d90002f9da448ea1",
+    "likelihood/desi_cl_dr1_dz0p02_model_b.yaml": "892210fdc492a33c95d244e620b146984123b643e938ee5e403ddd04166fce70",
+    "likelihood/desi_cl_dr1_dz0p05.yaml": "7f576f477d261668ed42133f03ce1165bfd9ac94236185c81134e89062e6be94",
+    "likelihood/desi_cl_dr1_dz0p05_model_b.yaml": "a1c51ba602dc1834219d3138db500e1ed0baade60ba51f5d8722fccf767d72c1",
+    "likelihood/desi_cl_dr1_dz0p20.yaml": "707b776ca3df32fc6b4e3aace40d04ec0f8c72130a29c48ca78389c4c04deee8",
+    "likelihood/desi_cl_dr1_dz0p20_model_b.yaml": "4ab3a21bfec591b489ca4cbdaab66a1996d2b2e450f9d5c63ae5bb4419ca14be",
+    "likelihood/desi_cl_model_b.yaml": "d691a7b73e45197d4379bee4f60578b1086bb00497ae8718694db80a71a8896a",
+    "likelihood/lsst_y1_3x2pt.yaml": "5599dfefdbc3888afe5d86854ebb8c055a09f3abb75b5f47a819eda64bfd6679",
+    "likelihood/params_desi.yaml": "eba0585ff4d478742ec12986582700179b238c13d7aba6614c8df189ae157a7a",
+    "likelihood/params_desi_bias_pessimistic.yaml": "b6e84f53dc1296d00f0ee2fac47475d9522bb5833a84e28a26bc1a5ea6a6ae7c",
+    "likelihood/params_desi_dr1_dz0p02.yaml": "ac9448e7a4934aea62d40c93d966e0fc40ca73f8daa5dbb9a16a9301cb6bf47a",
+    "likelihood/params_desi_dr1_dz0p02_bias_pessimistic.yaml": "9a599febae9ac7e256f4faab0b7d178d260dfdca35af4baf638b98965944597f",
+    "likelihood/params_desi_dr1_dz0p02_model_b_tilts.yaml": "2649043312720186b0a32412373f71240d409fda13d297fdc5f1f29f41f60e8d",
+    "likelihood/params_desi_dr1_dz0p05.yaml": "c9d750f7e0e2008db4dee84a16e14df18aa97f0e4327ad1cbc21e4c4e2b3ca8a",
+    "likelihood/params_desi_dr1_dz0p05_bias_pessimistic.yaml": "1f20a2b6240c2a21344ca3374f691d6822e28c71626a73ca324d9adc7749022f",
+    "likelihood/params_desi_dr1_dz0p05_model_b_tilts.yaml": "4e8c0eea8fa15bb5f2d5665bd51a35f365e5429ad1f7c12df78c88604b38513d",
+    "likelihood/params_desi_dr1_dz0p20.yaml": "57278f49bf4d8a31668651cd1608b080c3e6646adc65b1b892489566d9850897",
+    "likelihood/params_desi_dr1_dz0p20_bias_pessimistic.yaml": "e4d84de9535aec943131a512c634423ed4e5a6f9a7c5b07167b7cbda9ee94b8c",
+    "likelihood/params_desi_dr1_dz0p20_model_b_tilts.yaml": "e90fa7c1f99733149728ef8519f14324a4c0df9555658373347987a4e28d989e",
+    "likelihood/params_desi_model_b_tilts.yaml": "84499cd7ef168c8427a02c306b7baa021b4a44bab8f8b4befea7724134bf7bbe",
+    "likelihood/params_lens.yaml": "7affe9ec9ced091ececd6a720ab6f800f11e681f19644c4cc268b24a71fc8ac8",
+    "likelihood/params_source.yaml": "b3be088d881118f266c5edf827f9e59e252e477e8f954aa6658fdb0496deab0d"
+  },
+  "shared_test_source_sha256": {
+    "cocoa_testing.py": "5b53970a78974b926043001b0a93265d3a7f273c397bd5d142501168ff8eeb66",
+    "cocoa_testing_suites.py": "6a8e26c462f825bcb0efa6255f4db1c3082c771f6e3853aa420d4e33fbbf39b0"
+  },
+  "source_write_scope": "BF0 writes only a temporary cocoa_baryon_model_*/baryon_spk_akino.modelvector and matching descriptor, excluding the frozen links with those names; no frozen output is its write target.",
+  "remaining_definition": "Exclude the entirely completed test_accuracy.py module. Restart interrupted BF0 from its beginning and run other remaining cases; its five completed sub-knob diagnostics remain in the original log but the test has no resumable sub-knob state.",
+  "numerical_slot_released": true,
+  "queue_status_note": "The original queue preserves returncode 2/failed for KeyboardInterrupt; this explicit user-requested deferral supersedes its scheduling status without relabeling it complete."
+}

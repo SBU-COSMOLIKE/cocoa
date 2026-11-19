@@ -1,6 +1,13 @@
 # Project endpoint refreeze and retained FFTW preparation
 
-The refreeze and notebook queue is in progress. This record separates
+The refreeze and notebook queue is in progress. Seven A projects are
+complete; the user explicitly deferred the remaining DESI A checks until
+tonight. Its partial suite preserves eight passes and four permitted
+accuracy-threshold failures, with 98 cases still to run. All owned DESI
+processes stopped and all 91 frozen manifest hashes still match. The
+[resume record](projects/lssty1xdesi/RESUME.md) preserves the exact boundary.
+The other projects' notebook queue continues after the reserved native
+validation interval. This record separates
 completed checks from work still running. The configuration and ordering
 are specified in [PLAN.md](PLAN.md). All heavy jobs are serial, with at most
 six OpenMP workers and one BLAS worker. No changes have been pushed.
@@ -15,15 +22,15 @@ do not separate omitted-domain error from sampling error. That separation
 requires varying the endpoint and node count together; the present
 refreeze does not establish it.
 
-Independent input audits now cover the first seven projects: 325 manifest
-entries and 28 frozen sampled points, parameter definitions and prior
+Independent input audits now cover all eight projects: 416 manifest
+entries and 33 frozen sampled points, parameter definitions and prior
 dictionaries match their saved originals. Frozen physical input data are
 unchanged; only generated model-vector files move. Roman real
-`halo_reference.json` is unchanged. The Roman real audit was performed
-while its quick checks were still running, so this input result is not a
-claim that those checks have passed. The separate records are
-`root_manifest_audit_first_four.json` and the Roman Fourier, Roman KL and
-Roman real files with the same prefix.
+`halo_reference.json` is unchanged. The DESI audit was performed while its
+quick checks were still pending, so this input result is not a claim that
+those checks have passed. The separate records are
+`root_manifest_audit_first_four.json` and the Roman Fourier, Roman KL,
+Roman real and LSST Y1 × DESI files with the same prefix.
 
 ## Completed implementation and binding checks
 
@@ -280,9 +287,10 @@ makes the existing default galaxy tolerances explicit and records the
 already-disabled higher-order bias, nonlinear Kaiser and orientation
 selection controls as zero, zero and null. Their fallback values were
 checked in the likelihood source before acceptance. Both rejected
-attempts and the successful field audit are retained. Endpoint comparisons,
-reference generation, the four random-model archives and the final quick
-checks now run in order; their results are not yet complete.
+attempts and the successful field audit are retained. Five endpoint/state
+comparisons, reference generation, all four random-model archives and the
+constant measurements have completed. The final quick checks began at
+06:14:17 EST and remain pending.
 
 ## LSST endpoint comparison
 
@@ -313,26 +321,31 @@ The fifty-point accuracy check is advisory in this project
 of 0.2 across the prior. Its median squared vector difference is 0.005377
 and its maximum is 1.439154. With the amplitude, matter density and linear
 galaxy biases fixed to their fiducial values, the maximum is 0.058521.
-The generated scatter figure was visually inspected: labels, scales,
-legend and the advisory 0.2 line are legible. These accuracy results are
+The [generated scatter figure](projects/lsst_y1/figures/accuracy_nmodels_example2_seed137.png)
+was visually inspected: labels, scales, legend and the advisory 0.2 line
+are legible. A project-specific copy prevents later projects with the
+same example name from replacing this evidence. These accuracy results are
 distinct from the much smaller endpoint-only comparison above.
 
 ## Random-model archives and CAMB warnings
 
 The completed LSST archive retains all fifty original sampled points
 byte for byte, with identical names, held flags, seed and draw rules.
-Every regenerated vector entry is finite. The same offline comparison
-will check the four DESI archives after their generation completes.
+Every regenerated vector entry is finite. The four DESI archives also
+pass this comparison: all 200 physical draws and their metadata are
+unchanged, all vector entries are finite, and the new configuration
+hashes independently match the configured high-accuracy models.
 
 CAMB printed a transfer-time integration warning in the LSST log and
-in the ongoing DESI generation. This is not an established observable
+in three of the four DESI archives. This is not an established observable
 error budget: its message omits the actual time discrepancy. The Fortran
 output is buffered. In LSST, 640 lines appear between Python progress
 messages for models two and three, and another 49 appear after all fifty
 vectors were stored. Those positions therefore cannot identify the
 physical row that caused each warning. The records retain log boundaries,
-warning counts and the candidate progress-point information with that
-limitation explicit. Finite likelihoods and vectors do not establish
+warning counts and the neighboring progress-point information with that
+limitation explicit. DESI examples one, two and four each contain 685
+warning lines, including a trailing flush; example three contains none. Finite likelihoods and vectors do not establish
 convergence; neither warnings nor failed accuracy bounds are suppressed.
 
 ## Notebook preparation
@@ -352,7 +365,9 @@ initializations, DES Y3's boost 1-to-2-to-1 state round trip, and DESI
 Fourier and real-space Fisher reads. Restored tolerances match their
 accuracy-scaled production bases, and the repeated DES vector is bitwise
 identical. The shared helper is committed in core `87195ee`.
-Full notebook execution and visual inspection remain pending; no old
+The shared noise explanations were further qualified in core `48da11f`,
+with an unchanged executable AST. Full notebook execution and visual
+inspection remain pending; no old
 output is represented as a new result.
 The detailed notebook record is [PREPARATION.md](notebooks/PREPARATION.md).
 

@@ -43,15 +43,13 @@ the notebook/refreeze agent. No push is requested.
 
 ## In progress
 
-Seven A projects are complete. Roman real finished at 03:42:24 EST and
-was committed as `064cb94`. The DESI configuration expansion first stopped
-because today's examples select model B rather than the stored regression
-likelihood. A retained-physics Cobaya expansion now preserves all five old
-parameter/prior/point dictionaries and adds endpoint 4.5 plus existing
-explicit off/default controls. Its audit passes. Session `3293`, started
-at 03:45:19 EST, runs DESI endpoint checks, references, random-model
-archives, constants and quick tests. The prior rejected attempts remain
-recorded.
+Seven A projects are complete. DESI A is deferred until tonight at the
+user's explicit request. Its quick suite stopped safely at 07:21:47 EST:
+eight completed cases passed and four completed archive checks had the
+permitted threshold failures. All 200 high-accuracy and 200 default vectors
+were completed; all 91 frozen manifest files remain intact. The remaining
+98 quick cases and final A commit are pending. The exact resume boundary is
+[recorded here](projects/lssty1xdesi/RESUME.md). No restart was scheduled.
 
 The analytic bridge checks passed five cases in each of strict and
 UBSan modes and released the slot. The bounded CAMB study also finished:
@@ -103,17 +101,16 @@ any separate retry evidence and before/after reference records.
 
 ## Next numerical jobs
 
-The bridge/adapter/allocator changes have a reserved validation interval
-after DESI completes and before C starts. Reactivate
-`/root/ia_decomposition_review` with `collaboration.followup_task` when
-`heavy.lock` is released. That agent owns the pi-value probe, final source
-snapshot, strict/UBSan checks and short original/fixed ASan alias checks.
-It will explicitly hand the slot back; no installed project binary changes.
+The DESI CAMB background diagnostic is also deferred until tonight.
+The numerical slot was released directly to the reactivated bridge agent
+for its reserved adapter/allocator/bridge checks. All owned DESI processes
+have stopped and `heavy.lock` was removed normally. When the bridge agent
+releases the slot explicitly, begin C notebooks despite the authorized
+DESI deferral; those eleven notebooks do not include DESI.
 
 The supplied-baseline validation, full-vector study and actual CAMB/provider
-check have released the numerical slot. Continue the requested project order
-through the active LSST Y1 × DESI run. The reserved derivative and private CAMB checks are complete. Run and review C notebooks after all A
-projects complete.
+check have released the numerical slot. The completed private diagnostics remain recorded. Continue C after the
+reserved bridge interval; finish the deferred DESI A checks tonight.
 
 The C outputs use the current wrapper boost convention; some Fisher wrappers
 square the requested boost. The native checks measured requested boost 2 as
