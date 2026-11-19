@@ -1,0 +1,55 @@
+{
+  "scope": "Read-only source audit; no native or CAMB evaluation, benchmark, or production-source changes.",
+  "plan_sha256": "506867bbe1420a2fa077c17cd4f5928e2b5ae5bee678732356c649820d750343",
+  "sources": [
+    {
+      "path": "/Users/vivianmiranda/data/COCOA/november2026/sbu_cosmolike/cocoa/Cocoa/projects/des_3pcf/python/des3pcf/scaling.py",
+      "sha256": "fd7d6cd0ee8be2d0f0798af873160646492b93912c55de32fbfdc3e77f6cf948"
+    },
+    {
+      "path": "/Users/vivianmiranda/data/COCOA/november2026/sbu_cosmolike/cocoa/Cocoa/projects/des_3pcf/python/des3pcf/scaling_lsst.py",
+      "sha256": "2ccca1526ba7d659fbc704307ab806c88d0dda4b7acebd6e49ab9038023da379"
+    },
+    {
+      "path": "/Users/vivianmiranda/data/COCOA/november2026/sbu_cosmolike/cocoa/Cocoa/projects/des_3pcf/python/des3pcf/scaling_threepcf.py",
+      "sha256": "586fce09d5932df91ad6c9817d1e7c879723bfe48cec5adcc0648993026ef4a8"
+    },
+    {
+      "path": "/Users/vivianmiranda/data/COCOA/november2026/sbu_cosmolike/cocoa/Cocoa/projects/des_3pcf/python/des3pcf/scaling_plot.py",
+      "sha256": "2b6ae6685cbaa30f296ddb7e62e578ec54a1122984895e44fc33626b9ed1cbc4"
+    },
+    {
+      "path": "/Users/vivianmiranda/data/COCOA/november2026/sbu_cosmolike/cocoa/Cocoa/projects/des_3pcf/python/des3pcf/mean.py",
+      "sha256": "ba7369cf4805798a2fcedf2a6eb4120a550322ffe224ff5912bbae31f10acf78"
+    },
+    {
+      "path": "/Users/vivianmiranda/data/COCOA/november2026/sbu_cosmolike/cocoa/Cocoa/projects/des_3pcf/python/des3pcf/inputs.py",
+      "sha256": "0130f18c005936f1dee5a611ef6682213ca58c2749dca9f363236c042e2f0151"
+    },
+    {
+      "path": "/Users/vivianmiranda/data/COCOA/november2026/sbu_cosmolike/cocoa/Cocoa/projects/des_3pcf/scripts/benchmark_scaling.py",
+      "sha256": "c8f9c068733e191cfdc2e8fb2e0c580c62d57dd027487dbcff48981cc5c8088d"
+    },
+    {
+      "path": "/Users/vivianmiranda/data/COCOA/november2026/sbu_cosmolike/cocoa/Cocoa/projects/des_3pcf/configs/openmp_scaling.yaml",
+      "sha256": "064980aad9c5aa570cbd8bdb92939689515fc134557d789d6ff854c342b39bd3"
+    },
+    {
+      "path": "/Users/vivianmiranda/data/COCOA/november2026/sbu_cosmolike/cocoa/Cocoa/projects/des_3pcf/BENCHMARK.md",
+      "sha256": "3d9a663a25be2ae8d7fd2e9361c2300ec0b29e74da736f59cb18d13e73612e49"
+    },
+    {
+      "path": "/Users/vivianmiranda/data/COCOA/november2026/sbu_cosmolike/cocoa/Cocoa/projects/lsst_y1/likelihood/combo_3x2pt.yaml",
+      "sha256": "e95b70155705760e63d4b1cb2e3c1c817d4deb64885e84187525810ab6fbf5a1"
+    },
+    {
+      "path": "/Users/vivianmiranda/data/COCOA/november2026/sbu_cosmolike/cocoa/Cocoa/external_modules/code/cosmolike_core/cosmolike/3pcf/threepcf_interface.cpp",
+      "sha256": "aee334037e3b963229c97e7e0d29ddf9adab692df01d678ffdf5aee0ffcbd287"
+    }
+  ],
+  "render": {
+    "tables": 1,
+    "paragraphs": 26,
+    "html_bytes": 13018
+  }
+}

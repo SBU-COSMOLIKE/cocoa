@@ -573,6 +573,9 @@ identifies the 98 remaining quick cases and the completed comparisons.
 The [follow-up source review](../../to_reproduce/zmax_per_project_refreeze_20261118/notebooks/D_SOURCE_REVIEW.md)
 records the different wrapper boost paths, derivkit's near-zero sampling
 scale and plotting side effect, and the interpretation of response plots.
+The [timing source audit](../../to_reproduce/zmax_per_project_refreeze_20261118/notebooks/E_TIMING_REVIEW.md)
+identifies the older LSST settings, unsupported newer source/physics choices,
+input-pinning gaps and worker-count assumptions to correct before E.
 
 </details>
 
