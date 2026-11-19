@@ -1225,6 +1225,12 @@ it, never around it. The pieces:
 - `manifest_sha256.json` - the SHA-256 pin of every file under
   `frozen/`; each test verifies it before evaluating anything, so
   nothing under `frozen/` is ever edited by hand.
+- `tests/data_vector/test_setting_sequences.py` - bound in every
+  project: each sequence changes cosmolike settings in one process,
+  as a notebook does between evaluations, and must match a fresh
+  process at the final settings bit for bit, or stop with the named
+  error. A change to a frozen example's bin counts or probe layout
+  updates this file's sequence arguments in the same piece of work.
 
 Two data designs coexist, and knowing which project has which is the
 first step of any refreeze:
@@ -1794,6 +1800,11 @@ notebook wrapper or a notebook. The points that matter from this side:
 
 Use these defaults in every plotting script, notebook cell or study
 figure written for the maintainer; deviations get rejected by eye.
+The `figures` skill holds the complete figure style (colorblind-safe
+palette with redundant encodings, legend placement enforced in code,
+paper and note layouts, captions, the plot-folder contract); read it
+before drawing any figure. The rules below are its README and study
+part.
 
 Notebook setup (the cell of every `EXAMPLE_EVALUATE*.ipynb`):
 
