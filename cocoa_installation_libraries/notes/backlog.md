@@ -491,8 +491,8 @@ The work queue runs serially with six OpenMP workers and BLAS fixed to one.
 
 The endpoint defaults to four and rejects nonfinite values or values below
 four. LSST Y1 and Roman real use 4.5, Roman Fourier uses 5.0, and the DES
-projects use 4.0. Roman KL and LSST Y1 with DESI retain 4.5. Six project
-refreezes are committed; Roman real and LSST Y1 with DESI remain in progress.
+projects use 4.0. Roman KL and LSST Y1 with DESI retain 4.5. Seven project
+refreezes are committed; LSST Y1 with DESI remains in progress.
 
 | Project | Refreeze commit | Quick-test outcome |
 |---|---|---|
@@ -502,6 +502,7 @@ refreezes are committed; Roman real and LSST Y1 with DESI remain in progress.
 | DES cluster | `eb6fc9d` | 73 passed |
 | Roman Fourier | `42428b3` | 88 passed, one inapplicable Fourier stencil check skipped |
 | Roman KL | `14281fd` | 92 applicable cases passed after the comparison repair below; one Fourier skip |
+| Roman real | `064cb94` | 127 passed, 24 optional slow-halo checks skipped |
 
 The initial LSST missing-GSL build failure passed on a targeted retry in
 the normal Cocoa build environment. Roman KL's original run remains
@@ -519,8 +520,10 @@ DES Y3 retains an explicitly Limber galaxy-lensing residual, and clustering
 residuals remain. The installed CAMB is unchanged; numerical agreement does
 not identify the unrecorded historical binary. Frozen physical parameters,
 points and priors are preserved even when live example defaults differ.
-An independent audit checks 290 frozen-file hashes and 25 parameter
-configurations across the first six projects. Eleven notebooks have prepared settings,
+An independent audit checks 325 frozen-file hashes and 28 parameter
+configurations across the first seven projects. Roman real's seven saved
+endpoint comparisons preserve shear entries and restore the original vectors
+bit for bit; its halo reference is unchanged. Eleven notebooks have prepared settings,
 Fisher tolerance restoration and checked structure; full execution remains
 separate from those preparation checks.
 
