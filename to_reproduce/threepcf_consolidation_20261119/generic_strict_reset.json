@@ -1,0 +1,7 @@
+{
+  "binary": "/private/tmp/threepcf_consolidation_20261119/generic_strict/cosmolike_lsst_y1_interface.so",
+  "binary_sha256": "0534b2eb42019bed5228cfcf8ad5ea7a50a6ad26a668b1ada496748fbac03eee",
+  "power_sha256": "8552fc4aa8f82f226f90cdd47d96b9306b4f6c28af05528f0b54f72da67df909",
+  "scope": "ordinary project total/cb variance A/B/A and initial_setup reset; no survey refreeze",
+  "passed": true
+}
