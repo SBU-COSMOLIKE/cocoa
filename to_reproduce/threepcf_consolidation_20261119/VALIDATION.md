@@ -164,8 +164,49 @@ interpolation modes. The full suite passes 876 tests in strict mode and
 passes 22 focused UBSan tests. The first strict run's two failures were
 error-message matching failures; no numerical assertions failed.
 
-The native no-array compatibility path remains present. This is a checked
+At that stage the native no-array compatibility path remained present. This was a checked
 integration step, not a claim that all local C smoothing has been removed.
 The user subsequently narrowed the validation queue: run the necessary
 TATT shared4 comparison, omit the automatic full shared8 forecast, and
 defer the broader covariance study. Notebooks and refreezes remain paused.
+
+
+## Authorized retirement of the native variance fallback
+
+The user subsequently authorized removing the fallback and migrating its
+callers. The BiHalofit mean model now requires explicit variance arrays;
+its local C smoothing integral, radius search and scalar power-normalization
+branch have been removed. The core bridge obtains missing arrays from the
+shared core variance engine and copies them into the immutable model.
+Direct native callers must supply their arrays. The independent Python
+reference prepares them explicitly for original-library comparisons and
+legacy test inputs. Frozen outputs captured before retirement retain an
+independent check of the deleted implementation.
+
+The automatic bridge preparation smooths the installed full P(k,z).
+Factorized P(k,0)D(z)^2 inputs require explicitly prepared arrays, as in the
+project comparison provider. The legacy scalar sigma8 argument does not
+rescale supplied power; tests check this at an exact input anchor and
+check bitwise invariance of the complete returned spectrum when that
+scalar changes. This distinction prevents an interpolation-coordinate
+roundoff error from being mistaken for a normalization change.
+
+Python bridge construction now retains the GIL while preparing shared
+mutable tables and copying their results. Internal OpenMP remains available.
+A simultaneous two-thread cold-build test checks that both requests obtain
+one cached owner and advance its generation only once. External native
+callers must still serialize access to global core state.
+
+The final complete suite passes **879 tests in strict mode** and **879 under
+UBSan**, with halt-on-error enabled. No numerical tolerance was relaxed.
+The source identities, binary identities and log hashes are recorded in
+`retired_variance_final.json`. The earlier passing NLA and TATT comparisons
+remain the forecast evidence; this deletion did not rerun a full forecast
+or establish an eight-times TATT result. The covariance halo calculation
+is a separate numerical prescription and was not removed in this change.
+
+Installed extensions were not replaced. Notebooks, refreezes and the broader
+covariance study remain paused. The project documentation commit `4260e77`
+and the unrelated Makefile changes were preserved.
+
+Retirement commits: core `eb31a3f`; project `7f4f3e9`.
