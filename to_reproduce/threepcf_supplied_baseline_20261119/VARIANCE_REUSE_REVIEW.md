@@ -9,6 +9,24 @@ The proposed reuse changes three aspects of the calculation. Test each
 separately before combining them. A faster variance calculation and a
 different physical growth prescription must have separate comparisons.
 
+## Sequencing with the interpolation work
+
+The uniform-grid plan's stages B through F are not complete in the inspected
+source. `make_natural_uniform_spline` still calls the local irregular builder
+before replacing its second derivatives with a separate natural solve.
+Power, background and radial-kernel preparation still call `make_spline`.
+The dense production readers usually use index arithmetic, but their
+preparation and the explicitly selected original readers still use the
+irregular machinery. These facts are separate from the completed uniform
+spline adoption in feedback preparation.
+
+The variance handoff depends on acceptance of that interpolation work. Its
+shared-array interface can be designed now, but a combined replacement must
+not attribute differences from interpolation, amplitude and growth to one
+variance algorithm. Keep these comparisons separate when implementing the
+remaining stages. The source sequence was rechecked at core `48da11f`; its
+interpolation implementation is unchanged from the revision above.
+
 ## Amplitude normalization
 
 `physics_3pcf.c`, around line 1501, multiplies the supplied linear spectrum

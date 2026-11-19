@@ -605,7 +605,7 @@ consolidations preserve derivative accuracy or improve runtime.
 ### What is missing
 
 - Replace module-local variance and normalization work with the shared
-  power-table functions after reviewing the completed uniform-grid seam.
+  power-table functions after accepting the planned uniform-grid changes.
   The handoff requires joint-mean squared covariance-weighted displacement
   at most 0.01, derivative-column error at most 1e-3, and changes below
   0.5% in marginalized errors and pair figures of merit, stable under
@@ -615,7 +615,9 @@ consolidations preserve derivative accuracy or improve runtime.
   normalization and an inconsistent Gaussian-tail derivative. The
   [variance reuse record](../../to_reproduce/threepcf_supplied_baseline_20261119/VARIANCE_REUSE_REVIEW.md)
   identifies the immutable-array boundary and existing comparison inputs;
-  it contains no numerical acceptance result.
+  it contains no numerical acceptance result. The physical model still
+  uses its local irregular builder and natural-spline solve; feedback's
+  uniform preparation does not complete those separate interpolation stages.
 - Separate immutable model construction from IA-only and feedback-amplitude
   query changes, with A/B/A invalidation and retained-old-owner tests.
 - Finish the NFW domain/cache checks and remaining consolidation described
