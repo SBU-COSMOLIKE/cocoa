@@ -80,6 +80,8 @@ export IGNORE_DARK_EMULATOR_CODE=1
 # The keys below control which cosmolike projects will be installed and compiled 
 # ------------------------------------------------------------------------------
 #export IGNORE_COSMOLIKE_LSST_Y1_CODE=1
+#export IGNORE_COSMOLIKE_LSSTY1XDESI_CODE=1
+#export IGNORE_COSMOLIKE_DES_3PCF_CODE=1
 export IGNORE_COSMOLIKE_DES_Y3_CODE=1
 #export IGNORE_COSMOLIKE_DESXPLANCK_CODE=1
 export IGNORE_COSMOLIKE_ROMAN_FOURIER_CODE=1
@@ -149,6 +151,10 @@ export USE_SPT_CLIK_PLANCK=1
 # ------------------------------------------------------------------------------
 # ------------------------------------------------------------------------------
 
+export DES_3PCF_URL="https://github.com/SBU-COSMOLIKE/cocoa_des_3pcf.git"
+export DES_3PCF_NAME="des_3pcf"
+export DES_3PCF_GIT_BRANCH="main"
+
 export DES_Y3_URL="https://github.com/SBU-COSMOLIKE/cocoa_des_y3.git"
 export DES_Y3_NAME="des_y3"
 export DES_Y3_GIT_BRANCH="main"
@@ -160,6 +166,10 @@ export DESXPLANCK_GIT_BRANCH="main"
 export LSST_Y1_URL="https://github.com/SBU-COSMOLIKE/cocoa_lsst_y1.git"
 export LSST_Y1_NAME="lsst_y1"
 export LSST_Y1_GIT_BRANCH="main"
+
+export LSSTY1XDESI_URL="https://github.com/SBU-COSMOLIKE/cocoa_lssty1xdesi.git"
+export LSSTY1XDESI_NAME="lssty1xdesi"
+export LSSTY1XDESI_GIT_BRANCH="main"
 
 export ROMAN_FOURIER_URL="https://github.com/SBU-COSMOLIKE/cocoa_roman_fourier.git"
 export ROMAN_FOURIER_NAME="roman_fourier"
@@ -243,12 +253,6 @@ export FASTPT_WRAPPER_GIT_BRANCH="main"
 #   No optimization (-O0), full warnings, debug symbols, and sanitizers
 #   (UBSan + float-divide-by-zero on macOS). Keeps the SIMDe codepaths.
 #   Use for: debugging, valgrind, catching undefined behavior.
-#
-# Aggressive mode is retired: fast-math builds produced incorrect covariance
-# inverses. COSMOLIKE_AGGRESSIVE_MODE now causes a build error; unset it.
-# Do not add -ffast-math, -Ofast, -funsafe-math-optimizations,
-# -fassociative-math, -ffinite-math-only, -freciprocal-math,
-# -fno-signed-zeros, or -fno-trapping-math to the compiler flags.
 #
 # DEFAULT MODE (COSMOLIKE_DEBUG_MODE unset)
 #   Full optimization (-O3, -march=native, LTO, loop unrolling) but with

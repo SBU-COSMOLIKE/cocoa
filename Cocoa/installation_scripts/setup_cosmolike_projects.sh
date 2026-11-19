@@ -261,6 +261,90 @@ if [ -z "${IGNORE_COSMOLIKE_LSST_Y1_CODE}" ]; then
 fi
 
 # ----------------------------------------------------------------------------
+# ---------------------------- LSSTY1XDESI ------------------------------------
+# ----------------------------------------------------------------------------
+
+if [ -z "${IGNORE_COSMOLIKE_LSSTY1XDESI_CODE}" ]; then
+
+  # Name to be printed on this shell script messages
+  PRINTNAME="LSSTY1XDESI"
+
+  ptop "GETTING ${PRINTNAME:?}" || { unset_all; return 1; }
+
+  FOLDER="${LSSTY1XDESI_NAME:-"lssty1xdesi"}"
+
+  URL="${LSSTY1XDESI_URL:-"https://github.com/SBU-COSMOLIKE/cocoa_lssty1xdesi.git"}"
+  URL=$(devurl "${URL:?}")
+
+  if [ -n "${LSSTY1XDESI_GIT_COMMIT:-}" ]; then
+
+    gitact0 "${FOLDER:?}" "${URL:?}" || return 1;
+
+    gitact2 "${FOLDER:?}" "${LSSTY1XDESI_GIT_COMMIT:?}" || return 1;
+
+  elif [ -n "${LSSTY1XDESI_GIT_BRANCH:-}" ]; then
+
+    gitact1 "${FOLDER:?}" "${URL:?}" "${LSSTY1XDESI_GIT_BRANCH:?}" || return 1;
+
+  elif [ -n "${LSSTY1XDESI_GIT_TAG:-}" ]; then
+
+    gitact0 "${FOLDER:?}" "${URL:?}" || return 1;
+
+    gitact3 "${FOLDER:?}" "${LSSTY1XDESI_GIT_TAG:?}" || return 1;
+
+  else
+
+    gitact0 "${FOLDER:?}" "${URL:?}" || return 1;
+
+  fi
+
+  pbottom "GETTING ${PRINTNAME:?}" || { unset_all; return 1; }
+
+fi
+
+# ----------------------------------------------------------------------------
+# ---------------------------- DES_3PCF ------------------------------------
+# ----------------------------------------------------------------------------
+
+if [ -z "${IGNORE_COSMOLIKE_DES_3PCF_CODE}" ]; then
+
+  # Name to be printed on this shell script messages
+  PRINTNAME="DES_3PCF"
+
+  ptop "GETTING ${PRINTNAME:?}" || { unset_all; return 1; }
+
+  FOLDER="${DES_3PCF_NAME:-"des_3pcf"}"
+
+  URL="${DES_3PCF_URL:-"https://github.com/SBU-COSMOLIKE/cocoa_des_3pcf.git"}"
+  URL=$(devurl "${URL:?}")
+
+  if [ -n "${DES_3PCF_GIT_COMMIT:-}" ]; then
+
+    gitact0 "${FOLDER:?}" "${URL:?}" || return 1;
+
+    gitact2 "${FOLDER:?}" "${DES_3PCF_GIT_COMMIT:?}" || return 1;
+
+  elif [ -n "${DES_3PCF_GIT_BRANCH:-}" ]; then
+
+    gitact1 "${FOLDER:?}" "${URL:?}" "${DES_3PCF_GIT_BRANCH:?}" || return 1;
+
+  elif [ -n "${DES_3PCF_GIT_TAG:-}" ]; then
+
+    gitact0 "${FOLDER:?}" "${URL:?}" || return 1;
+
+    gitact3 "${FOLDER:?}" "${DES_3PCF_GIT_TAG:?}" || return 1;
+
+  else
+
+    gitact0 "${FOLDER:?}" "${URL:?}" || return 1;
+
+  fi
+
+  pbottom "GETTING ${PRINTNAME:?}" || { unset_all; return 1; }
+
+fi
+
+# ----------------------------------------------------------------------------
 # -------------------------------- DES_Y3 ------------------------------------
 # ----------------------------------------------------------------------------
 
