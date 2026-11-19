@@ -572,11 +572,10 @@ vector handling are core `7a3ae44`.
 
 ### High-level summary
 
-Consolidate the remaining shared numerical work and separate expensive
-3PCF table preparation from changes to query parameters. Preserve the
+Consolidate the remaining shared numerical work. Preserve the
 physical input conventions, retained-model lifetimes and explicit cache
-invalidation. The supplied-baseline route, independent background check
-and NFW documentation are complete and recorded in Closed tickets.
+invalidation. The supplied-baseline route, independent background check,
+bridge query reuse and documented NFW scalar reader are implemented.
 
 ### Current status
 
@@ -587,20 +586,37 @@ reference. The ordered project refreeze/notebook queue above remains active.
 Its follow-up D includes the cluster early-exit setting, and E includes the
 installed DES 3PCF rebuild, timings and notebook runs.
 
-Bridge ownership/cache changes, the adapter style pass, typed empty-array
-allocation, removal of redundant allocation checks and the normalized NFW
-reader have prepared source and test changes. The NFW tests include a
-high-precision comparison through dimensionless phase 20000 and both
-interpolation boundaries. Compiled validation is pending in the serial slot
-after the DESI refreeze; these items remain open until those checks complete.
+Bridge ownership/cache changes, array-count checks, the adapter style pass,
+typed empty-array allocation, removal of redundant allocation checks and
+the normalized NFW reader are committed. The strict and UBSan builds each
+passed all 829 project tests, including the 40 focused bridge/count cases.
+Saved outputs agree byte for byte across the reference and candidate
+builds at one and four workers. Four targeted ASan checks reproduce the
+old borrowed-input lifetime errors and pass with the replacement order
+corrected. The allocator checks pass in strict, UBSan and ASan modes at
+one and six workers. BLAS remains one throughout.
+
+The core changes are `dbc9ff7`, `4b5d017`, `f2d3de0`, `fbe4b90`,
+`26b3844`, `b86891a` and `df28967`; `7264f96` records the validation.
+Permanent project tests are committed as `2cfc4a3`, `4bf9a54` and
+`a84b249`. See `cosmolike_core/dev_scripts/bridge_cache_check/` for input
+hashes, comparison scopes and retained setup-failure records. Bridge
+setters, model refresh and reset still require sequential Python entry.
+
+The NFW tests cover four concentrations, both adapters, dimensionless
+phases through 20000 and both interpolation boundaries. Larger physical
+domain, covariance-convergence and performance checks remain below. DESI's
+remaining refreeze tests and background diagnostic are deferred at the
+user's request; the other projects' notebook queue has started.
 
 ### What is already in place
 
 The core has power-table variance functions and a shared dimensionless NFW
 evaluator. The bridge copies its inputs, compares state contents and returns
-immutable models with owned arrays. The Python bispectrum producer reuses
-unchanged cosmological inputs. These facts do not establish that the proposed further
-consolidations preserve derivative accuracy or improve runtime.
+immutable models with owned arrays. IA and feedback amplitudes reuse these
+models while new query dictionaries carry the changed parameters. The
+Python bispectrum producer reuses unchanged cosmological inputs. Further
+consolidations require their own derivative-accuracy and runtime checks.
 
 ### What is missing
 
@@ -618,15 +634,9 @@ consolidations preserve derivative accuracy or improve runtime.
   it contains no numerical acceptance result. The physical model still
   uses its local irregular builder and natural-spline solve; feedback's
   uniform preparation does not complete those separate interpolation stages.
-- Separate immutable model construction from IA-only and feedback-amplitude
-  query changes, with A/B/A invalidation and retained-old-owner tests.
 - Finish the NFW domain/cache checks and remaining consolidation described
   by its plan. SIMD work for NFW and feedback preparation requires a quiet
   machine and measured benefit before adoption.
-- Review the C++ adapters' comparisons, argument explanations and pi
-  constants; remove allocator checks that are unreachable under the house
-  allocator contract; audit and document typed allocator zero counts.
-  Keep each numerical or ownership change separately testable.
 - Respect the handoff's separate ownership of the uncommitted DES 3PCF
   Makefile lines. Build with them, but do not include them incidentally in
   another change's commit.
