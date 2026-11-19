@@ -178,3 +178,60 @@ repeat the CLI timing with actual changed parameter points and CAMB
 excluded, and rerun the DES 3PCF notebooks. A quiet-machine check is needed
 for a new timing claim. Six OpenMP workers remain the current upper limit;
 BLAS stays at one.
+
+## Details to retain for the later cluster and DESI checks
+
+The cluster engine already accepts a tolerance argument, and its stopping
+condition explicitly requires `tol > 0`. Passing zero therefore keeps every
+multipole below the cap. The missing piece is the public setting and the
+cache connection: `cluster_nonlimber_overwrite` currently supplies 0.002,
+while the real-space `w_cc_tomo` and `w_cg_tomo` blocks reuse values according
+to their explicit key arrays. A setter that changes only a scalar without
+adding that scalar's effective value to those keys can silently reuse the
+old vector. Include the tolerance in those real-space refill keys; do not
+invalidate unrelated cluster counts or Limber tables merely to make a test
+pass. The existing `double_bits_key` gives this file a house mechanism for
+keying a double. Reset must restore the default too.
+
+Roman real's last halo reference update is project commit `8451623`, dated
+6 October. Its record says the update followed independent FFTLog checks
+and moved probes by at most 6.8e-10. That is historical evidence, not the
+size or cause of today's reported slow-tier drift. The current quick suite
+skipped the slow `p_gm` and `p_gg` comparisons. The JSON reference records
+the HOD, example and TATT choice, but does not pin an old native binary or
+CAMB build. D must first measure the present discrepancy, retain the
+original reference, check the independent large-scale limits and refine
+the relevant tables before deciding whether to update the reference.
+Describe frozen values as a regression reference, not physical ground truth.
+
+The DESI study `tests/studies/test_nonlinear_kaiser.py` already implements
+flag toggles, a fresh-process comparison, A_s-squared scaling and an E3
+comparison. Two test-design issues must be handled before interpreting a
+new run:
+
+- `test_default_off` currently identifies the default-off behavior through
+  chi-squared below 1e-6 against the live example's data. The preserved
+  legacy data and current model need not coincide. The flag's default
+  behavior should instead be checked against an explicitly selected zero
+  flag at identical model settings. Keep the observed chi-squared as a
+  separate reference-data diagnostic; do not loosen its threshold to hide
+  a changed reference.
+- `test_e3_record` skips unmatched spectrum keys and requires only that at
+  least one spectrum was compared. The installed Delta-z=0.2 record has
+  23 spectra and 667 retained bands. A complete comparison must account for
+  every expected key and retained band, verify the band ordering and
+  relevant physical inputs, and reject missing or nonfinite entries.
+
+The external E3 record's `swap` is A minus B: the exact loop contribution
+minus the older Limber halofit contribution to the velocity sector. The
+production flag preserves that halofit hand-off and adds A minus Lloop,
+where Lloop is the Limber projection of the loop terms themselves. The
+existing six-percent comparison allowance includes this different physical
+construction; passing it is not a six-percent integration-accuracy test.
+The core skill records a separate matched-convention comparison with much
+smaller residuals. Preserve that distinction, including the different
+growth inputs, when running the new consistency check. Do not change the
+production high-ell convention to force agreement with the older `swap`.
+
+These are read-only findings. No DESI test was launched and no DESI file
+was edited for this review; its deferred refreeze remains paused.

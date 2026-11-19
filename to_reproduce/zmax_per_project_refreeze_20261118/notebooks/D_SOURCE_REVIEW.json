@@ -190,12 +190,32 @@
     {
       "path": "/Users/vivianmiranda/data/COCOA/november2026/sbu_cosmolike/cocoa/Cocoa/.local/lib/python3.11/site-packages/derivkit/plotutils/plot_style.py",
       "sha256": "2a2273bbffe1e4a276258ebe814c92e3bb02f7ffde50ae0f36b3bb170775cf5f"
+    },
+    {
+      "path": "/Users/vivianmiranda/data/COCOA/november2026/sbu_cosmolike/cocoa/Cocoa/projects/roman_real/tests/data_vector/test_halo.py",
+      "sha256": "94fd3816413b83c058c35ecb555050beeb58450a00b5943da45f5c57ccb43faf"
+    },
+    {
+      "path": "/Users/vivianmiranda/data/COCOA/november2026/sbu_cosmolike/cocoa/Cocoa/projects/roman_real/tests/frozen/halo_reference.json",
+      "sha256": "ae3a15f7ff6f56e9d33f2c7265af1d14d630619ffeffb27b3ca6ff6bc9de6400"
+    },
+    {
+      "path": "/Users/vivianmiranda/data/COCOA/november2026/sbu_cosmolike/cocoa/Cocoa/projects/lssty1xdesi/tests/studies/test_nonlinear_kaiser.py",
+      "sha256": "8718cd68504619d3da243a9347d9b74cd8c4af3e965e8f32443e1ac4031cfaa0"
+    },
+    {
+      "path": "/Users/vivianmiranda/data/COCOA/november2026/sbu_cosmolike/cocoa/Cocoa/projects/lssty1xdesi/chains/e3_velocity_swap.json",
+      "sha256": "5bd6ab6e8ea16083c15bca131de0bb1047fe3d1972028fe586fa0a4c213f4cf8"
+    },
+    {
+      "path": "/Users/vivianmiranda/data/COCOA/november2026/sbu_cosmolike/cocoa/Cocoa/external_modules/code/cosmolike_core/.claude/skills/cosmolike-dev/references/nonlinear_kaiser.md",
+      "sha256": "19fc100be1e519e10f1d861d8f8ee13dee7e63bcd1808649257bfe290d238eec"
     }
   ],
-  "plan_sha256": "8683f6fd728c9d9f4f936b250815fcc49311acbb811880986ac2b948abe61a15",
+  "plan_sha256": "4e9b35a860f8678dc37d6f20b4afba3c2e263ffb5269a60687e47ac21f0326b1",
   "render": {
     "tables": 1,
-    "paragraphs": 26,
-    "html_bytes": 11465
+    "paragraphs": 33,
+    "html_bytes": 15165
   }
 }
