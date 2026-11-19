@@ -17,6 +17,7 @@ below, each carrying `BUG FIX` or `NEW FUNCTIONALITY`. Never a second
 with its summary, status, and what is missing; pointers to files and
 commits go in the collapsed technical record at the end of the section.
 
+<a id="open-tickets"></a>
 # Open tickets
 
 Severity sorts first, type second: High bugs, Medium bugs, Medium
@@ -538,6 +539,12 @@ for Roman KL, LSST and Roman Fourier; their supplemental records are
 allowance changed. Fourth differences also contain smooth curvature;
 the record does not interpret every residual as independent noise.
 
+Core `48da11f` qualifies the shared Fisher-noise explanations without
+changing their executable AST. Small sensitivity weights do not bound
+unmeasured columns whose numerical jitter is unknown. The diagonal-addition
+estimate predicts a change in its approximate Fisher matrix; it does not
+bound the error of one computed forecast or remove smooth derivative bias.
+
 ### What is missing
 
 Finish the remaining refreezes, then run and inspect the notebooks. After
@@ -581,16 +588,18 @@ Its follow-up D includes the cluster early-exit setting, and E includes the
 installed DES 3PCF rebuild, timings and notebook runs.
 
 Bridge ownership/cache changes, the adapter style pass, typed empty-array
-allocation and removal of redundant allocation checks have prepared source
-and test changes. Compiled validation is pending in the serial slot after
-the DESI refreeze; these items remain open until those checks complete.
+allocation, removal of redundant allocation checks and the normalized NFW
+reader have prepared source and test changes. The NFW tests include a
+high-precision comparison through dimensionless phase 20000 and both
+interpolation boundaries. Compiled validation is pending in the serial slot
+after the DESI refreeze; these items remain open until those checks complete.
 
 ### What is already in place
 
 The core has power-table variance functions and a shared dimensionless NFW
-evaluator. The bridge copies its inputs, compares state contents and retains
-old owners safely. The Python bispectrum producer reuses unchanged
-cosmological inputs. These facts do not establish that the proposed further
+evaluator. The bridge copies its inputs, compares state contents and returns
+immutable models with owned arrays. The Python bispectrum producer reuses
+unchanged cosmological inputs. These facts do not establish that the proposed further
 consolidations preserve derivative accuracy or improve runtime.
 
 ### What is missing
@@ -974,6 +983,7 @@ porting precedent any WHM work would build on.
 
 </details>
 
+<a id="closed-tickets"></a>
 # Closed tickets
 
 ## 2026-11-19 — Independent 3PCF bridge background derivative
