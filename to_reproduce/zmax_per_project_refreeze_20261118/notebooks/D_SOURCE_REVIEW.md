@@ -235,3 +235,25 @@ production high-ell convention to force agreement with the older `swap`.
 
 These are read-only findings. No DESI test was launched and no DESI file
 was edited for this review; its deferred refreeze remains paused.
+
+## The later timing driver also needs the six-worker limit
+
+The existing DES 3PCF benchmark cannot be converted to this session's
+one/four/six-worker study by editing its YAML alone. `scaling.py` rejects
+thread lists other than one/four/eight, `scaling_plot.py` hard-codes those
+x coordinates, and both the command-line script and child environment
+force `OMP_THREAD_LIMIT=8`. The point-bank and preflight records also print
+the old counts. E must make these agree with the explicitly requested
+counts before launching a numerical job, while retaining the old measured
+eight-worker records unchanged. The plot must read the measured thread
+values rather than relabel an eight-worker result as six.
+
+The old timing profile has 80 aperture entries and coarse interpolation;
+its saved guide explicitly records that those TATT settings have not
+converged. The current scientific examples can have different row counts
+and accuracy settings. Choose and print the new workload's actual rows,
+triangle cuts, interpolation and integration controls. A changed workload
+cannot establish an implementation speedup from an old runtime ratio.
+Keep the CAMB solve and table reads outside the timed interval, retain a
+separate warmup, and require different physical inputs at each of the ten
+measured points. These remain separate requirements from thread scaling.

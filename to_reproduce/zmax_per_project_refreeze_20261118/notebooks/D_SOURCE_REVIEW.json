@@ -210,12 +210,28 @@
     {
       "path": "/Users/vivianmiranda/data/COCOA/november2026/sbu_cosmolike/cocoa/Cocoa/external_modules/code/cosmolike_core/.claude/skills/cosmolike-dev/references/nonlinear_kaiser.md",
       "sha256": "19fc100be1e519e10f1d861d8f8ee13dee7e63bcd1808649257bfe290d238eec"
+    },
+    {
+      "path": "/Users/vivianmiranda/data/COCOA/november2026/sbu_cosmolike/cocoa/Cocoa/projects/des_3pcf/python/des3pcf/scaling.py",
+      "sha256": "fd7d6cd0ee8be2d0f0798af873160646492b93912c55de32fbfdc3e77f6cf948"
+    },
+    {
+      "path": "/Users/vivianmiranda/data/COCOA/november2026/sbu_cosmolike/cocoa/Cocoa/projects/des_3pcf/python/des3pcf/scaling_plot.py",
+      "sha256": "2b6ae6685cbaa30f296ddb7e62e578ec54a1122984895e44fc33626b9ed1cbc4"
+    },
+    {
+      "path": "/Users/vivianmiranda/data/COCOA/november2026/sbu_cosmolike/cocoa/Cocoa/projects/des_3pcf/scripts/benchmark_scaling.py",
+      "sha256": "c8f9c068733e191cfdc2e8fb2e0c580c62d57dd027487dbcff48981cc5c8088d"
+    },
+    {
+      "path": "/Users/vivianmiranda/data/COCOA/november2026/sbu_cosmolike/cocoa/Cocoa/projects/des_3pcf/configs/openmp_scaling.yaml",
+      "sha256": "064980aad9c5aa570cbd8bdb92939689515fc134557d789d6ff854c342b39bd3"
     }
   ],
-  "plan_sha256": "4e9b35a860f8678dc37d6f20b4afba3c2e263ffb5269a60687e47ac21f0326b1",
+  "plan_sha256": "df3f2ce1d4dce73a5cab7e78d10b01faa9b71220134cbdec138b826880103f8d",
   "render": {
     "tables": 1,
-    "paragraphs": 33,
-    "html_bytes": 15165
+    "paragraphs": 35,
+    "html_bytes": 16566
   }
 }
