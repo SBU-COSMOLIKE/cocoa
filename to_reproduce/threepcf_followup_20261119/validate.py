@@ -39,7 +39,7 @@ def main():
         + ':/Users/vivianmiranda/miniforge/envs/cocoapy311/bin:'
         + environment['PATH']
     )
-    for name in ('python', 'scripts', 'tests'):
+    for name in ('python', 'scripts', 'tests', 'interface'):
         for path in (project / name).rglob('*.py'):
             destination = target / path.relative_to(project)
             destination.parent.mkdir(parents=True, exist_ok=True)
@@ -54,6 +54,7 @@ def main():
             destination.parent.mkdir(parents=True, exist_ok=True)
             if not destination.exists() or path.read_bytes() != destination.read_bytes():
                 shutil.copy2(src=path, dst=destination)
+                destination.touch()
             record['source_sha256'][str(relative)] = hashlib.sha256(
                 path.read_bytes()).hexdigest()
     for mode in ('strict', 'debug'):
@@ -66,7 +67,8 @@ def main():
             shutil.copy2(src=binary, dst=saved)
         for entry in builds['builds']:
             if entry['mode'] == mode:
-                command = entry['command']
+                command = [value if value != '-j1' else '-j6'
+                           for value in entry['command']]
         log = base / (stage + '_' + mode + '_build.log')
         print(stage, mode, 'build', flush=True)
         with log.open(mode='w') as stream:
