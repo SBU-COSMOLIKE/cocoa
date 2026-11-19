@@ -40,6 +40,14 @@ Follow these rules exactly. When a rule below conflicts with your own idea of
 
 ## 1. Repository layout facts
 
+Project consistency is a requirement. Before introducing a project directory,
+launcher, likelihood, YAML example or notebook workflow, inspect the matching
+LSST Y1 and DES Y3 files and follow their conventions. Straightforward repeated
+code is acceptable. Do not create a different project framework for 3PCF.
+Generated computations and figures belong in ignored `chains/`; actual inputs
+belong in `data/`, and frozen predictions in `tests/`. Survey likelihoods belong
+in `likelihood/`, exposed through Cocoa's normal Cobaya project links.
+
 - `set_installation_options.sh` — every user-facing environmental key:
   `IGNORE_*` (skip a package), `OVERWRITE_*`, URLs, and version pins.
 - `installation_scripts/` — one `setup_*.sh` (download), one `compile_*.sh`
