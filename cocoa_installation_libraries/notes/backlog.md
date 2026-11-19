@@ -491,12 +491,23 @@ The work queue runs serially with six OpenMP workers and BLAS fixed to one.
 
 The endpoint defaults to four and rejects nonfinite values or values below
 four. LSST Y1 and Roman real use 4.5, Roman Fourier uses 5.0, and the DES
-projects use 4.0. Roman KL and LSST Y1 with DESI retain 4.5. LSST Y1, DES Y3,
-DES with Planck and DES cluster refreezes are committed as `57b50d5`,
-`f429b69`, `ec63a45` and `eb6fc9d`. Their validation covers 115, 108, 91 and
-73 quick-test cases,
-respectively. The initial LSST missing-GSL build failure passed on a
-targeted retry in the normal Cocoa build environment.
+projects use 4.0. Roman KL and LSST Y1 with DESI retain 4.5. Six project
+refreezes are committed; Roman real and LSST Y1 with DESI remain in progress.
+
+| Project | Refreeze commit | Quick-test outcome |
+|---|---|---|
+| LSST Y1 | `57b50d5` | 115 cases covered, including the successful environment retry |
+| DES Y3 | `f429b69` | 108 passed |
+| DES with Planck | `ec63a45` | 91 passed |
+| DES cluster | `eb6fc9d` | 73 passed |
+| Roman Fourier | `42428b3` | 88 passed, one inapplicable Fourier stencil check skipped |
+| Roman KL | `14281fd` | 92 applicable cases passed after the comparison repair below; one Fourier skip |
+
+The initial LSST missing-GSL build failure passed on a targeted retry in
+the normal Cocoa build environment. Roman KL's original run remains
+recorded as 91 passes, one failed comparison and one intentional skip.
+Its failed comparison was rerun after correcting the test setup, with
+the original numerical allowance unchanged.
 
 ### What is already in place
 
@@ -507,10 +518,22 @@ cases using the appropriate growth convention and older halofit tolerance.
 DES Y3 retains an explicitly Limber galaxy-lensing residual, and clustering
 residuals remain. The installed CAMB is unchanged; numerical agreement does
 not identify the unrecorded historical binary. Frozen physical parameters,
-points and priors are preserved even
-when live example defaults differ. Eleven notebooks have prepared settings,
+points and priors are preserved even when live example defaults differ.
+An independent audit checks 290 frozen-file hashes and 25 parameter
+configurations across the first six projects. Eleven notebooks have prepared settings,
 Fisher tolerance restoration and checked structure; full execution remains
 separate from those preparation checks.
+
+Core `2bc4500` matches the galaxy-shear cap between the FKEM and SVD
+clustering comparisons. The earlier SVD-at-150 case had left galaxy-shear
+at its production cap of 200. Five fresh-process controls isolate that
+confound: matching the caps changes only galaxy-shear entries and reduces
+the Roman KL w0 diagnostic ratio from 1.10070 to 1.00130. All production
+restorations are bitwise. The comparison and restoration tests then pass
+for Roman KL, LSST and Roman Fourier; their supplemental records are
+`d1730d3`, `f682191` and `eb51b99`. No native calculation or numerical
+allowance changed. Fourth differences also contain smooth curvature;
+the record does not interpret every residual as independent noise.
 
 ### What is missing
 
@@ -977,8 +1000,9 @@ comparison establishes Fisher-derivative convergence across the prior.
 The [project guide](../../Cocoa/projects/des_3pcf/BIHALOFIT_PYTHON.md) links
 durable inputs, results and commands. Core `90a1b3a` explains the persistent
 universal NFW table and the separate per-halo angular shear spline, including
-their numerical controls and ownership. That documentation-only change
-passes rendering and link checks. Installed DES 3PCF rebuilding remains in
+their numerical controls and ownership. Core `8c1bfd3` distinguishes their
+comoving length and angular units. These documentation-only changes pass
+rendering and link checks. Installed DES 3PCF rebuilding remains in
 the ordered execution ticket above; the route was validated in isolated
 strict/debug builds. No default switch or push was made.
 
