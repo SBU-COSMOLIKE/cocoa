@@ -140,3 +140,21 @@ and one BLAS worker. Installed extensions, notebooks and survey refreezes
 remain untouched. Private numerical outputs reside under
 `/private/tmp/threepcf_consolidation_20261119`; committed provenance keeps
 the configuration, parameter points and input/output identities.
+
+## Explicit reference inputs
+
+Core commit `3abb5a6` preserves the selected interpolation convention when
+fit arrays are supplied. Project commit `35d6aad` prepares the independent
+reference arrays in Python and passes their recorded power normalization
+only to the three-point model. Direct comparisons against the independent
+native legacy calculation pass in both production and source-comparison
+interpolation modes. The full suite passes 876 tests in strict mode and
+876 under UBSan. A final metadata/documentation/validation-order follow-up
+passes 22 focused UBSan tests. The first strict run's two failures were
+error-message matching failures; no numerical assertions failed.
+
+The native no-array compatibility path remains present. This is a checked
+integration step, not a claim that all local C smoothing has been removed.
+The user subsequently narrowed the validation queue: run the necessary
+TATT shared4 comparison, omit the automatic full shared8 forecast, and
+defer the broader covariance study. Notebooks and refreezes remain paused.

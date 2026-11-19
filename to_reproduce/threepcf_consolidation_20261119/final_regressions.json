@@ -1,0 +1,52 @@
+[
+  {
+    "mode": "strict",
+    "extension_sha256": "6f895ea13a498621bbd94436c69cf27bb673a6e7554cd654cc3ae2c845e967ea",
+    "command": [
+      "/Users/vivianmiranda/data/COCOA/november2026/sbu_cosmolike/cocoa/Cocoa/.local/bin/python",
+      "-B",
+      "-m",
+      "pytest",
+      "-q",
+      "-p",
+      "no:cacheprovider",
+      "tests"
+    ],
+    "cwd": "/private/tmp/threepcf_consolidation_20261119/provider_tests_Cocoa/projects/des_3pcf",
+    "returncode": 0,
+    "log": "/private/tmp/threepcf_consolidation_20261119/final_provider_strict.log",
+    "log_sha256": "8eacab94d6098b470fae3654a58f1e27b437d87ee102284c475c71af3280322d",
+    "summary": [
+      "........................................................................ [ 82%]",
+      "........................................................................ [ 90%]",
+      "........................................................................ [ 98%]",
+      "............                                                             [100%]",
+      "876 passed in 127.00s (0:02:07)"
+    ]
+  },
+  {
+    "mode": "debug",
+    "extension_sha256": "5abe56e01546354f32440e7dc50ac27875ec8f5327e9611b6082e63c71bc2526",
+    "command": [
+      "/Users/vivianmiranda/data/COCOA/november2026/sbu_cosmolike/cocoa/Cocoa/.local/bin/python",
+      "-B",
+      "-m",
+      "pytest",
+      "-q",
+      "-p",
+      "no:cacheprovider",
+      "tests"
+    ],
+    "cwd": "/private/tmp/threepcf_consolidation_20261119/provider_tests_Cocoa/projects/des_3pcf",
+    "returncode": 0,
+    "log": "/private/tmp/threepcf_consolidation_20261119/final_provider_debug.log",
+    "log_sha256": "7180ee768e5727d25386a07b461bf3e7c4f377846a53a652079f5c1886259d3b",
+    "summary": [
+      "........................................................................ [ 82%]",
+      "........................................................................ [ 90%]",
+      "........................................................................ [ 98%]",
+      "............                                                             [100%]",
+      "876 passed in 234.51s (0:03:54)"
+    ]
+  }
+]
