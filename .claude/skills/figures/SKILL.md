@@ -91,6 +91,13 @@ For notebooks, the setup cell also sets `%matplotlib inline` and
 - Legend labels name a model plainly; a variant is stated once in the
   caption when the figure draws only one, so variant names do not
   clash with other labels in the panels.
+- Shift figures (parameter shifts in units of the forecast error)
+  shade the region above 0.3 sigma in light gray (`color '0.92'`, zero
+  linewidth, drawn behind the data) in every panel, as a reference
+  scale: the band has no legend entry, the caption names it, and no
+  pass/fail line is drawn. The y range always includes 0.3, so the
+  band is visible even when every shift sits below it. Shifts are
+  reported as measured, never against a threshold.
 
 ### Look at it
 
