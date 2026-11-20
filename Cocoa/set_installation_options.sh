@@ -108,6 +108,7 @@ export IGNORE_COSMOLIKE_DESXPLANCK_COVARIANCE=1
 export IGNORE_COSMOLIKE_DES_CLUSTER_COVARIANCE=1
 
 #export IGNORE_BFMT_CODE=1 # Baryon Feedback Theory Block from Nihar&JVicente
+#export IGNORE_BIHALOFIT_CODE=1 # Matter bispectrum theory bundled with CosmoLike
 
 # ------------------------------------------------------------------------------
 # The keys below control which private projects (may not be public repo)

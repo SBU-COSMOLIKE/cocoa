@@ -17,6 +17,39 @@ description: >
 Follow these rules exactly. When a rule below conflicts with your own idea of
 "better code", the rule wins. Do not improvise improvements.
 
+## Required Cocoa likelihood pattern
+
+The user explicitly requires the LSST Y1 implementation and coding style,
+not a new interpretation of its architecture. Before editing a likelihood,
+read `projects/lsst_y1/likelihood/_cosmolike_prototype_base.py` in the Cocoa
+checkout and the corresponding probe subclass. Follow their class methods
+and call order directly. Developers already know this pattern; changing it
+makes the code harder to maintain even when the new code computes the same
+quantity.
+
+- Put native initialization calls directly in the base class `initialize`.
+  Do not extract `init_two_point`, `check_two_point`, `two_point_spectra`,
+  adapters, dispatchers or equivalent helper layers.
+- Follow `get_requirements`, `set_cosmo_related`, `set_source_related`,
+  `get_datavector`, `internal_get_datavector`, `compute_logp` and `logp`
+  where those operations are needed. Do not add empty methods just to make
+  the names match. The provider and native calls must actually follow the
+  established sequence.
+- Numerical controls and their validation belong in the C++ initialization
+  functions, following `generic_interface.cpp`. The native interface owns
+  the data, covariance and mask singleton and the joint chi-squared.
+  Do not implement a parallel Python covariance/likelihood-state framework.
+- Use explicit assignments and named native arguments. Do not introduce
+  field-name registries such as `ARRAY_NAMES`, `SCALAR_NAMES` or optional
+  field schemas to generate calls. Put each named argument on its own line.
+- Keep necessary theory-input checks short and inside the likelihood class;
+  do not create input/bispectrum container classes or validation modules.
+- Production YAMLs and notebooks use CosmoLike's IA normalization and pivot
+  directly: `c1rho = 0.01389` and `zpivot = 0.62`. A conversion from an
+  upstream convention belongs only to the explicit code-comparison notebook.
+- Repeated code is acceptable. Do not move an unwanted abstraction to
+  another file and call that consistency. Implement the established pattern.
+
 ## 0. Absolute rules (read first)
 
 1. **NEVER merge, deduplicate, or refactor the bash scripts.** Every
@@ -47,6 +80,9 @@ code is acceptable. Do not create a different project framework for 3PCF.
 Generated computations and figures belong in ignored `chains/`; actual inputs
 belong in `data/`, and frozen predictions in `tests/`. Survey likelihoods belong
 in `likelihood/`, exposed through Cocoa's normal Cobaya project links.
+Do not overengineer: do not add abstractions, wrappers or protective layers
+when straightforward code already serves the purpose. Existing projects are
+the reference, including their ordinary Python calling and array conventions.
 
 - `set_installation_options.sh` — every user-facing environmental key:
   `IGNORE_*` (skip a package), `OVERWRITE_*`, URLs, and version pins.

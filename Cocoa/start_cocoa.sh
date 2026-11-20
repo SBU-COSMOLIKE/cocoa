@@ -300,6 +300,21 @@ if [[ -z "${IGNORE_BFMT_CODE}" ]]; then
 fi
 
 # ----------------------------------------------------------------------------
+# --------------------------- BiHalofit Theory -------------------------------
+# ----------------------------------------------------------------------------
+if [[ -z "${IGNORE_BIHALOFIT_CODE}" ]]; then
+  ECODEF="${ROOTDIR:?}/external_modules/code"
+  COBTH="${ROOTDIR:?}/cobaya/cobaya/theories"
+  TMP="${COSMOLIKE_NAME:-"cosmolike_core"}"
+  TMP2="bihalofit"
+  if [[ ! -L "${COBTH:?}/${TMP2}" ]]; then
+    ln -s "${ECODEF:?}/${TMP}/theory/bihalofit" "${COBTH:?}/${TMP2}" \
+      >>${OUT1:?} 2>>${OUT2:?} || { error_start_cocoa "${EC34:?}"; return 1; }
+  fi
+  unset -v ECODEF COBTH TMP TMP2
+fi
+
+# ----------------------------------------------------------------------------
 # ----------------------------------------------------------------------------
 # ----------------------------------------------------------------------------
 
