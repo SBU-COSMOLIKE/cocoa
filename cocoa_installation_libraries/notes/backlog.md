@@ -1010,6 +1010,26 @@ porting precedent any WHM work would build on.
 <a id="closed-tickets"></a>
 # Closed tickets
 
+<a id="closed-bacco-cobaya"></a>
+## BACCO paired-response Cobaya integration (2026-11-19)
+
+Registered the bundled `bacco_bispectrum` theory through Cocoa start/stop
+links and `IGNORE_BACCO_BISPECTRUM_CODE`, including key cleanup. It reads the
+solved CAMB state and reuses the existing total-matter response producer;
+BiHalofit remains the absolute DMO bispectrum provider. DES numbered evaluate,
+MCMC and Nautilus examples teach the optional theory, five feedback parameters
+and likelihood switch with commented YAML, following LSST Y1. Their active
+configurations are unchanged. No separate named BACCO example is retained.
+
+All 78 focused checks passed, including real CAMB/BACCO state restoration,
+offline agreement, the massless limit and isolated start/stop cleanup.
+Production-sampling NLA/TATT joint checks changed both probes and restored
+bitwise after feedback, sigma8 and source-shift changes; the nonlinear power
+response is applied once. The ordinary gravity-only regression also passed.
+No notebook, refreeze, Fisher forecast, posterior or timing study was run.
+The native kernels are unchanged; the project binds the existing nonlinear
+power setter. Full records and commands are in DES `tests/VALIDATION.md`.
+
 ## 2026-11-19 — Independent 3PCF bridge background derivative
 
 DES 3PCF `d9f2a1e` adds the permanent analytic-geometry test and its
