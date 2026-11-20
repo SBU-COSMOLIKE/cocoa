@@ -35,7 +35,9 @@ see the Cosmolike project READMEs (e.g., `projects/lsst_y1` and `projects/des_y3
 
 The emulator scripts in this folder (`EXAMPLE_EMUL_EMCEE1.py`, `EXAMPLE_EMUL_NAUTILUS1.py`,
 `EXAMPLE_EMUL_MINIMIZE1.py`, `EXAMPLE_EMUL_PROFILE1.py`, `EXAMPLE_EMUL_PROFILE_SCIPY1.py` and
-`EXAMPLE_EMUL_SCAN1.py`) are documented in the main README. `EXAMPLE_MINIMIZE1.py` and
+`EXAMPLE_EMUL_SCAN1.py`) are documented in the main README. `EXAMPLE_EMUL_NAUTILUS1.py` runs the
+shared Nautilus driver of `cosmolike_core/cocoa_hybrid_sampling.py` on the model of
+`EXAMPLE_EMUL_NAUTILUS1.yaml`. `EXAMPLE_MINIMIZE1.py` and
 `EXAMPLE_PROFILE1.py` are their `CAMB` counterparts, documented in their own module docstrings
 (model, options and output files). `EXAMPLE_MIN_COMPARE_CONV.py` plots how the minimum of
 `EXAMPLE_EMUL_MINIMIZE1.py` converges with its budget.

@@ -416,14 +416,14 @@ likelihoods, and the theory code, all following Cobaya Conventions.
           --mca btl_tcp_if_exclude lo,docker0,virbr0,ib0 \
           --bind-to core:overload-allowed --report-bindings \
           --rank-by slot --map-by slot \
-          python -m mpi4py.futures ./projects/example/EXAMPLE_EMUL_NAUTILUS1.py \
+          python ./projects/example/EXAMPLE_EMUL_NAUTILUS1.py \
             --root ./projects/example/ --outroot "EXAMPLE_EMUL_NAUTILUS1"  \
             --maxfeval 450000 --nlive 2048 --neff 15000 --flive 0.01 --nnetworks 5
 
   - macOS (arm)
 
         mpirun -n 12 --oversubscribe \
-          python -m mpi4py.futures ./projects/example/EXAMPLE_EMUL_NAUTILUS1.py \
+          python ./projects/example/EXAMPLE_EMUL_NAUTILUS1.py \
           --root ./projects/example/ --outroot "EXAMPLE_EMUL_NAUTILUS1"  \
           --maxfeval 450000 --nlive 2048 --neff 15000 --flive 0.01 --nnetworks 5
 
