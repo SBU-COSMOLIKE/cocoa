@@ -77,6 +77,7 @@ declare -a CORE=("setup_core_packages.sh"
                  "setup_tensiometer.sh"
                  "setup_getdist.sh"
                  "setup_derivkit.sh"
+                 "setup_treecorr.sh"
                  "setup_ee2.sh"
                  "setup_simde.sh"
                 )

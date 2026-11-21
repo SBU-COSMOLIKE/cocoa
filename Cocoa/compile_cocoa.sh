@@ -58,6 +58,7 @@ declare -a CORE=("compile_core_packages.sh"
                  "compile_tensiometer.sh"
                  "compile_getdist.sh"
                  "compile_derivkit.sh"
+                 "compile_treecorr.sh"
                  "compile_ee2.sh" 
                 )
 

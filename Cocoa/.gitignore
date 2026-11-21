@@ -216,3 +216,5 @@ projects/roman*
 projects/roman_fourier/
 projects/roman_real/
 projects/axi*/
+# TreeCorr source and its offline build dependencies.
+/external_modules/code/treecorr/

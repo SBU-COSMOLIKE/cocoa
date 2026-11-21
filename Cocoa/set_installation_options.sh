@@ -72,6 +72,7 @@ export IGNORE_DARK_EMULATOR_CODE=1
 #export IGNORE_TENSIOMETER_CODE=1
 #export IGNORE_GETDIST_CODE=1 #dev getdist with code tweaks
 #export IGNORE_PYSPK_CODE=1
+#export IGNORE_TREECORR_CODE=1
 #export IGNORE_BCEMU_CODE=1
 #export IGNORE_FBRE_CODE=1
 #export IGNORE_BACCOEMU_CODE=1
@@ -413,6 +414,13 @@ export AXIE_CAMB_NAME="axiecamb"
 export AXION_HMCODE_URL="https://github.com/SBU-COSMOLIKE/axionHMcode.git"
 export AXION_HMCODE_GIT_COMMIT="c9c482300f8d0853fc3d46f64ae086917738e078"
 export AXION_HMCODE_NAME="axionHMcode"
+
+# TreeCorr v5.1.2: measurement software, with offline build dependencies.
+export TREECORR_URL="https://github.com/rmjarvis/TreeCorr.git"
+export TREECORR_NAME="treecorr"
+export TREECORR_GIT_COMMIT="4c8add5d688789ee33145fde2a25bb4343ad8f10"
+export TREECORR_COORD_VERSION="1.3.0"
+export TREECORR_PYBIND11_VERSION="2.13.6"
 
 export PYSPK_URL="https://github.com/jemme07/pyspk.git"
 export PYSPK_GIT_COMMIT="50737f9295fee75ef2fe97e4bdd284134ed0d474"
