@@ -283,6 +283,10 @@ export FASTPT_WRAPPER_GIT_BRANCH="main"
 # ------------------------------------------------------------------------------
 export SPDLOG_VERSION=v1.15.3
 export GIT_CLONE_MAXIMUM_DEPTH=1000
+# Retry failed Git network requests; local checkout errors fail immediately.
+# Ten total attempts allow nine waits of five seconds each.
+export GIT_NETWORK_MAX_ATTEMPTS=10
+export GIT_NETWORK_RETRY_DELAY=5
 
 # This is COBAYA version 3.6.2 
 # Except that CoCoA patches revert clik back to Fortran + few minor patches

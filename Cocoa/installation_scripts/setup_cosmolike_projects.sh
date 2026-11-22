@@ -25,6 +25,77 @@ fi
 # unset_env_vars: forget every variable the body defines. Sourced scripts
 # share the caller's shell, so anything not unset here would leak into the
 # user's environment. cdroot returns to the directory the user launched from.
+
+# Retry only network work. A failed local checkout is not a network failure.
+# Ten attempts means at most nine waits; success returns immediately.
+gitfetch() {
+  local ATTEMPT=1
+  local ARGS=""
+  if ! [[ "${GIT_NETWORK_MAX_ATTEMPTS:-10}" =~ ^[1-9][0-9]*$ ]] ||
+     ! [[ "${GIT_NETWORK_RETRY_DELAY:-5}" =~ ^[0-9]+$ ]]; then
+    echo "Git retries require a positive attempt count and a nonnegative delay" >&2
+    return 1
+  fi
+  while [ "${ATTEMPT}" -le "${GIT_NETWORK_MAX_ATTEMPTS:-10}" ]; do
+    # Recheck after each failure: an interrupted fetch may have unshallowed
+    # the repository before a later part of that same fetch failed.
+    ARGS=""
+    if [ "$("${GIT:?}" rev-parse --is-shallow-repository)" = "true" ]; then
+      ARGS="--unshallow"
+    fi
+    if "${GIT:?}" fetch ${ARGS} --all --tags --prune; then
+      return 0
+    fi
+    if [ "${ATTEMPT}" -ge "${GIT_NETWORK_MAX_ATTEMPTS:-10}" ]; then
+      return 1
+    fi
+    echo "GIT FETCH attempt ${ATTEMPT} failed; retrying in ${GIT_NETWORK_RETRY_DELAY:-5}s" >&2
+    sleep "${GIT_NETWORK_RETRY_DELAY:-5}" || return 1
+    ATTEMPT=$((ATTEMPT + 1))
+  done
+  return 1
+}
+
+# Arguments: destination, URL, then the ordinary git clone options.
+# Clone into a temporary sibling directory. A failed recursive clone can
+# leave files behind; only publish the destination after the clone succeeds.
+# We remove only the temporary directory created by this call.
+gitclone() {
+  local DESTINATION="${1:?}"
+  # Accept folder names written with a trailing slash as well.
+  DESTINATION="${DESTINATION%/}"
+  local URL="${2:?}"
+  local TEMP=""
+  local ATTEMPT=1
+  shift 2
+  if [ -e "${DESTINATION}" ]; then
+    echo "GIT CLONE destination already exists: ${DESTINATION}" >&2
+    return 1
+  fi
+  if ! [[ "${GIT_NETWORK_MAX_ATTEMPTS:-10}" =~ ^[1-9][0-9]*$ ]] ||
+     ! [[ "${GIT_NETWORK_RETRY_DELAY:-5}" =~ ^[0-9]+$ ]]; then
+    echo "Git retries require a positive attempt count and a nonnegative delay" >&2
+    return 1
+  fi
+  while [ "${ATTEMPT}" -le "${GIT_NETWORK_MAX_ATTEMPTS:-10}" ]; do
+    TEMP=$(mktemp -d "${DESTINATION}.clone.XXXXXX") || return 1
+    # "$@" passes the remaining clone options without changing their quoting.
+    if "${GIT:?}" clone "${URL}" "$@" "${TEMP}/repo"; then
+      mv "${TEMP}/repo" "${DESTINATION}" || return 1
+      rmdir "${TEMP}" || return 1
+      return 0
+    fi
+    rm -rf "${TEMP:?}"
+    if [ "${ATTEMPT}" -ge "${GIT_NETWORK_MAX_ATTEMPTS:-10}" ]; then
+      return 1
+    fi
+    echo "GIT CLONE attempt ${ATTEMPT} failed; retrying in ${GIT_NETWORK_RETRY_DELAY:-5}s" >&2
+    sleep "${GIT_NETWORK_RETRY_DELAY:-5}" || return 1
+    ATTEMPT=$((ATTEMPT + 1))
+  done
+  return 1
+}
+
 unset_env_vars () {
   unset -v PRINTNAME FOLDER URL PACKAGE_VERSION PACKAGE_BRANCH
   cdroot || return 1;
@@ -33,6 +104,7 @@ unset_env_vars () {
 # unset_env_funcs: forget every helper function defined below (functions leak
 # into the user's shell exactly like variables).
 unset_env_funcs () {
+  unset -f gitclone gitfetch
   unset -f cdfolder cpfolder cpfile error gitact0 gitact1 gitact2 gitact3 devurl
   unset -f unset_env_funcs
   cdroot || return 1;
@@ -90,8 +162,7 @@ gitact0() {
 
   if [ ! -d "${PACKDIR:?}" ]; then
   
-    "${GIT:?}" clone "${URL}" --depth ${GIT_CLONE_MAXIMUM_DEPTH:-1000} \
-      --no-single-branch --recursive "${NAME}" \
+    gitclone "${NAME}" "${URL}" --depth ${GIT_CLONE_MAXIMUM_DEPTH:-1000} --no-single-branch --recursive \
       >>${OUT1:?} 2>>${OUT2:?} || { error "${EC15:?}"; return 1; }
   
   fi
@@ -115,10 +186,26 @@ gitact1() {
   fi
 
   if [ ! -d "${PACKDIR:?}" ]; then
-    "${GIT:?}" clone "${URL}" "${NAME}" --branch "${TAG}" --single-branch \
+    gitclone "${NAME}" "${URL}" --branch "${TAG}" --single-branch \
       >>${OUT1:?} 2>>${OUT2:?} || { error "${EC15:?}"; return 1; }
   fi
     
+  cdfolder "${PACKDIR:?}" || return 1;
+  if [ ! -d .git ] && [ ! -f .git ]; then
+    error "DIRECTORY IS NOT A GIT CHECKOUT: ${PACKDIR}"; return 1;
+  fi
+  # Prefer the existing local branch; it may contain the user's own commits.
+  if ! "${GIT:?}" show-ref --verify --quiet "refs/heads/${TAG}"; then
+    if ! "${GIT:?}" cat-file -e "origin/${TAG}^{commit}" 2>/dev/null; then
+      gitfetch >>${OUT1:?} 2>>${OUT2:?} || { error "GIT FETCH"; return 1; }
+    fi
+    "${GIT:?}" checkout -b "${TAG}" "origin/${TAG}" \
+      >>${OUT1:?} 2>>${OUT2:?} || { error "${EC16:?}"; return 1; }
+  else
+    "${GIT:?}" checkout "${TAG}" \
+      >>${OUT1:?} 2>>${OUT2:?} || { error "${EC16:?}"; return 1; }
+  fi
+
   cdfolder "${ROOTDIR:?}" || return 1;
 }
 
@@ -130,12 +217,10 @@ gitact2() {
   if [ -d "${PACKDIR:?}" ]; then
     cdfolder "${PACKDIR:?}" || return 1;
     
-    # unshallow the repo if necessary before check out a specific commit/tag
-    if [ "$("${GIT:?}" rev-parse --is-shallow-repository)" = "true" ]; then
-      ARGS="--unshallow ${ARGS}"
+    # The requested revision may already be present from an earlier run.
+    if ! "${GIT:?}" cat-file -e "${COMMIT}^{commit}" 2>/dev/null; then
+      gitfetch >>${OUT1:?} 2>>${OUT2:?} || { error "GIT FETCH"; return 1; }
     fi
-    "${GIT:?}" fetch ${ARGS:?} \
-      >>${OUT1:?} 2>>${OUT2:?} || { error "${EC16:?}"; return 1; }
 
     # in case it this script runs twice:
     # check if the current commit = wanted commit
@@ -167,12 +252,10 @@ gitact3() {
   if [ -d "${PACKDIR:?}" ]; then
     cdfolder "${PACKDIR:?}" || return 1;
 
-    # unshallow the repo if necessary before check out a specific commit/tag
-    if [ "$("${GIT:?}" rev-parse --is-shallow-repository)" = "true" ]; then
-      ARGS="--unshallow ${ARGS}"
+    # The requested revision may already be present from an earlier run.
+    if ! "${GIT:?}" cat-file -e "refs/tags/${TAG}^{commit}" 2>/dev/null; then
+      gitfetch >>${OUT1:?} 2>>${OUT2:?} || { error "GIT FETCH"; return 1; }
     fi
-    "${GIT:?}" fetch ${ARGS:?} \
-      >>${OUT1:?} 2>>${OUT2:?} || { error "${EC16:?}"; return 1; }
     
     if "${GIT:?}" show-ref --verify --quiet "refs/heads/${TAG:?}TMP"; then
       # in case it this script runs twice (CB = CURRENT BRANCH)

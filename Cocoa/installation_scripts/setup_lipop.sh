@@ -29,6 +29,77 @@ fi
 # unset_env_vars: forget every variable the body defines. Sourced scripts
 # share the caller's shell, so anything not unset here would leak into the
 # user's environment. cdroot returns to the directory the user launched from.
+
+# Retry only network work. A failed local checkout is not a network failure.
+# Ten attempts means at most nine waits; success returns immediately.
+gitfetch() {
+  local ATTEMPT=1
+  local ARGS=""
+  if ! [[ "${GIT_NETWORK_MAX_ATTEMPTS:-10}" =~ ^[1-9][0-9]*$ ]] ||
+     ! [[ "${GIT_NETWORK_RETRY_DELAY:-5}" =~ ^[0-9]+$ ]]; then
+    echo "Git retries require a positive attempt count and a nonnegative delay" >&2
+    return 1
+  fi
+  while [ "${ATTEMPT}" -le "${GIT_NETWORK_MAX_ATTEMPTS:-10}" ]; do
+    # Recheck after each failure: an interrupted fetch may have unshallowed
+    # the repository before a later part of that same fetch failed.
+    ARGS=""
+    if [ "$("${GIT:?}" rev-parse --is-shallow-repository)" = "true" ]; then
+      ARGS="--unshallow"
+    fi
+    if "${GIT:?}" fetch ${ARGS} --all --tags --prune; then
+      return 0
+    fi
+    if [ "${ATTEMPT}" -ge "${GIT_NETWORK_MAX_ATTEMPTS:-10}" ]; then
+      return 1
+    fi
+    echo "GIT FETCH attempt ${ATTEMPT} failed; retrying in ${GIT_NETWORK_RETRY_DELAY:-5}s" >&2
+    sleep "${GIT_NETWORK_RETRY_DELAY:-5}" || return 1
+    ATTEMPT=$((ATTEMPT + 1))
+  done
+  return 1
+}
+
+# Arguments: destination, URL, then the ordinary git clone options.
+# Clone into a temporary sibling directory. A failed recursive clone can
+# leave files behind; only publish the destination after the clone succeeds.
+# We remove only the temporary directory created by this call.
+gitclone() {
+  local DESTINATION="${1:?}"
+  # Accept folder names written with a trailing slash as well.
+  DESTINATION="${DESTINATION%/}"
+  local URL="${2:?}"
+  local TEMP=""
+  local ATTEMPT=1
+  shift 2
+  if [ -e "${DESTINATION}" ]; then
+    echo "GIT CLONE destination already exists: ${DESTINATION}" >&2
+    return 1
+  fi
+  if ! [[ "${GIT_NETWORK_MAX_ATTEMPTS:-10}" =~ ^[1-9][0-9]*$ ]] ||
+     ! [[ "${GIT_NETWORK_RETRY_DELAY:-5}" =~ ^[0-9]+$ ]]; then
+    echo "Git retries require a positive attempt count and a nonnegative delay" >&2
+    return 1
+  fi
+  while [ "${ATTEMPT}" -le "${GIT_NETWORK_MAX_ATTEMPTS:-10}" ]; do
+    TEMP=$(mktemp -d "${DESTINATION}.clone.XXXXXX") || return 1
+    # "$@" passes the remaining clone options without changing their quoting.
+    if "${GIT:?}" clone "${URL}" "$@" "${TEMP}/repo"; then
+      mv "${TEMP}/repo" "${DESTINATION}" || return 1
+      rmdir "${TEMP}" || return 1
+      return 0
+    fi
+    rm -rf "${TEMP:?}"
+    if [ "${ATTEMPT}" -ge "${GIT_NETWORK_MAX_ATTEMPTS:-10}" ]; then
+      return 1
+    fi
+    echo "GIT CLONE attempt ${ATTEMPT} failed; retrying in ${GIT_NETWORK_RETRY_DELAY:-5}s" >&2
+    sleep "${GIT_NETWORK_RETRY_DELAY:-5}" || return 1
+    ATTEMPT=$((ATTEMPT + 1))
+  done
+  return 1
+}
+
 unset_env_vars () {
   unset -v COB CCCOB COBLIKE URL TFILE TFOLDER ECODEF CCIL
   cdroot || return 1;
@@ -37,6 +108,7 @@ unset_env_vars () {
 # unset_env_funcs: forget every helper function defined below (functions leak
 # into the user's shell exactly like variables).
 unset_env_funcs () {
+  unset -f gitclone gitfetch
   unset -f cdfolder error fhilipop flolipop
   unset -f unset_env_funcs
   cdroot || return 1;
@@ -83,16 +155,27 @@ fhilipop() {
   
   fi
 
+  local NEW_CLONE=0
   if [ ! -d "${TF:?}" ]; then
+    NEW_CLONE=1
     cdfolder "${ECODEF:?}" || return 1;
 
-    "${GIT:?}" clone "${3:?}" --recursive "${1:?}" \
+    gitclone "${1:?}" "${3:?}" --recursive \
       >>${OUT1:?} 2>>${OUT2:?} || { error "${EC15:?}"; return 1; }
   
-    cdfolder "${TF:?}" || return 1;
+  fi
 
-    "${GIT:?}" reset --hard "${4:?}" \
-      >>${OUT1:?} 2>>${OUT2:?} || { error "${EC23:?}"; return 1; }
+  cdfolder "${TF:?}" || return 1;
+  if [ ! -d .git ] && [ ! -f .git ]; then
+    error "DIRECTORY IS NOT A GIT CHECKOUT: ${TF}"; return 1;
+  fi
+  if ! "${GIT:?}" cat-file -e "${4:?}^{commit}" 2>/dev/null; then
+    gitfetch >>${OUT1:?} 2>>${OUT2:?} || { error "GIT FETCH"; return 1; }
+  fi
+  "${GIT:?}" checkout --detach "${4:?}" \
+    >>${OUT1:?} 2>>${OUT2:?} || { error "GIT CHECKOUT"; return 1; }
+
+  if [ "${NEW_CLONE}" = 1 ]; then
 
     cp "${CCIL:?}/${2:?}_changes/init.patch" "${TF:?}/${2:?}" \
       2>>"/dev/null" || { error "CP FILE init.patch"; return 1; }
@@ -115,17 +198,28 @@ flolipop() {
   
   fi
 
+  local NEW_CLONE=0
   if [ ! -d "${TF:?}" ]; then
+    NEW_CLONE=1
     
     cdfolder "${ECODEF:?}" || return 1;
 
-    "${GIT:?}" clone "${3:?}" --recursive  "${1:?}" \
+    gitclone "${1:?}" "${3:?}" --recursive \
       >>${OUT1:?} 2>>${OUT2:?} || { error "${EC15:?}"; return 1; }
   
-    cdfolder "${TF:?}" || return 1;
+  fi
 
-    "${GIT:?}" reset --hard "${4:?}" \
-      >>${OUT1:?} 2>>${OUT2:?} || { error "${EC23:?}"; return 1; }
+  cdfolder "${TF:?}" || return 1;
+  if [ ! -d .git ] && [ ! -f .git ]; then
+    error "DIRECTORY IS NOT A GIT CHECKOUT: ${TF}"; return 1;
+  fi
+  if ! "${GIT:?}" cat-file -e "${4:?}^{commit}" 2>/dev/null; then
+    gitfetch >>${OUT1:?} 2>>${OUT2:?} || { error "GIT FETCH"; return 1; }
+  fi
+  "${GIT:?}" checkout --detach "${4:?}" \
+    >>${OUT1:?} 2>>${OUT2:?} || { error "GIT CHECKOUT"; return 1; }
+
+  if [ "${NEW_CLONE}" = 1 ]; then
 
     cp "${CCIL:?}/${2:?}_changes/init.patch" "${TF:?}/${2:?}" \
       2>>"/dev/null" || { error "CP FILE init.patch"; return 1; }

@@ -30,6 +30,77 @@ fi
 # unset_env_vars: forget every variable the body defines. Sourced scripts
 # share the caller's shell, so anything not unset here would leak into the
 # user's environment. cdroot returns to the directory the user launched from.
+
+# Retry only network work. A failed local checkout is not a network failure.
+# Ten attempts means at most nine waits; success returns immediately.
+gitfetch() {
+  local ATTEMPT=1
+  local ARGS=""
+  if ! [[ "${GIT_NETWORK_MAX_ATTEMPTS:-10}" =~ ^[1-9][0-9]*$ ]] ||
+     ! [[ "${GIT_NETWORK_RETRY_DELAY:-5}" =~ ^[0-9]+$ ]]; then
+    echo "Git retries require a positive attempt count and a nonnegative delay" >&2
+    return 1
+  fi
+  while [ "${ATTEMPT}" -le "${GIT_NETWORK_MAX_ATTEMPTS:-10}" ]; do
+    # Recheck after each failure: an interrupted fetch may have unshallowed
+    # the repository before a later part of that same fetch failed.
+    ARGS=""
+    if [ "$("${GIT:?}" rev-parse --is-shallow-repository)" = "true" ]; then
+      ARGS="--unshallow"
+    fi
+    if "${GIT:?}" fetch ${ARGS} --all --tags --prune; then
+      return 0
+    fi
+    if [ "${ATTEMPT}" -ge "${GIT_NETWORK_MAX_ATTEMPTS:-10}" ]; then
+      return 1
+    fi
+    echo "GIT FETCH attempt ${ATTEMPT} failed; retrying in ${GIT_NETWORK_RETRY_DELAY:-5}s" >&2
+    sleep "${GIT_NETWORK_RETRY_DELAY:-5}" || return 1
+    ATTEMPT=$((ATTEMPT + 1))
+  done
+  return 1
+}
+
+# Arguments: destination, URL, then the ordinary git clone options.
+# Clone into a temporary sibling directory. A failed recursive clone can
+# leave files behind; only publish the destination after the clone succeeds.
+# We remove only the temporary directory created by this call.
+gitclone() {
+  local DESTINATION="${1:?}"
+  # Accept folder names written with a trailing slash as well.
+  DESTINATION="${DESTINATION%/}"
+  local URL="${2:?}"
+  local TEMP=""
+  local ATTEMPT=1
+  shift 2
+  if [ -e "${DESTINATION}" ]; then
+    echo "GIT CLONE destination already exists: ${DESTINATION}" >&2
+    return 1
+  fi
+  if ! [[ "${GIT_NETWORK_MAX_ATTEMPTS:-10}" =~ ^[1-9][0-9]*$ ]] ||
+     ! [[ "${GIT_NETWORK_RETRY_DELAY:-5}" =~ ^[0-9]+$ ]]; then
+    echo "Git retries require a positive attempt count and a nonnegative delay" >&2
+    return 1
+  fi
+  while [ "${ATTEMPT}" -le "${GIT_NETWORK_MAX_ATTEMPTS:-10}" ]; do
+    TEMP=$(mktemp -d "${DESTINATION}.clone.XXXXXX") || return 1
+    # "$@" passes the remaining clone options without changing their quoting.
+    if "${GIT:?}" clone "${URL}" "$@" "${TEMP}/repo"; then
+      mv "${TEMP}/repo" "${DESTINATION}" || return 1
+      rmdir "${TEMP}" || return 1
+      return 0
+    fi
+    rm -rf "${TEMP:?}"
+    if [ "${ATTEMPT}" -ge "${GIT_NETWORK_MAX_ATTEMPTS:-10}" ]; then
+      return 1
+    fi
+    echo "GIT CLONE attempt ${ATTEMPT} failed; retrying in ${GIT_NETWORK_RETRY_DELAY:-5}s" >&2
+    sleep "${GIT_NETWORK_RETRY_DELAY:-5}" || return 1
+    ATTEMPT=$((ATTEMPT + 1))
+  done
+  return 1
+}
+
 unset_env_vars () {
   unset -v URL_BASE URL FOLDER VER XZF CCIL CNAME PACKDIR PACKAGE_VERSION 
   cdroot || return 1;
@@ -38,6 +109,7 @@ unset_env_vars () {
 # unset_env_funcs: forget every helper function defined below (functions leak
 # into the user's shell exactly like variables).
 unset_env_funcs () {
+  unset -f gitclone gitfetch
   unset -f cdfolder cpfolder cpfile error wgetact gitact gitact1 gitact2
   unset -f unset_env_funcs wgetact1 wgetact2
   cdroot || return 1;
@@ -307,11 +379,18 @@ gitact1() {
 
   if [ ! -d "${CCIL:?}/${1:?}" ]; then
   
-    "${GIT:?}" clone "${3:?}" "${1:?}" \
+    gitclone "${1:?}" "${3:?}"  \
       >>${OUT1:?} 2>>${OUT2:?} || { error "GIT CLONE"; return 1; }
     
+  fi
+
+  # Successful source archives have no .git. If it remains, finish checkout.
+  if [ -d "${CCIL:?}/${1:?}/.git" ]; then
     cdfolder "${CCIL:?}/${1:?}" || return 1;
     
+    if ! "${GIT:?}" cat-file -e "${2:?}^{commit}" 2>/dev/null; then
+      gitfetch >>${OUT1:?} 2>>${OUT2:?} || { error "GIT FETCH"; return 1; }
+    fi
     "${GIT:?}" checkout "${2:?}" \
       >>${OUT1:?} 2>>${OUT2:?} || { error "GIT CHECKOUT"; return 1; }
     

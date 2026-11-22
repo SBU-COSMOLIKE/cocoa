@@ -1304,3 +1304,29 @@ On some machines, the step `Installing pip dependencies` hangs (mamba shows repe
 **Step :four:**: In case the interrupted installation already finished the conda stage, rerun only the pip stage
 
     conda env update --name cocoa --file=cocoapy311.yml
+
+### Retrying Git downloads
+
+The standalone setup scripts retry failed Git clones and fetches. In
+`Cocoa/set_installation_options.sh`, the defaults are:
+
+```bash
+export GIT_NETWORK_MAX_ATTEMPTS=10
+```
+
+```bash
+export GIT_NETWORK_RETRY_DELAY=5
+```
+
+These mean ten total attempts, with five seconds between failures and no
+wait after the final attempt. Each script contains its own commented retry
+loop. A failed clone is discarded from its temporary directory; an existing
+checkout is never deleted by the retry loop. Checkout errors fail immediately.
+
+Rerunning setup completes revision selection even when the clone already
+exists. A requested commit or tag already available locally needs no fetch;
+missing revisions trigger a fetch with the same retry limits. Existing local
+branches are kept, including local commits: setup does not update them to the
+latest remote tip. Use Git explicitly when you want to update a branch.
+Packages that intentionally discard `.git` after extracting their source
+keep that archive behavior. Cocoa cleanup unsets both retry keys.
