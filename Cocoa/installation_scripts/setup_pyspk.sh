@@ -30,7 +30,7 @@ fi
 # share the caller's shell, so anything not unset here would leak into the
 # user's environment. cdroot returns to the directory the user launched from.
 unset_env_vars () {
-  unset -v URL CCIL ECODEF FOLDER PACKDIR  
+  unset -v URL CCIL ECODEF FOLDER PACKDIR PYSPK_REQUESTED_REF
   cdroot || return 1;
 }
 
@@ -106,37 +106,47 @@ if [ ! -d "${PACKDIR:?}" ]; then
     --recursive --no-single-branch "${PACKDIR:?}" \
     >>${OUT1:?} 2>>${OUT2:?} || { error "${EC15:?}"; return 1; }
 
-  cdfolder "${PACKDIR:?}" || return 1;
+fi
 
-  if [[ -n "${PYSPK_GIT_COMMIT:-}" ||
-        -n "${PYSPK_GIT_BRANCH:-}" ||
-        -n "${PYSPK_GIT_TAG:-}" ]]; then
+# A completed clone may remain after a later setup step failed. Resolve the
+# requested revision on every attempt, not only when creating the directory.
+cdfolder "${PACKDIR:?}" || return 1;
+if [ ! -d .git ] && [ ! -f .git ]; then
+  error "PYSPK DIRECTORY IS NOT A GIT CHECKOUT: ${PACKDIR}"; return 1;
+fi
+
+PYSPK_REQUESTED_REF=""
+if [ -n "${PYSPK_GIT_COMMIT:-}" ]; then
+  PYSPK_REQUESTED_REF="${PYSPK_GIT_COMMIT}"
+elif [ -n "${PYSPK_GIT_BRANCH:-}" ]; then
+  PYSPK_REQUESTED_REF="origin/${PYSPK_GIT_BRANCH}"
+elif [ -n "${PYSPK_GIT_TAG:-}" ]; then
+  PYSPK_REQUESTED_REF="refs/tags/${PYSPK_GIT_TAG}"
+fi
+
+# A shallow clone already contains its tip commit. Do not make a second
+# network request when that is the requested pin. Fetch only missing refs.
+if [ -n "${PYSPK_REQUESTED_REF}" ]; then
+  if ! "${GIT:?}" cat-file -e "${PYSPK_REQUESTED_REF}^{commit}" 2>/dev/null; then
     if [ "$("${GIT:?}" rev-parse --is-shallow-repository)" = "true" ]; then
       "${GIT:?}" fetch --unshallow --all --tags --prune \
-        >>${OUT1:?} 2>>${OUT2:?} || { error "${EC16:?}"; return 1; }
+        >>${OUT1:?} 2>>${OUT2:?} || { error "PYSPK GIT FETCH"; return 1; }
     else
       "${GIT:?}" fetch --all --tags --prune \
-        >>${OUT1:?} 2>>${OUT2:?} || { error "${EC16:?}"; return 1; }
+        >>${OUT1:?} 2>>${OUT2:?} || { error "PYSPK GIT FETCH"; return 1; }
     fi
   fi
 
   if [ -n "${PYSPK_GIT_COMMIT:-}" ]; then
-
-    "${GIT:?}" checkout "${PYSPK_GIT_COMMIT:?}" \
+    "${GIT:?}" checkout --detach "${PYSPK_GIT_COMMIT}" \
       >>${OUT1:?} 2>>${OUT2:?} || { error "${EC16:?}"; return 1; }
-  
   elif [ -n "${PYSPK_GIT_BRANCH:-}" ]; then
-  
-    "${GIT:?}" checkout -B "${PYSPK_GIT_BRANCH:?}" "origin/${PYSPK_GIT_BRANCH:?}" \
+    "${GIT:?}" checkout -B "${PYSPK_GIT_BRANCH}" "${PYSPK_REQUESTED_REF}" \
       >>${OUT1:?} 2>>${OUT2:?} || { error "${EC16:?}"; return 1; }
-  
-  elif [ -n "${PYSPK_GIT_TAG:-}" ]; then
-    
-    "${GIT:?}" checkout "tags/${PYSPK_GIT_TAG:?}" -b "${PYSPK_GIT_TAG:?}TMP" \
+  else
+    "${GIT:?}" checkout --detach "${PYSPK_REQUESTED_REF}" \
       >>${OUT1:?} 2>>${OUT2:?} || { error "${EC16:?}"; return 1; }
-  
   fi
- 
 fi
 
 cdfolder "${ROOTDIR:?}" || return 1;
