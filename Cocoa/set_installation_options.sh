@@ -421,7 +421,6 @@ export TREECORR_URL="https://github.com/rmjarvis/TreeCorr.git"
 export TREECORR_NAME="treecorr"
 export TREECORR_GIT_COMMIT="4c8add5d688789ee33145fde2a25bb4343ad8f10"
 export TREECORR_COORD_VERSION="1.3.0"
-export TREECORR_PYBIND11_VERSION="2.13.6"
 
 export PYSPK_URL="https://github.com/jemme07/pyspk.git"
 export PYSPK_GIT_COMMIT="50737f9295fee75ef2fe97e4bdd284134ed0d474"

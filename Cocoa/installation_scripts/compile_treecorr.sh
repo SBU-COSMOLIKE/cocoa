@@ -94,24 +94,17 @@ rm -rf "${PLIB:?}"/treecorr-*
 
 cdfolder "${PACKDIR}" || return 1;
 
-# Coord is a runtime dependency. Pybind11 is only needed while building;
-# keep its pinned headers local to this package, not in Cocoa's shared Python.
+# Coord is a runtime dependency. Build with the pybind11 already provided
+# by Cocoa; --no-build-isolation prevents a private build environment.
 ${PIP3:?} install "LSSTDESC.Coord==${TREECORR_COORD_VERSION:?}" \
   --find-links="${PACKDIR:?}/cocoa_dependencies" --no-index --no-deps \
   --prefix="${ROOTDIR:?}/.local" --no-build-isolation \
   >>${OUT1:?} 2>>${OUT2:?} || { error "TREECORR COORD"; return 1; }
-${PIP3:?} install "pybind11==${TREECORR_PYBIND11_VERSION:?}" \
-  --find-links="${PACKDIR:?}/cocoa_dependencies" --no-index --no-deps \
-  --target="${PACKDIR:?}/cocoa_build_dependencies" --upgrade \
-  --no-build-isolation \
-  >>${OUT1:?} 2>>${OUT2:?} || { error "TREECORR PYBIND11"; return 1; }
-
 #prevent all compile_XXX.sh from using the internet (run @compute nodes)
 #FROM: https://github.com/pypa/pip/issues/12050
 #That is why we use --no-dependencies --no-index --no-build-isolation
 (
-  env PYTHONPATH="${PACKDIR:?}/cocoa_build_dependencies:${PYTHONPATH:-}" \
-    CXX="${CXX_COMPILER:?}" CC="${C_COMPILER:?}" \
+  env CXX="${CXX_COMPILER:?}" CC="${C_COMPILER:?}" \
     ${PIP3:?} install "${PACKDIR:?}" \
       --no-dependencies \
       --prefix="${ROOTDIR:?}/.local" \

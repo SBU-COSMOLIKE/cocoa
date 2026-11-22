@@ -139,13 +139,12 @@ if [ ! -d "${PACKDIR:?}" ]; then
 
 fi
 
-# Download the two additional dependencies now; the compile step is offline.
+# Download Coord now; compilation uses Cocoa's existing pybind11 offline.
 mkdir -p "${PACKDIR:?}/cocoa_dependencies" \
   || { error "TREECORR DEPENDENCY DIRECTORY"; return 1; }
 ${PIP3:?} download --no-deps --only-binary=:all: \
   --dest "${PACKDIR:?}/cocoa_dependencies" \
   "LSSTDESC.Coord==${TREECORR_COORD_VERSION:?}" \
-  "pybind11==${TREECORR_PYBIND11_VERSION:?}" \
   >>${OUT1:?} 2>>${OUT2:?} || { error "TREECORR DEPENDENCIES"; return 1; }
 
 # Upstream enables fast-math. Cocoa preserves ordinary floating-point rules.
