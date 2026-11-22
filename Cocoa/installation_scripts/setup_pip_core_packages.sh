@@ -165,6 +165,9 @@ PIPCP=(
     'ipyparallel==9.0.1'
     'emcee==3.1.6'
     'sacc==1.0.2'
+    # Convert the saved HEALPix pixel indices to sky coordinates for TreeCorr.
+    # The Python import is astropy_healpix; healpy is a different package.
+    'astropy-healpix==1.0.3'
     'flit_core==3.12.0'
     # runtime deps of the baryonic feedback emulators:
     # pydantic (pyspk); smt + wget + msgpack (BCemu; smt==1.0.0 - other
