@@ -368,7 +368,7 @@ Now, users must follow all the steps below.
           -x OMP_NUM_THREADS -x OMP_PROC_BIND -x OMP_PLACES -x OMP_DYNAMIC \
           -x OPENBLAS_NUM_THREADS -x MKL_NUM_THREADS -x CLIK_PATH -x CLIK_DATA \
           -x CLIK_PLUGIN --mca mpi_yield_when_idle 1 \
-          --mca btl_tcp_if_exclude lo,docker0,virbr0,ib0 \
+          --mca btl_tcp_if_exclude lo,docker0,virbr0,ib0,eno1,enp1s0f0np0 \
           --bind-to core:overload-allowed --report-bindings \
           --rank-by slot --map-by slot \
           cobaya-run ./projects/example/EXAMPLE_EMUL_POLY1.yaml -r
@@ -382,8 +382,11 @@ Now, users must follow all the steps below.
 > **Running on more than one node.**
 >
 > 1. **Network interface.** TCP must use an interface routable between compute
->    nodes. A common exclusion list is
->    `--mca btl_tcp_if_exclude lo,docker0,virbr0,ib0`; adapt it to the cluster.
+>    nodes. The tested UofA exclusion list is
+>    `--mca btl_tcp_if_exclude lo,docker0,virbr0,ib0,eno1,enp1s0f0np0`; adapt it to the cluster.
+>    On the tested UofA nodes this leaves `enp1s0f1np1` available.
+>    Before launching, run `unset OMPI_MCA_btl_tcp_if_include` so an
+>    inherited inclusion list cannot conflict with the explicit exclusion.
 >    Keep `ib0` if routable IP-over-InfiniBand is the intended network. These
 >    examples exchange parameter vectors and scalar scores, so communication
 >    volume is small; actual scaling still depends on the machine.
@@ -413,7 +416,7 @@ likelihoods, and the theory code, all following Cobaya Conventions.
           -x OMP_NUM_THREADS -x OMP_PROC_BIND -x OMP_PLACES -x OMP_DYNAMIC \
           -x OPENBLAS_NUM_THREADS -x MKL_NUM_THREADS -x CLIK_PATH -x CLIK_DATA \
           -x CLIK_PLUGIN --mca mpi_yield_when_idle 1 \
-          --mca btl_tcp_if_exclude lo,docker0,virbr0,ib0 \
+          --mca btl_tcp_if_exclude lo,docker0,virbr0,ib0,eno1,enp1s0f0np0 \
           --bind-to core:overload-allowed --report-bindings \
           --rank-by slot --map-by slot \
           python ./projects/example/EXAMPLE_EMUL_NAUTILUS1.py \
@@ -440,7 +443,7 @@ likelihoods, and the theory code, all following Cobaya Conventions.
           -x OMP_NUM_THREADS -x OMP_PROC_BIND -x OMP_PLACES -x OMP_DYNAMIC \
           -x OPENBLAS_NUM_THREADS -x MKL_NUM_THREADS -x CLIK_PATH -x CLIK_DATA \
           -x CLIK_PLUGIN --mca mpi_yield_when_idle 1 \
-          --mca btl_tcp_if_exclude lo,docker0,virbr0,ib0 \
+          --mca btl_tcp_if_exclude lo,docker0,virbr0,ib0,eno1,enp1s0f0np0 \
           --bind-to core:overload-allowed --report-bindings \
           --rank-by slot --map-by slot \
           python ./projects/example/EXAMPLE_EMUL_EMCEE1.py --root ./projects/example/ \
@@ -489,7 +492,7 @@ likelihoods, and the theory code, all following Cobaya Conventions.
             -x OMP_NUM_THREADS -x OMP_PROC_BIND -x OMP_PLACES -x OMP_DYNAMIC \
             -x OPENBLAS_NUM_THREADS -x MKL_NUM_THREADS -x CLIK_PATH -x CLIK_DATA \
             -x CLIK_PLUGIN --mca mpi_yield_when_idle 1 \
-            --mca btl_tcp_if_exclude lo,docker0,virbr0,ib0 \
+            --mca btl_tcp_if_exclude lo,docker0,virbr0,ib0,eno1,enp1s0f0np0 \
             --bind-to core:overload-allowed --report-bindings \
             --rank-by slot --map-by slot \
             python ./projects/example/EXAMPLE_EMUL_MINIMIZE1.py \
@@ -534,7 +537,7 @@ likelihoods, and the theory code, all following Cobaya Conventions.
           -x OMP_NUM_THREADS -x OMP_PROC_BIND -x OMP_PLACES -x OMP_DYNAMIC \
           -x OPENBLAS_NUM_THREADS -x MKL_NUM_THREADS -x CLIK_PATH -x CLIK_DATA \
           -x CLIK_PLUGIN --mca mpi_yield_when_idle 1 \
-          --mca btl_tcp_if_exclude lo,docker0,virbr0,ib0 \
+          --mca btl_tcp_if_exclude lo,docker0,virbr0,ib0,eno1,enp1s0f0np0 \
           --bind-to core:overload-allowed --report-bindings \
           --rank-by slot --map-by slot \
           python ./projects/example/EXAMPLE_EMUL_PROFILE1.py \
@@ -585,7 +588,7 @@ likelihoods, and the theory code, all following Cobaya Conventions.
             -x OMP_NUM_THREADS -x OMP_PROC_BIND -x OMP_PLACES -x OMP_DYNAMIC \
             -x OPENBLAS_NUM_THREADS -x MKL_NUM_THREADS -x CLIK_PATH -x CLIK_DATA \
             -x CLIK_PLUGIN --mca mpi_yield_when_idle 1 \
-            --mca btl_tcp_if_exclude lo,docker0,virbr0,ib0 \
+            --mca btl_tcp_if_exclude lo,docker0,virbr0,ib0,eno1,enp1s0f0np0 \
             --bind-to core:overload-allowed --report-bindings \
             --rank-by slot --map-by slot \
             python ./projects/example/EXAMPLE_EMUL_PROFILE_SCIPY1.py \
@@ -620,7 +623,7 @@ likelihoods, and the theory code, all following Cobaya Conventions.
             -x OMP_NUM_THREADS -x OMP_PROC_BIND -x OMP_PLACES -x OMP_DYNAMIC \
             -x OPENBLAS_NUM_THREADS -x MKL_NUM_THREADS -x CLIK_PATH -x CLIK_DATA \
             -x CLIK_PLUGIN --mca mpi_yield_when_idle 1 \
-            --mca btl_tcp_if_exclude lo,docker0,virbr0,ib0 \
+            --mca btl_tcp_if_exclude lo,docker0,virbr0,ib0,eno1,enp1s0f0np0 \
             --bind-to core:overload-allowed --report-bindings \
             --rank-by slot --map-by slot \
               python -m mpi4py.futures ./projects/example/EXAMPLE_EMUL_SCAN1.py \
