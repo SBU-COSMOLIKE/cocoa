@@ -168,6 +168,8 @@ PIPCP=(
     # Convert the saved HEALPix pixel indices to sky coordinates for TreeCorr.
     # The Python import is astropy_healpix; healpy is a different package.
     'astropy-healpix==1.0.3'
+    # CPU spherical transforms for the point-transformed Gaussian map generator.
+    'ducc0==0.42.0'
     'flit_core==3.12.0'
     # runtime deps of the baryonic feedback emulators:
     # pydantic (pyspk); smt + wget + msgpack (BCemu; smt==1.0.0 - other
