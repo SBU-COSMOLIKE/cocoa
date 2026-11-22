@@ -37,9 +37,13 @@ else
 fi
 
 ulimit -u 2000000 # require line when nmpi is high
+# Clear inherited inclusion settings before the explicit exclusion below.
+# This list was tested at UofA; adapt interface names for other clusters.
+unset OMPI_MCA_btl_tcp_if_include
+
 mpirun -n ${SLURM_NTASKS} --oversubscribe \
   --mca pml ob1 --mca btl vader,tcp,self \
-  --mca btl_tcp_if_exclude lo,docker0,virbr0,ib0 \
+  --mca btl_tcp_if_exclude lo,docker0,virbr0,ib0,eno1,enp1s0f0np0 \
   --bind-to core:overload-allowed --mca mpi_yield_when_idle 1 \
   --rank-by slot --map-by numa:pe=${OMP_NUM_THREADS} \
   cobaya-run ./projects/example/EXAMPLE_POLY${SLURM_ARRAY_TASK_ID}.yaml -r
