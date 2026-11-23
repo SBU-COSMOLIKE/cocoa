@@ -50,6 +50,65 @@ quantity.
 - Repeated code is acceptable. Do not move an unwanted abstraction to
   another file and call that consistency. Implement the established pattern.
 
+## Required Cocoa project layout (compare with lsst_y1, file by file)
+
+`projects/lsst_y1` is the reference layout for every project. The maintainer
+has had to correct the same drift many times, in sessions of Claude, Fable
+and GPT alike, so treat this section as a checklist, not as advice. Before
+creating a file, a folder or a Python module in a project, open the matching
+place in lsst_y1 and do what it does. A review of a project compares the
+layout with lsst_y1 file type by file type, not only the prose, and says what
+it did not compare.
+
+- **One route for computing.** Predictions come only from Cobaya theory
+  blocks, the compiled interface (cosmolike_core, including
+  `cosmolike/3pcf/`), the project's `likelihood/` and `interface/`,
+  `cosmolike_core/cosmolike_notebook_utils/` (only for code that every
+  project of that kind would need unchanged), or the one notebook that uses
+  the code. A project never owns a second route: no private CAMB producer,
+  prediction class, config schema (`configs/`), cache format or command-line
+  pipeline beside the Cobaya likelihood. des_3pcf grew one
+  (`scripts/run_3pcf.py` and a `scripts/des3pcf/` package, about 9,000
+  lines) and it took a full retirement to remove it.
+- **Thin drivers only where Cobaya has no route or a run takes hours.** The
+  covariance (`covariance/compute_covariance.py`, the lsst_y1 pattern) and an
+  hours-long Fisher base are the examples; a timing benchmark is a driver in
+  `tests/`. A driver is roughly 70 to 200 lines that import the homes above;
+  it is never a library.
+- **`interface/` holds exactly two Python files, as in lsst_y1:**
+  `cosmolike_<project>_interface.py` (the loader stub next to the compiled
+  `.so`, copied from lsst_y1) and `cosmolike_<project>_notebook_wrappers.py`.
+  Notebooks write `import cosmolike_<project>_interface as ci` and
+  `import cosmolike_<project>_notebook_wrappers as nw`. Never add a third
+  wrapper file (`*_components_wrappers.py`, `*_feedback_wrappers.py`, ...).
+- **The notebook wrappers compute general observables.** Model them on
+  lsst_y1's `xi(ntheta, theta_min_arcmin, ..., omegam=omegam, ...)`: a function
+  that works at any parameter point, takes the project fiducial as keyword
+  defaults, and whose docstring says what it returns, in which units and
+  with which array shapes. A procedure whose meaning lives in one notebook
+  (a study loop, the plot of one report, saving that notebook's arrays)
+  belongs in that notebook, next to the markdown that explains it. A
+  general function stays in the wrappers even if only one notebook calls it
+  today; its docstring then says when to use it in general.
+- **Docstrings open with background.** Before the argument list, say which
+  notebook or step calls the function, what data it handles and where they
+  come from (which simulations, who produced them, what one vector or row
+  is), and what the caller does with the result. Define every term of art
+  at first use. "Reads explicitly labeled independent joint vectors" means
+  nothing to a student who does not know which simulations exist.
+- **Never run the code a port came from.** A project ported from an
+  external code (des_3pcf from fastnc and the Y3 aperture integrator) never
+  imports, executes or subprocess-runs that code, not in notebooks, tests or
+  generator scripts. Validation uses saved JSON fixtures that record the
+  source commit.
+- **Notebooks that read `likelihood.last_datavector` evaluate with
+  `cached=False`.** Cobaya serves a revisited point from its state cache
+  without calling `logp`, and the attribute then still holds the previous
+  point's vector.
+- **Design conversations stay out of git.** Briefs and replies exchanged
+  between Claude, Fable and GPT live in a scratch folder; if one lands in a
+  commit, remove it with a new commit.
+
 ## 0. Absolute rules (read first)
 
 1. **NEVER merge, deduplicate, or refactor the bash scripts.** Every
