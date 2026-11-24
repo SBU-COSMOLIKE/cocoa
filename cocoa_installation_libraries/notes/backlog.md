@@ -1023,6 +1023,38 @@ porting precedent any WHM work would build on.
 <a id="closed-tickets"></a>
 # Closed tickets
 
+<a id="closed-vic-emulator-validation"></a>
+## Vic emulator validation for DES Y6
+
+**NEW FUNCTIONALITY. CLOSED (2026-11-24).**
+
+DES Y6 commit `03efa2e` records an executed CAMB comparison notebook,
+legacy-reader spectra with provenance, and physical-theory MCMC/Nautilus
+examples. Candidate code `5324e81` and data `c0f19f3` were tested in
+separate checkouts; installation defaults and other projects were not changed.
+The seven-input `w0wa_mead2020` bundle does not supply the DES feedback
+parameter or a trained neutrino-mass dimension. At the fixed-mass fiducial,
+its nonlinear spectrum differs by up to 1.24% from plain HMCode2020 and
+28.5% from the DES feedback model. At 0.30 eV the plain-HMCode discrepancy
+reaches 14.2%; 0.60 eV produces nonfinite values. These mass tests probe
+compatibility with the DES prior, outside the network's trained inputs.
+CAMB reference refinement changes nonlinear power by up to 0.53%, so the
+percent-level discrepancy is not a converged error bound. The new reader
+changes legacy nonlinear predictions by up to 0.76% at three tested points.
+An inherited derived-sigma8 bug uses radius 8 Mpc instead of 8/h Mpc:
+1.0575 versus 0.8141 on the same fiducial spectrum. No claim is made that
+this bug originates in the candidate branch.
+
+Validation: seven notebook code cells executed, plot inspected, candidate
+Cobaya spectra including extrapolation finite at the fixed-mass fiducial,
+native DES Y6 build passed after adding the shared halo-profile source.
+MCMC and Nautilus preserve the original likelihood, theory and priors;
+their evaluated log prior and log likelihood match exactly. Four OpenMP
+threads and BLAS=1. No sampling or production simulations were launched.
+Adoption is deferred pending a matching physical model and further
+likelihood-weighted validation; the DES Y6 studies ticket remains open.
+
+
 <a id="closed-covariance-geometry-prs"></a>
 ## Survey-mask and cluster-area covariance inputs (2026-11-24)
 
