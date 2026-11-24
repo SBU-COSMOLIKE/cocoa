@@ -90,7 +90,7 @@ export IGNORE_COSMOLIKE_ROMAN_FOURIER_CODE=1
 export IGNORE_COSMOLIKE_ROMAN_KL_CODE=1
 export IGNORE_COSMOLIKE_DES_CLUSTER_CODE=1
 # WARNING: des_y6 is not production ready.
-export IGNORE_COSMOLIKE_DES_Y6_CODE=1
+#export IGNORE_COSMOLIKE_DES_Y6_CODE=1
 
 # ------------------------------------------------------------------------------
 # Covariance generation is optional; data-vector likelihoods still read their

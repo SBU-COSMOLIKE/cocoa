@@ -38,6 +38,7 @@ features, Low bugs, Low features.
 
 ### Medium
 
+- OPEN **MEDIUM** **NEW FUNCTIONALITY** — [DES Y6 comparison and PPD studies](#open-des-y6-studies)
 - OPEN **MEDIUM** **BUG** — [Cache-key hardening for in-process reconfiguration](#open-cache-key-hardening)
 - OPEN **MEDIUM** **NEW FUNCTIONALITY** — [Cache the Fourier non-Limber band-center corrections](#open-fourier-nonlimber-cache)
 - OPEN **MEDIUM** **NEW FUNCTIONALITY** — [Rewrite analytic covariances in an isolated module](#open-covariance-rewrite)
@@ -54,6 +55,18 @@ features, Low bugs, Low features.
 - OPEN **LOW** **NEW FUNCTIONALITY** — [Finish the Compton-y port (C_gy, C_ys, C_ky, C_yy)](#open-compton-y-port)
 - OPEN **LOW** **NEW FUNCTIONALITY** — [Web-halo model (WHM, arXiv:2508.10902) for nonlinear P(k)](#open-web-halo-model)
 - OPEN **LOW** **NEW FUNCTIONALITY** — [Vectorization study for halo.c (SIMDe, SLEEF)](#open-halo-vectorization)
+
+<a id="open-des-y6-studies"></a>
+## DES Y6 comparison and PPD studies
+
+**Ticket type: NEW FUNCTIONALITY. Severity: MEDIUM. OPEN (2026-11-24).**
+
+Install the SBU DES Y6 repository, organize its inputs and comparisons using
+LSST Y1 conventions, and replace the comparison scripts with reproducible
+notes and companion notebooks. Develop the PPD study from Krause's toy
+notebook and the statistical and DES literature. Distinguish archived
+code comparisons from validation of the current fork. The repository is
+downloaded; local September Lighthouse inputs are being checked.
 
 <a id="closed-des-y6-modernization"></a>
 ## Modernize the DES Y6 project
@@ -1009,6 +1022,25 @@ porting precedent any WHM work would build on.
 
 <a id="closed-tickets"></a>
 # Closed tickets
+
+<a id="closed-covariance-geometry-prs"></a>
+## Survey-mask and cluster-area covariance inputs (2026-11-24)
+
+**Ticket type: NEW FUNCTIONALITY. Severity: MEDIUM. CLOSED.**
+
+Manually ported upstream PRs 63 and 64 in core `a5dc03c`, with native
+regressions in DES cluster `606995a`. Raw binary-mask power, measured
+pair availability and redshift-dependent count area reach notebook and
+production forecasts and the covariance YAML reader. Measured pair areas
+bypass harmonic reconstruction. Invalid geometry and distinct-window
+SSC approximations violating the Cauchy bound fail explicitly; remaining
+mask and cross-window assumptions accompany the saved forecast.
+
+An isolated covariance build passed 59 tests, with 10 opt-in slow halo
+checks skipped; four existing CLI-reader tests also passed. The 27 default
+ordinary/joint forecast arrays remained byte-identical. BLAS used one
+thread; OpenMP was capped at four. Installed libraries and other teams'
+C/C++ edits were left intact.
 
 <a id="closed-bacco-cobaya"></a>
 ## BACCO paired-response Cobaya integration (2026-11-19)
