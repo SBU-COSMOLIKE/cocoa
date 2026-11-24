@@ -12,8 +12,8 @@
 ## The Projects Folder <a name="appendix_projects_folder"></a> 
 
 Current project examples cap the sampled primordial power amplitude at
-`As_1e9 = 3.75`, meaning `A_s = 3.75e-9`. A project sampling
-`logA = ln(1e10 A_s)` uses the equivalent maximum `ln(37.5)`.
+`As_1e9 = 3.5`, meaning `A_s = 3.5e-9`. A project sampling
+`logA = ln(1e10 A_s)` uses the equivalent maximum `ln(35)`.
 Tighter scientific priors remain unchanged. Fixed fiducial amplitudes and
 saved historical test configurations are not sampling-prior defaults.
 
