@@ -11,6 +11,13 @@
  
 ## The Projects Folder <a name="appendix_projects_folder"></a> 
 
+Current project examples cap the sampled primordial power amplitude at
+`As_1e9 = 3.75`, meaning `A_s = 3.75e-9`. A project sampling
+`logA = ln(1e10 A_s)` uses the equivalent maximum `ln(37.5)`.
+Tighter scientific priors remain unchanged. Fixed fiducial amplitudes and
+saved historical test configurations are not sampling-prior defaults.
+
+
 The `projects` folder includes all the projects linked to Cosmolike; they can also help organize general investigations, even if they don't use Cosmolike directly. Projects that utilize Cosmolike need to have more or less the following structure, taken from the [LSST_Y1 project](https://github.com/CosmoLike/cocoa_lsst_y1)
 
     +-- cocoa_lsst_y1
