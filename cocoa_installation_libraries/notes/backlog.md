@@ -61,12 +61,57 @@ features, Low bugs, Low features.
 
 **Ticket type: NEW FUNCTIONALITY. Severity: MEDIUM. OPEN (2026-11-24).**
 
-Install the SBU DES Y6 repository, organize its inputs and comparisons using
-LSST Y1 conventions, and replace the comparison scripts with reproducible
-notes and companion notebooks. Develop the PPD study from Krause's toy
-notebook and the statistical and DES literature. Distinguish archived
-code comparisons from validation of the current fork. The repository is
-downloaded; local September Lighthouse inputs are being checked.
+Current status (2026-11-25): the project organization, numbered examples,
+sampler/minimizer/profile launchers, CAMB postprocessing configurations and
+Slurm array example are implemented. The comparison, redshift-mode,
+cluster-robustness and PPD teaching notebooks have been executed. Archived
+Lighthouse inputs are portable; they are not a new external-code run.
+
+Remaining work in the current DES Y6 and cross-project testing task:
+
+- Regenerate and validate proposals from
+  `Cocoa/projects/des_y6/mcmc/FISHER_PROPOSALS.ipynb` against the current
+  configurations in the scheduled compute lane. The notebook migration,
+  mathematical/didactical review and read-only inventory are complete
+  (DES Y6 `a700865`): all 40 named matrices are positive definite and
+  unchanged, and 3,002 fiducial/stencil points satisfy Cobaya's priors.
+  The standalone generator is retired. Existing stored proposals still
+  predate some CPL-bound and acoustic-scale-solver changes.
+- Finish the remaining LSST Y1 x DESI FoM layouts; review and publish the
+  independent approximate-FoM convergence tables. Eighteen scopes have
+  completed, including DESI dz=0.05; three DESI layouts remain. Investigate
+  DES Y6 4x2pt+N's final 7.26% shift and DESI dz=0.05's 2.08% shift;
+  neither passes the 1% screen. Keep this independent of emulator tests.
+- Resolve the observed-data numerical-control check at H0=80: the adopted
+  4x2pt+N grid changes chi-squared by 0.07267 against a 0.05 target.
+  Higher CAMB accuracy also encountered a transfer integration failure.
+- Complete the final cross-project review and scoped commits for the
+  remaining changes. The corrected emulator comparison is complete for
+  all 19 supported scopes, with 50 broad and 25 focused points each,
+  strict w0+wa < -0.4, saved matching Fisher contours and a combined PDF.
+  DES Cluster and DES 3PCF CPL emulator comparisons remain unsupported by
+  the current cold-power provider; their CAMB-only FoM tests are separate.
+
+Longer scientific follow-ups, not completed by the teaching demonstrations:
+
+- Calibrate DES PPD tests using conditioning-only chains and repeated
+  simulated null/alternative analyses. The Tensiometer and nuisance toy
+  checks are executed; they do not supply a calibrated DES p-value.
+- Extend the released-chain importance pilot only with compatible support
+  and adequate effective sample size. The current fixed-mass pilot has
+  ESS=12.50; it is not a replacement for a production posterior fit.
+- Assess the CMB emulator residuals before claiming equivalence to CAMB.
+  The acoustic-scale inversion is corrected, but the spectrum checks are
+  pilots and include non-negligible Plik likelihood shifts.
+- Revisit cluster-robustness cases with large numerical diagnostics before
+  treating their Fisher forecasts as quantitative posterior constraints.
+- Obtain the missing systematics-weight and scale-dependent metacalibration
+  vectors, and the full 6x2pt+N measured vector, covariance and mask.
+  Those configurations cannot be validated from the supplied inputs alone.
+
+Continue with one native project at a time, two MPI ranks, four OpenMP
+threads per rank and BLAS=1. Map generation stays paused and TreeCorr stays
+on the HPC. Do not launch production chains as part of these test tasks.
 
 <a id="closed-des-y6-modernization"></a>
 ## Modernize the DES Y6 project
