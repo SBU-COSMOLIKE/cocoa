@@ -201,7 +201,7 @@ export DES_CLUSTER_GIT_BRANCH="lowrank_fftlog"
 # WARNING: des_y6 is not production ready.
 export DES_Y6_URL="https://github.com/SBU-COSMOLIKE/cocoa_des_y6.git"
 export DES_Y6_NAME="des_y6"
-export DES_Y6_GIT_BRANCH="main"
+export DES_Y6_GIT_BRANCH="lowrank_fftlog"
 
 export BFMT_THEORY_URL="https://github.com/SBU-COSMOLIKE/cocoa_baryonic_feedback_models_theory.git"
 export BFMT_NAME="baryon_suppression"
