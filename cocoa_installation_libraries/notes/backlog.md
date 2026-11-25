@@ -76,21 +76,43 @@ Remaining work in the current DES Y6 and cross-project testing task:
   (DES Y6 `a700865`): all 40 named matrices are positive definite and
   unchanged, and 3,002 fiducial/stencil points satisfy Cobaya's priors.
   The standalone generator is retired. Existing stored proposals still
-  predate some CPL-bound and acoustic-scale-solver changes.
-- Finish the remaining LSST Y1 x DESI FoM layouts; review and publish the
-  independent approximate-FoM convergence tables. Eighteen scopes have
-  completed, including DESI dz=0.05; three DESI layouts remain. Investigate
-  DES Y6 4x2pt+N's final 7.26% shift and DESI dz=0.05's 2.08% shift;
-  neither passes the 1% screen. Keep this independent of emulator tests.
+  predate some CPL-bound and acoustic-scale-solver changes. Executing the
+  actual notebook regenerated cases 21, 31 and 11 into scratch: all three
+  have matching parameter names and positive-definite matrices, with
+  native OpenMP=4 and BLAS=1. Case 21 is byte-identical to its stored file;
+  the CPL cases change with the narrowed prior and need publication with
+  the full build.
+- Investigate the five approximate-FoM screens exceeding 1%: observed
+  DES Y6 4x2pt+N and all four LSST Y1 x DESI layouts. All 21 screens are
+  measured, audited and published; 16 are within the threshold. A mixed
+  DES Y6 stencil localizes its change chiefly to native cluster clustering,
+  not CAMB. Keep this independent of emulator accuracy tests; these are
+  approximate noise estimates, not full higher-accuracy Fisher matrices.
 - Resolve the observed-data numerical-control check at H0=80: the adopted
   4x2pt+N grid changes chi-squared by 0.07267 against a 0.05 target.
-  Higher CAMB accuracy also encountered a transfer integration failure.
+  Increasing CAMB IntTolBoost at AccuracyBoost=4 leaves its difference
+  from AccuracyBoost=5 essentially unchanged. The direct-vector error
+  between those two predictions is only 5.7e-6; the observed chi-squared
+  shift is dominated by the linear residual term. Higher CAMB accuracy
+  also encountered a transfer integration failure.
 - Complete the final cross-project review and scoped commits for the
   remaining changes. The corrected emulator comparison is complete for
   all 19 supported scopes, with 50 broad and 25 focused points each,
   strict w0+wa < -0.4, saved matching Fisher contours and a combined PDF.
-  DES Cluster and DES 3PCF CPL emulator comparisons remain unsupported by
-  the current cold-power provider; their CAMB-only FoM tests are separate.
+  DES Cluster's additional CPL comparison has completed: below direct
+  E thresholds 0.2/0.5/1/4, broad counts are 25/32/38/43 out of 50 and
+  focused counts are 23/24/24/24 out of 25, with no nonfinite evaluations.
+  Its largest focused error is 122.72; do not describe the whole focused
+  set as accurate. DES 3PCF's CPL comparison is running. The linear
+  cold-power provider now uses a matched-LambdaCDM anchor at
+  physical k=0.05/Mpc (emulator code `af209ae`), with five passing
+  regression tests and cold/total ratio errors below 0.12% at z<=4 in
+  the seven-point pilot. Matching saved CPL Fisher contours and focused
+  points are prepared without new derivatives. Separately, one allowed
+  CPL point has a large learned linear-spectrum error, confirmed with
+  the full emulator bundle. Do not hide
+  that error with extra cuts or describe the full spectrum as validated.
+  Their CAMB-only FoM tests are separate.
 
 Longer scientific follow-ups, not completed by the teaching demonstrations:
 
