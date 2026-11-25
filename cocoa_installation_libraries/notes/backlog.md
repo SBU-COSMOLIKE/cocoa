@@ -67,26 +67,40 @@ Slurm array example are implemented. The comparison, redshift-mode,
 cluster-robustness and PPD teaching notebooks have been executed. Archived
 Lighthouse inputs are portable; they are not a new external-code run.
 
+All 21 CPL emulator comparisons are complete and reviewed: 50 broad and
+25 focused points per scope, strict w0+wa < -0.4, matching saved Fisher
+contours, and a 21-page combined PDF. All 1,575 paired evaluations are
+finite. Finite does not mean accurate: DES Cluster's largest focused
+distance is 122.72. DES 3PCF's focused maximum is 0.01074. The completed
+results and threshold counts are in each project's data-vector test guide.
+
+The CPL linear cold-power extension is implemented in emulator `af209ae`,
+using a matched-LambdaCDM anchor at physical k=0.05/Mpc. Five regression
+tests passed. The seven-point spectrum pilot bounds the isolated ratio
+error below 0.12% at z<=4; it is not a full-prior guarantee. At the two
+largest DES Cluster discrepancies, changing only the cold input gave
+E=0.00265 and 0.00001298, far below the full emulator errors. A separate
+CPL spectrum outlier was traced to the learned correction, not the
+metadata-version warning. No extra parameter cuts conceal these errors.
+
+The proposal notebook `Cocoa/projects/des_y6/mcmc/FISHER_PROPOSALS.ipynb`
+has regenerated all 40 matrices from the current YAMLs. Independent review
+confirmed parameter headers, finite symmetric entries and positive
+definiteness; the smallest correlation-matrix eigenvalue is 2.18e-5.
+Survey LambdaCDM proposals reproduce the previous files exactly, and joint
+LambdaCDM changes are below 1.8e-8 in old-diagonal-scaled units. CPL
+proposals change with the narrower prior and updated acoustic-scale solve.
+The standalone generator is retired; reproducibility lives in the notebook.
+
 Remaining work in the current DES Y6 and cross-project testing task:
 
-- Regenerate and validate proposals from
-  `Cocoa/projects/des_y6/mcmc/FISHER_PROPOSALS.ipynb` against the current
-  configurations in the scheduled compute lane. The notebook migration,
-  mathematical/didactical review and read-only inventory are complete
-  (DES Y6 `a700865`): all 40 named matrices are positive definite and
-  unchanged, and 3,002 fiducial/stencil points satisfy Cobaya's priors.
-  The standalone generator is retired. Existing stored proposals still
-  predate some CPL-bound and acoustic-scale-solver changes. Executing the
-  actual notebook regenerated cases 21, 31 and 11 into scratch: all three
-  have matching parameter names and positive-definite matrices, with
-  native OpenMP=4 and BLAS=1. Case 21 is byte-identical to its stored file;
-  the CPL cases change with the narrowed prior and need publication with
-  the full build.
 - Investigate the five approximate-FoM screens exceeding 1%: observed
   DES Y6 4x2pt+N and all four LSST Y1 x DESI layouts. All 21 screens are
   measured, audited and published; 16 are within the threshold. A mixed
   DES Y6 stencil localizes its change chiefly to native cluster clustering,
-  not CAMB. Keep this independent of emulator accuracy tests; these are
+  not CAMB. Integration level 4 to 5 alone barely changes the tested
+  column; the global native boost and its coupled grids remain sensitive.
+  Keep this independent of emulator accuracy tests; these are
   approximate noise estimates, not full higher-accuracy Fisher matrices.
 - Resolve the observed-data numerical-control check at H0=80: the adopted
   4x2pt+N grid changes chi-squared by 0.07267 against a 0.05 target.
@@ -95,24 +109,6 @@ Remaining work in the current DES Y6 and cross-project testing task:
   between those two predictions is only 5.7e-6; the observed chi-squared
   shift is dominated by the linear residual term. Higher CAMB accuracy
   also encountered a transfer integration failure.
-- Complete the final cross-project review and scoped commits for the
-  remaining changes. The corrected emulator comparison is complete for
-  all 19 supported scopes, with 50 broad and 25 focused points each,
-  strict w0+wa < -0.4, saved matching Fisher contours and a combined PDF.
-  DES Cluster's additional CPL comparison has completed: below direct
-  E thresholds 0.2/0.5/1/4, broad counts are 25/32/38/43 out of 50 and
-  focused counts are 23/24/24/24 out of 25, with no nonfinite evaluations.
-  Its largest focused error is 122.72; do not describe the whole focused
-  set as accurate. DES 3PCF's CPL comparison is running. The linear
-  cold-power provider now uses a matched-LambdaCDM anchor at
-  physical k=0.05/Mpc (emulator code `af209ae`), with five passing
-  regression tests and cold/total ratio errors below 0.12% at z<=4 in
-  the seven-point pilot. Matching saved CPL Fisher contours and focused
-  points are prepared without new derivatives. Separately, one allowed
-  CPL point has a large learned linear-spectrum error, confirmed with
-  the full emulator bundle. Do not hide
-  that error with extra cuts or describe the full spectrum as validated.
-  Their CAMB-only FoM tests are separate.
 
 Longer scientific follow-ups, not completed by the teaching demonstrations:
 
