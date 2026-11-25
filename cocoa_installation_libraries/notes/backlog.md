@@ -92,14 +92,32 @@ LambdaCDM changes are below 1.8e-8 in old-diagonal-scaled units. CPL
 proposals change with the narrower prior and updated acoustic-scale solve.
 The standalone generator is retired; reproducibility lives in the notebook.
 
+The legacy `desy3_4x2ptN/`, `desy6_cardinal/`,
+`lighthouse_6x2ptN_comparison/`, `yamls/` and root `plots/` directories
+are removed. The existing redshift notebook reproduces the useful DES Y3
+redshift panels; active data, configurations and frozen references remain.
+Cleanup commits are DES Y6 `b9972c3` and `bdb442d`.
+
+A subsequent numerical review found a Z_MID n(z) row-selection bug:
+rounding a reconstructed sample coordinate back through `floor` could read
+row k-1 instead of k. Core `d925d26` reads the known stored row directly
+for midpoint inputs; 18 native reader tests pass. Both Z_LOW curves and
+the DES 3PCF benchmark grid retain byte-identical values. The four DESI
+emulator comparisons and FoM baselines are being recomputed after this
+physical correction, with their existing cosmologies and saved E5 contours.
+The first corrected DESI screen (Delta z=0.20) passes: the final-tier
+approximate FoM shift is +0.00002129%, formerly -9.26759%, with unchanged
+accuracy controls. The new ordinary fiducial differs from the old vector
+by E=0.000184067; no regression data were refrozen.
+
 Remaining work in the current DES Y6 and cross-project testing task:
 
-- Investigate the five approximate-FoM screens exceeding 1%: observed
-  DES Y6 4x2pt+N and all four LSST Y1 x DESI layouts. All 21 screens are
-  measured, audited and published; 16 are within the threshold. A mixed
-  DES Y6 stencil localizes its change chiefly to native cluster clustering,
-  not CAMB. Integration level 4 to 5 alone barely changes the tested
-  column; the global native boost and its coupled grids remain sensitive.
+- Finish the corrected DESI comparisons and FoM screens, and confirm all
+  four selected columns for DES Y6 4x2pt+N at the finer radial grid. Five
+  old screens exceeded 1%; the corrected DESI Delta z=0.20 screen now passes.
+  A mixed DES Y6 stencil identifies non-Limber radial resolution as the
+  dominant source of its q-column change: changing that grid alone gives
+  -7.820%, while other controls at the same grid give -0.003415%.
   Keep this independent of emulator accuracy tests; these are
   approximate noise estimates, not full higher-accuracy Fisher matrices.
 - Resolve the observed-data numerical-control check at H0=80: the adopted
@@ -109,6 +127,15 @@ Remaining work in the current DES Y6 and cross-project testing task:
   between those two predictions is only 5.7e-6; the observed chi-squared
   shift is dominated by the linear residual term. Higher CAMB accuracy
   also encountered a transfer integration failure.
+- After these changes, smoke-test every DES Y6 evaluate configuration and
+  MCMC, Nautilus, minimization and profile launcher. Use isolated scratch
+  outputs and short runs capped at five minutes per case; check startup and
+  initial evaluations, not convergence. Distinguish failures from runs
+  stopped at the cap and leave existing production chains untouched.
+  Preflight covers 10 evaluate YAMLs, 40 MCMC YAMLs and proposal matrices,
+  120 Python launchers, and 88 active inputs. Runtime checks remain pending.
+  A profile needs a genuine same-case minimization record; without one,
+  its setup check must not be reported as a completed profile calculation.
 
 Longer scientific follow-ups, not completed by the teaching demonstrations:
 
