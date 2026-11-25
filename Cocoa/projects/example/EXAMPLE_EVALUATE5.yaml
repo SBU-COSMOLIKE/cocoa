@@ -121,7 +121,6 @@ params:
 
 theory:
   classy:
-    use_renames: True
     extra_args:
       non linear: hmcode
       l_max_scalars: 3000
