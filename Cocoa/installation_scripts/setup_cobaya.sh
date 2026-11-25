@@ -262,6 +262,11 @@ if [ "${SETUP_NEW_CLONE}" = 1 ]; then
   # parenthesis = run in a subshell
   ( sh change_python_files.sh ) || { error "${EC22:?} (CPF)"; return 1; }
 
+  # Preserve the source score paired with each retained postprocessing row.
+  "${GIT:?}" -C "${COB:?}" apply \
+    "${CCCOB:?}/cobaya/post_reweight_rejected_rows.patch" \
+    || { error "${EC22:?} (Cobaya postprocessing weights)"; return 1; }
+
   # --------------------------------------------------------------------------
   # PATCH FILE --------------------------------------------- -----------------
   # --------------------------------------------------------------------------  
