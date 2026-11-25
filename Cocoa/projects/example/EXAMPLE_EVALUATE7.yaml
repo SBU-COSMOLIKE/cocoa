@@ -78,19 +78,8 @@ params:
       scale: 0.03
     proposal: 0.03
     latex: \Omega_\mathrm{c} h^2
-  #mnu:
-  #  value: 0.06
-  mnu1:
-    value: 0.0
-    drop: True
-  mnu2:
-    value: 'lambda: np.sqrt(7.5e-5)'
-    drop: True
-  mnu3:
-    value: 'lambda: 0.06 - np.sqrt(7.5e-5)'
-    drop: True
   mnu:
-    value: 'lambda mnu1, mnu2 ,mnu3: mnu1 + mnu2 + mnu3'
+    value: 0.06
     latex: \sum m_\nu
   tau:
     prior:
@@ -216,15 +205,6 @@ theory:
       DoLateRadTruncation: false
       recombination_model: CosmoRec
       halofit_version: mead2020
-      # from https://github.com/simonsobs/SOLikeT/blob/master/examples/example_1.yaml
-      num_nu_massless: 1.044
-      num_nu_massive: 2
-      nu_mass_eigenstates: 2
-      # The lightest state is massless. The massive states carry sqrt(7.5e-5) eV
-      # and the remainder of the 0.06 eV total, as specified above.
-      nu_mass_fractions: [0.14433756729740646, 0.8556624327025936]
-      nu_mass_numbers: [1,1]
-      share_delta_neff: True
 
 sampler:
   evaluate:
