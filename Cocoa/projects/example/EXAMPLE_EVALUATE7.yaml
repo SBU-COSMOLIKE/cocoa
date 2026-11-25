@@ -220,9 +220,9 @@ theory:
       num_nu_massless: 1.044
       num_nu_massive: 2
       nu_mass_eigenstates: 2
-      # We use the minimal normal ordering case: massless lightest state, m2 and m3
-      # computed according to oscilation measurements.
-      nu_mass_fractions: [0.14763410387308012,0.8523658961269198]
+      # The lightest state is massless. The massive states carry sqrt(7.5e-5) eV
+      # and the remainder of the 0.06 eV total, as specified above.
+      nu_mass_fractions: [0.14433756729740646, 0.8556624327025936]
       nu_mass_numbers: [1,1]
       share_delta_neff: True
 
