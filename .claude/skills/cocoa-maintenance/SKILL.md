@@ -150,6 +150,10 @@ Fisher engine, plotting script or benchmark framework per project.
   Marginalize nuisance parameters with the shared Fisher machinery. Preserve
   the actual baseline settings, including non-Limber tolerances; silently
   setting a tolerance to zero changes the experiment.
+- Reuse the shared nuisance-derivative batching and validated theory-cache
+  path. Nuisance-only changes do not require new CAMB spectra. Do not replace
+  that path with blanket `cached=False` calls; keep the existing safeguards
+  against reading a stale native data vector.
 - Use one fixed relative step of 2.5% for nonzero fiducial parameters and
   documented absolute steps for zero fiducials. Respect parameter boundaries
   and report necessary step adjustments. Do not run an automatic half-step
