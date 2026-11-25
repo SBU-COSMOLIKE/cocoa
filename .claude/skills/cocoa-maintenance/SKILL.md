@@ -109,6 +109,76 @@ it did not compare.
   between Claude, Fable and GPT live in a scratch folder; if one lands in a
   commit, remove it with a new commit.
 
+## Emulator accuracy and cheap FoM tests: keep their purposes separate
+
+These rules apply to every project's `tests/` and the shared
+`cocoa_testing.py` machinery. Follow LSST Y1's project structure and the
+shared Fisher implementation used by LSST Y1 x DESI. Do not add a second
+Fisher engine, plotting script or benchmark framework per project.
+
+### Emulator accuracy is an ordinary chi-squared calculation
+
+- Use the saved benchmark configuration, mask, covariance, nuisance values
+  and fixed cosmologies (50 broad and 25 focused points). Save the point
+  settings so future candidates are tested on the same models. The changing
+  input is the candidate emulator; this test is not a scan of current YAMLs.
+- Use ordinary MCMC/chi-squared numerical settings for both predictions.
+  Never silently replace CAMB `AccuracyBoost` or `k_per_logint`, or native
+  likelihood settings, with Fisher settings. Inspect and record the effective
+  configuration after programmatic overrides: reading the source YAML alone
+  missed hidden `AccuracyBoost=3` and `k_per_logint=50` overrides.
+- Compare matched physical prescriptions using
+  `delta_d = d_emulator - d_CAMB` and `E = delta_d.T @ C_inverse @ delta_d`
+  on the same retained entries. The difference of observed-data chi-squareds
+  contains a linear residual term and is not this emulator-error statistic.
+- Load a saved approximate, nuisance-marginalized Fisher reference for the
+  contours and focused region. Preparing that reference is separate work;
+  an emulator test must not recompute derivatives, redraw focused points or
+  rebuild the reference. It is a Gaussian approximation, not an MCMC posterior.
+  Do not add source-tree hashes, live-configuration comparisons or automatic
+  invalidation/rebuild machinery to this fixed benchmark. Retain ordinary
+  checks that the saved files can be read and their array dimensions agree.
+- Approximate contour accuracy must not gate valid broad or focused model
+  comparisons. Report contour limitations separately; do not discard the
+  focused points because a FoM tolerance was missed. Report failed model
+  evaluations separately from finite large errors. Use the shared plotting
+  function and the project's plain-text name, with the agreed cuts and bins.
+
+### Cheap FoM convergence is its own numerical test
+
+- Build one full derivative baseline at the project's default accuracy.
+  Marginalize nuisance parameters with the shared Fisher machinery. Preserve
+  the actual baseline settings, including non-Limber tolerances; silently
+  setting a tolerance to zero changes the experiment.
+- Use one fixed relative step of 2.5% for nonzero fiducial parameters and
+  documented absolute steps for zero fiducials. Respect parameter boundaries
+  and report necessary step adjustments. Do not run an automatic half-step
+  ladder to obtain a perfectly stable absolute FoM for this approximate test.
+- Apply the shared LSST Y1 x DESI noise formula using its required stencil
+  and weights. Compute only the selected sensitive columns at higher
+  accuracy. Never append the remaining columns afterward: that turns the
+  cheap estimate back into an expensive full refined Fisher calculation.
+  Several stencil offsets at one step are not several step-size studies.
+- Report the estimated FoM change and the selected columns. Unmeasured
+  higher-accuracy contributions are unknown, not zero. A full refined Fisher
+  or derivative-step convergence study is a separate, explicit calculation.
+  Keep deliberately raised-accuracy chi-squared convergence scans separate
+  too; these rules do not remove their necessary refinement calculations.
+
+### Verify cost and parallel execution before scaling out
+
+- For the requested laptop test schedule, run one project at a time with
+  two MPI ranks, four native OpenMP threads per rank and BLAS=1. Verify the
+  native thread count after likelihood initialization; environment variables
+  alone do not prove that a later likelihood setter kept that value.
+- Time the emulator benchmark and FoM test separately. Record wall time,
+  actual model-evaluation counts, baseline/candidate stages and whether any
+  predictions were reused. Loading contours or redrawing a plot is not a
+  fresh numerical test. Check one project's timing before launching all.
+- Audit the effective call path, not just CLI names: an ordinary emulator
+  test must not launch Fisher construction through a default argument or a
+  subprocess. Fix the shared implementation and keep project drivers thin.
+
 ## 0. Absolute rules (read first)
 
 1. **NEVER merge, deduplicate, or refactor the bash scripts.** Every
