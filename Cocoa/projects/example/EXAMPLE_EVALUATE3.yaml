@@ -3,6 +3,9 @@ timing: True
 debug: False
 
 likelihood:
+  background_caps:
+    external: "lambda _self: 0.0 if _self.provider.get_param('H0') < 85 and 0.2 < _self.provider.get_param('omegam') < 0.5 else -np.inf"
+    requires: {H0: null, omegam: null}
   SPT3G_Y1.TTTEEE: 
     clik_file: spt3g_Y1_v1_TTTEEE.clik
     # uncomment the 3 next lines to compute TEEE only likelihood
@@ -17,7 +20,7 @@ likelihood:
 params:
   logA:
     prior:
-      min: 1.61
+      min: 2.3025850929940463
       max: 3.5553480614894135
     ref:
       dist: norm
@@ -61,7 +64,7 @@ params:
   omegabh2:
     prior:
       min: 0.005
-      max: 0.1
+      max: 0.034999999999999996
     ref:
       dist: norm
       loc: 0.0224
@@ -104,7 +107,7 @@ params:
     drop: true
   w:
     prior:
-      min: -3
+      min: -1.9999999999999998
       max: -0.01
     ref:
       dist: norm

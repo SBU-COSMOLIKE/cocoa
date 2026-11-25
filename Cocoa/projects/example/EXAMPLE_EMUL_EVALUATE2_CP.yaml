@@ -14,10 +14,13 @@ likelihood:
      lens_only: True
      lmax: 2998
      variant: actplanck_baseline
+prior:
+  omegam_cap: "lambda omegach2, omegabh2, H0, mnu: 0.0 if 0.2 < (omegach2 + omegabh2 + mnu*(3.046/3)**0.75/94.0708)/(H0/100)**2 < 0.5 else -np.inf"
+
 params:
   logA:
     prior:
-      min: 1.61
+      min: 2.3025850929940463
       max: 3.5553480614894135
     ref:
       dist: norm
@@ -38,7 +41,7 @@ params:
   H0:
     prior:
       min: 55
-      max: 91
+      max: 84.99999999999999
     ref:
       dist: norm
       loc: 67.32
@@ -49,7 +52,7 @@ params:
   omegabh2:
     prior:
       min: 0.01
-      max: 0.04
+      max: 0.034999999999999996
     ref:
       dist: norm
       loc: 0.022383

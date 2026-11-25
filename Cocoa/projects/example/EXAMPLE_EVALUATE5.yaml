@@ -3,13 +3,16 @@ debug: true
 timing: true
 
 likelihood:
+  background_caps:
+    external: "lambda _self: 0.0 if 0.2 < _self.provider.get_param('omegam') < 0.5 else -np.inf"
+    requires: {omegam: null}
   planck_2018_highl_plik.TTTEEE:
     path: ./external_modules/
 
 params:
   logA:
     prior:
-      min: 1.61
+      min: 2.3025850929940463
       max: 3.5553480614894135
     ref:
       dist: norm
@@ -34,7 +37,7 @@ params:
   H0:
     prior:
       min: 20
-      max: 100
+      max: 84.99999999999999
     ref:
       dist: norm
       loc: 67
@@ -44,7 +47,7 @@ params:
   omegabh2:
     prior:
       min: 0.005
-      max: 0.1
+      max: 0.034999999999999996
     ref:
       dist: norm
       loc: 0.0224

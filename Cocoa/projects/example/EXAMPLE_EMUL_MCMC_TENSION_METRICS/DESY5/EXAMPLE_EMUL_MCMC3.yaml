@@ -3,6 +3,9 @@ timing: false
 debug: false
 
 likelihood:
+  background_caps:
+    external: "lambda _self: 0.0 if _self.provider.get_param('H0') < 85 and 0.2 < _self.provider.get_param('omegam') < 0.5 else -np.inf"
+    requires: {H0: null, omegam: null}
   sn.desy5: 
     path: ./external_modules/data/sn_data
 params:
@@ -20,7 +23,7 @@ params:
   omegabh2:
     prior:
       min: 0.01
-      max: 0.04
+      max: 0.034999999999999996
     ref:
       dist: norm
       loc: 0.022383

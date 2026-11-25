@@ -3,6 +3,9 @@ debug: false
 timing: true
 
 likelihood:
+  background_caps:
+    external: "lambda _self: 0.0 if _self.provider.get_param('H0') < 85 and 0.2 < _self.provider.get_param('omegam') < 0.5 else -np.inf"
+    requires: {H0: null, omegam: null}
   act_dr6_cmbonly:
     lmax_theory: 4000
   act_dr6_lenslike.ACTDR6LensLike:
@@ -14,7 +17,7 @@ likelihood:
 params:
   logA:
     prior:
-      min: 1.61
+      min: 2.3025850929940463
       max: 3.5553480614894135
     ref:
       dist: norm
@@ -58,7 +61,7 @@ params:
   omegabh2:
     prior:
       min: 0.01
-      max: 0.04
+      max: 0.034999999999999996
     ref:
       dist: norm
       loc: 0.022383
@@ -84,7 +87,7 @@ params:
     value: 'lambda: np.sqrt(7.5e-5)'
     drop: True
   mnu3:
-    value: 'lambda: np.sqrt(2.5e-3)'
+    value: 'lambda: 0.06 - np.sqrt(7.5e-5)'
     drop: True
   mnu:
     value: 'lambda mnu1, mnu2 ,mnu3: mnu1 + mnu2 + mnu3'
@@ -112,7 +115,7 @@ params:
     drop: true
   w:
     prior:
-      min: -3
+      min: -1.9999999999999998
       max: -0.01
     ref:
       dist: norm
