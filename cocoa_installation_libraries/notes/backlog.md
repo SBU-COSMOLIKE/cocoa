@@ -74,6 +74,58 @@ finite. Finite does not mean accurate: DES Cluster's largest focused
 distance is 122.72. DES 3PCF's focused maximum is 0.01074. The completed
 results and threshold counts are in each project's data-vector test guide.
 
+Execution update (2026-11-26): DES Y6 `eff1cfe` aligns all ten Evaluate
+cosmologies with TATT 3x2pt and ordinary CAMB controls with
+AccuracyBoost=1.05, k_per_logint=10 and kmax=10. Native, CAMB, nonlinear
+and three CPL emulator comparisons were rerun at this baseline. The
+current cluster cheap-FoM screen first gave successive shifts of -3.7%
+and -7.4%. Refining only its radial grid then changed the estimate by
++16% from 2,045 to 8,177 nodes and -0.016% from 8,177 to 16,353 nodes.
+The last comparison meets the 1% selected-column convergence target at
+the current fiducial. Both refinements reused the ordinary 35-parameter
+Fisher matrix and evaluated only five selected derivative stencils.
+The maintained radial driver is committed as `826532b`; its guide and
+the numerical random-model references are in DES Y6 `5f818e1`.
+
+The runtime photo-z and non-Limber additions pass together (seven checks).
+They cover n(z) modes and calibrated shift/stretch, require exact return
+to the default, and report direct prediction distances. BACCO also passes
+its cosmology-response check and has a measured feedback plot. The joint
+accuracy check passes at all nine points with native boost 3, integration
+level 10, lmax=200000 and the raised CAMB controls (effective kmax=120).
+Maximum prediction distances are 0.0067 (TATT), 0.010 (NLA) and 0.0068
+(4x2pt+N). Both cosmic-shear sector ladders pass with bitwise return.
+CFASTPT comparisons pass for shear, 3x2pt and 2x2pt in DES Y6 and the
+DES Cluster optical configurations. The DES Y6 cache/tolerance suite
+passes all 12 checks; its setting sequences pass all 11. Targeted LSST
+checks preserve the existing shared API. DES Y6 additions are committed
+as `9db5112` and `544cfc1`, with shared core implementation `05a9ee0`.
+DES Cluster's optical comparison is committed as `b6648be`. The shared
+reference-worker BLAS initialization is committed as `0018ccd`.
+DES 3PCF's joint-shear photo-z check passes with unchanged Map3 entries
+and exact restoration (`87eec7d`). DES Y6's 50 seeded-prior predictions
+are finite, with 43 below the numerical target of 0.2 and a maximum of
+1.2. The seven above-target points require diagnosis; an advisory test
+pass does not establish numerical convergence there. The six sibling
+reference and ordinary replays continue in two independent two-core
+lanes alongside the eight-core DES Y6 startup/diagnostic lane.
+The ten guides now use compact FoM settings/change tables; the nine
+sibling-guide revisions are committed. The cross-project audit is also
+adding missing applicable test bindings, with current prior inputs kept
+separate from historical synthetic snapshots.
+The 12 shift/stretch fiducial checks pass; 40 unchanged feedback
+fiducial checks reuse actual-model validation. These 52 setup checks
+are not inference-startup results. The bounded sampler-startup queue
+remains active on two MPI ranks with
+four native OpenMP threads each and BLAS=1. Profile setup checks remain
+distinct from actual profiles, which require genuine matching minima.
+Independent tests now overlap at the user's request, while retaining
+one-thread BLAS. The PPD notebook's conditioning-mask preparation,
+weighted chain intake and missing-nuisance prior draws were reviewed and
+committed as DES Y6 `ba49a61`. Two actual native predictions validate the
+reader-to-prediction path; they do not supply calibrated DES
+posterior-predictive probabilities or replace conditioning chains.
+
 The CPL linear cold-power extension is implemented in emulator `af209ae`,
 using a matched-LambdaCDM anchor at physical k=0.05/Mpc. Five regression
 tests passed. The seven-point spectrum pilot bounds the isolated ratio
