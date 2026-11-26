@@ -128,24 +128,107 @@ DESI `dbd8de6` and DES Y6 `0ea8a43`.
 
 Remaining work in the current DES Y6 testing task:
 
-- Preserve the documented observed-data numerical limitation at H0=80.
-  Holding transfer wavenumbers fixed while increasing CAMB's massive-
-  neutrino momentum quadrature from 40 to 50 nodes reduces the AB4
-  TimeStepBoost=1.25 versus AB5 difference to Delta chi-squared=-0.00880.
-  Cold-power input isolation and independent mass-variance integrals
-  identify this quadrature as the dominant source at the tested point.
-  The adopted 4x2pt+N configuration still differs from that targeted
-  reference by Delta chi-squared=+0.14425, above the 0.05 working target,
-  despite a small direct-vector error E=0.000486. No default numerical
-  settings have changed; this is not a convergence certificate.
-- Smoke-test every DES Y6 evaluate configuration and
-  MCMC, Nautilus, minimization and profile launcher. Use isolated scratch
-  outputs and short runs capped at five minutes per case; check startup and
+- The five LSST Y1 baryonic-feedback templates are fully commented in
+  all ten DES Y6 Evaluate examples (`f04ff2f`). They include the theory
+  selector, parameter priors and overrides, with a warning to replace CAMB's
+  `mead2020_feedback` by `mead2020` and remove `HMCode_logT_AGN` before
+  enabling external feedback. Independent parsing and active-line checks
+  confirm that the ten existing evaluation configurations are unchanged.
+- SP(k), BCemu, Flamingo, BACCO and BCemu2025 inference companions are
+  implemented as cases 53--92 (`fac2e58`, notebook follow-up `7dc11bb`).
+  Each covers TATT cosmic shear and 3x2pt, LambdaCDM and CPL, with and
+  without CMB. MCMC/minimizer/Nautilus/profile and matched plain-CAMB
+  postprocessing use the existing routes. The README maps every case.
+  The proposal notebook checks all 52 full and 40 partial base proposals
+  and can compute full feedback-specific matrices. A scratch case-58
+  build produced a full 23-parameter SPD proposal; two MPI MCMC ranks
+  used it and saved scored samples, whose replay agreed within 5.7e-5
+  in minus log posterior. All forty configurations now evaluate with
+  finite positive non-unity suppression; each feedback family also passes
+  a genuine CPL point with w=-0.9, wa=0.1. DES Y6 `6648718` requests the
+  hybrid suppression and refuses missing or invalid grids. Feedback theory
+  `4ceb199` declares all BACCO cosmology dependencies and matches BCEmu's
+  actual eta/deta upper bound 0.40 and baryon-fraction bounds [0.10,0.25].
+  The maintained BACCO regression passes for changes in amplitude, tilt,
+  w and wa with cached results exactly matching fresh calculations.
+  Core `201db8a` allows fifty startup posterior draws: four joint examples
+  required a sixth draw, beyond the previous five-draw budget. The old
+  bounded startup queue is resumed after these checks; this does not
+  certify sampler convergence or all minimization/profile workflows.
+- The twelve calibrated shift-and-stretch cases 41--52 and full named
+  Fisher proposals are committed in `00c0416`. All twelve matrices passed
+  finite, symmetry and Cholesky checks; bounded startup remains pending.
+  Their priors and redshift notebook are committed in `5f5c198`. CosmoSIS and
+  Cardinal inventories are now documented in the data README. Data
+  utilities moved to `scripts/` in `9d96174`, and the incomplete cluster
+  descriptor and obsolete DES Y3 proposal were cleaned up in `096e17f`.
+- Per-probe radial-resolution multipliers are implemented in core
+  `4549367`, with preservation during shared tolerance checks in `75238a2`.
+  The keys use the prefix `integration_accuracy_` and suffixes `ss`, `gs`,
+  `gg`, `gk`, `ks`, `kk`, `cg`, `cc`, `cs`, `n`. They multiply the quadrature
+  resolution at the existing global level; counts have a 1024-node base
+  minimum before multiplication. Default factors are 1. Strict rebuilds,
+  installation and finite native checks passed across all ten projects.
+  Default optical parity, unrelated-probe isolation,
+  non-Limber linear/full matching and factor/reset restoration are checked.
+- The user adopted DES Y6 global integration level 0 with SS=1, GS=4,
+  GG=2, CG=CC=CS=4 and N=1 where those probes are active. Ten changing
+  points give maximum direct-vector errors 0.003724 (TATT optical),
+  0.003474 (NLA optical) and 0.000518 (clusters), relative to global level
+  7 with unity factors. The observed-data chi-squared shift is a separate
+  advisory and can be larger because it includes a residual linear term.
+  Production Evaluate/MCMC/post settings have been updated; the sampler,
+  minimizer and profile drivers inherit their corresponding MCMC files.
+  Maintained tests passed (12 checks), recorded in DES Y6 `1425736`.
+- The maintained DES Y6 CAMB trials now cover sampling density,
+  AccuracyBoost, power coverage, joint refinement and cluster neutrino
+  momenta at three chosen points per family. All 78 comparisons meet the
+  user's numerical target: full-vector E < 0.2. The earlier 0.01 E and
+  0.05 observed-fit criteria were introduced incorrectly; current tests
+  and guides are corrected in `f4d3803` and `97cd21c`. Smaller diagnostic
+  errors must not become a stricter requirement. Observed fit shifts are
+  separate from prediction error. Main skill `c9e13462` requires checking
+  the requested metric, threshold and scope before running or choosing
+  defaults. The optional DESI radial convergence criterion is also 0.2
+  (`e784b38`); that optional study was not rerun for the policy change.
+- DES Cluster's combined native+CAMB test passes at the unchanged global
+  integration level 1 and unity factors: maximum E=0.0006892 for 4x2pt+N
+  and 0.04703 for 6x2pt+N at H0=61,69,77. GG uses 256 nodes. A 128-node
+  diagnostic gives maxima 0.04898 and 0.34240 respectively. The user
+  explicitly prefers the simpler existing GG256 defaults for both, so
+  remove the briefly proposed GG0.5 and GS2 live overrides; no YAML diff
+  remains. The four simplified maintained tests and both cheap Fisher
+  screens passed, recorded in DES Cluster `e3cbcaa`. Successive refined
+  FoM changes were 0.008855% and 0.008388%; these are selected-column
+  estimates, not full refined Fishers. The measured optical
+  DES Y3 configuration also passes at its own fiducial (full E=0.004606).
+- The DES Y6 cheap FoM screens at the new ordinary controls are complete.
+  Shear and 3x2pt pass the separate 1% successive-tier screen, with final
+  shifts +0.021209% and -0.058381%. The initial 4x2pt+N estimate changes
+  -6.78090%. Its selected-column radial follow-up passes at the final
+  refinement: g16 to g32 changes the estimate by +0.0243077%, after
+  g4 to g16 changes it by -2.83917% (`0ea8b55`). The saved baseline and
+  selected columns were reused. Accepted chi-squared defaults remain
+  unchanged by this separate Fisher diagnostic. These runs
+  used one full baseline, one 2.5% stencil spacing and selected-column
+  refinement, with two MPI ranks, four OpenMP threads each and BLAS=1.
+  Emulator benchmark points and saved contours remain intact. The user
+  resumed YAML startup checks; serialize them with numerical tests.
+- Smoke-test all 10 DES Y6 evaluations and all 40 cases each for MCMC,
+  Nautilus, minimization, profiling and CAMB postprocessing. Reweight fresh
+  scratch MCMC samples with each post YAML. Use isolated outputs and short
+  runs capped at five minutes per case; check startup and
   initial evaluations, not convergence. Distinguish failures from runs
   stopped at the cap and leave existing production chains untouched.
   Preflight covers 10 evaluate YAMLs, 40 MCMC YAMLs and proposal matrices,
-  120 Python launchers, and 88 active inputs. Runtime checks are running
-  after the completed FoM queue, with results recorded per case.
+  120 Python launchers, 40 post YAMLs and 88 active inputs. These are 210
+  workflow dispositions plus separately labelled setup checks. The earlier
+  paused run completed 48 checks, with a
+  separate user-interrupted minimization case. Those checks included ten
+  evaluations, ten MCMC starts, ten Nautilus starts, nine capped
+  minimizations and nine profile
+  setup checks. Changed configurations will need fresh startup checks;
+  these earlier results do not validate future numerical-default changes.
   A profile needs a genuine same-case minimization record; without one,
   its setup check must not be reported as a completed profile calculation.
 
