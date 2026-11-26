@@ -17,6 +17,18 @@ description: >
 Follow these rules exactly. When a rule below conflicts with your own idea of
 "better code", the rule wins. Do not improvise improvements.
 
+## Required first action for agents and after compaction
+
+- Every worker, including Sol subagents, must first read this skill and
+  the applicable project instructions before starting its assigned work.
+  A parent agent's summary of the rules does not replace reading them.
+- Immediately after every context compaction, reread the applicable skills
+  and project instructions before resuming work. The compacted summary is
+  not a substitute, even if it says those instructions were read earlier.
+- Delegation does not transfer final-review responsibility: the parent
+  reviews the returned changes against the applicable instructions before
+  reporting completion.
+
 ## Required Cocoa likelihood pattern
 
 The user explicitly requires the LSST Y1 implementation and coding style,
