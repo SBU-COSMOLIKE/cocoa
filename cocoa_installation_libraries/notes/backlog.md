@@ -102,38 +102,50 @@ A subsequent numerical review found a Z_MID n(z) row-selection bug:
 rounding a reconstructed sample coordinate back through `floor` could read
 row k-1 instead of k. Core `d925d26` reads the known stored row directly
 for midpoint inputs; 18 native reader tests pass. Both Z_LOW curves and
-the DES 3PCF benchmark grid retain byte-identical values. The four DESI
-emulator comparisons and FoM baselines are being recomputed after this
-physical correction, with their existing cosmologies and saved E5 contours.
-The first corrected DESI screen (Delta z=0.20) passes: the final-tier
-approximate FoM shift is +0.00002129%, formerly -9.26759%, with unchanged
-accuracy controls. The new ordinary fiducial differs from the old vector
+the DES 3PCF benchmark grid retain byte-identical values. All four DESI
+emulator comparisons have been recomputed after this physical correction,
+with their existing cosmologies and saved E5 contours. Every prediction
+changes, but none crosses a plotted error threshold, so the reviewed
+figures and combined PDF remain byte-identical. The DESI data-vector guide
+records the corrected archives in commit `030da4c`.
+All four corrected DESI screens pass: their final-tier approximate FoM
+shifts are +0.00002129% (Delta z=0.20), -0.00004291% (Delta z=0.05),
+-0.00019123% (62 Mpc bins) and -0.00007391% (Delta z=0.02), with unchanged
+accuracy controls. Before the reader fix these shifts ranged from -2.08%
+to -29.83%. The ordinary baselines were rebuilt after the physical fix;
+the higher settings evaluated only their newly ranked selected columns.
+At Delta z=0.20 the new ordinary fiducial differs from the old vector
 by E=0.000184067; no regression data were refrozen.
 
-Remaining work in the current DES Y6 and cross-project testing task:
+The final DES Y6 4x2pt+N radial refinement also passes: the four-column
+estimated FoM changes by +0.026905% from g16 to g32, versus +1.123387%
+from g8 to g16. The ordinary Fisher, stencil steps and selected coordinates
+are unchanged. A mixed stencil identified radial resolution as the main
+source of its q-column shift. All scopes now have a final successive
+approximate-noise comparison below 1%; this does not replace a full
+higher-accuracy Fisher calculation. The updated guides are committed in
+DESI `dbd8de6` and DES Y6 `0ea8a43`.
 
-- Finish the corrected DESI comparisons and FoM screens, and confirm all
-  four selected columns for DES Y6 4x2pt+N at the finer radial grid. Five
-  old screens exceeded 1%; the corrected DESI Delta z=0.20 screen now passes.
-  A mixed DES Y6 stencil identifies non-Limber radial resolution as the
-  dominant source of its q-column change: changing that grid alone gives
-  -7.820%, while other controls at the same grid give -0.003415%.
-  Keep this independent of emulator accuracy tests; these are
-  approximate noise estimates, not full higher-accuracy Fisher matrices.
-- Resolve the observed-data numerical-control check at H0=80: the adopted
-  4x2pt+N grid changes chi-squared by 0.07267 against a 0.05 target.
-  Increasing CAMB IntTolBoost at AccuracyBoost=4 leaves its difference
-  from AccuracyBoost=5 essentially unchanged. The direct-vector error
-  between those two predictions is only 5.7e-6; the observed chi-squared
-  shift is dominated by the linear residual term. Higher CAMB accuracy
-  also encountered a transfer integration failure.
-- After these changes, smoke-test every DES Y6 evaluate configuration and
+Remaining work in the current DES Y6 testing task:
+
+- Preserve the documented observed-data numerical limitation at H0=80.
+  Holding transfer wavenumbers fixed while increasing CAMB's massive-
+  neutrino momentum quadrature from 40 to 50 nodes reduces the AB4
+  TimeStepBoost=1.25 versus AB5 difference to Delta chi-squared=-0.00880.
+  Cold-power input isolation and independent mass-variance integrals
+  identify this quadrature as the dominant source at the tested point.
+  The adopted 4x2pt+N configuration still differs from that targeted
+  reference by Delta chi-squared=+0.14425, above the 0.05 working target,
+  despite a small direct-vector error E=0.000486. No default numerical
+  settings have changed; this is not a convergence certificate.
+- Smoke-test every DES Y6 evaluate configuration and
   MCMC, Nautilus, minimization and profile launcher. Use isolated scratch
   outputs and short runs capped at five minutes per case; check startup and
   initial evaluations, not convergence. Distinguish failures from runs
   stopped at the cap and leave existing production chains untouched.
   Preflight covers 10 evaluate YAMLs, 40 MCMC YAMLs and proposal matrices,
-  120 Python launchers, and 88 active inputs. Runtime checks remain pending.
+  120 Python launchers, and 88 active inputs. Runtime checks are running
+  after the completed FoM queue, with results recorded per case.
   A profile needs a genuine same-case minimization record; without one,
   its setup check must not be reported as a completed profile calculation.
 
