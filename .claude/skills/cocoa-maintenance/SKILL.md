@@ -837,9 +837,11 @@ shape, the main README wins.
 - Operational caveats (a pager swallowing output, a platform quirk,
   anything of the form "if the terminal does X, do Y") are
   `> [!NOTE]` or `> [!TIP]` callouts, never body paragraphs.
-- Banned words in READMEs (user-vetoed): "suite" (say "the tests")
-  and "keypress" (say what is pressed, e.g. "until space or enter is
-  pressed"). Identifiers in code stay as the code spells them.
+- Banned words in READMEs (user-vetoed): "suite" (say "the tests"),
+  "fixture"/"fixtures" (say "saved test inputs" or name the actual
+  cosmologies and settings), and "keypress" (say what is pressed, e.g.
+  "until space or enter is pressed"). Literal paths and code identifiers
+  stay as the code spells them.
 - Titles never repeat the repository name: inside the lsst_y1
   project the tests page is "Unit tests for the likelihoods", never
   "Unit tests for the lsst_y1 likelihoods". The repository already
@@ -1027,6 +1029,7 @@ would make the reference false; name every such exception.
     innovative     intricate       meticulous     multifaceted
     notable        notably         pivotal        thereby
     transformative versatile
+    fixture        fixtures
 
 These forms are prohibited for the same reason:
 
