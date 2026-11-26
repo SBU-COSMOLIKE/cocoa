@@ -76,19 +76,19 @@ export IGNORE_DARK_EMULATOR_CODE=1
 #export IGNORE_BCEMU_CODE=1
 #export IGNORE_FBRE_CODE=1
 #export IGNORE_BACCOEMU_CODE=1
+#export IGNORE_BFMT_CODE=1 # Baryon Feedback Theory Block from Nihar&JVicente
+#export IGNORE_BACCO_BISPECTRUM_CODE=1 # Paired P/B feedback theory bundled with CosmoLike
+#export IGNORE_BIHALOFIT_CODE=1 # Matter bispectrum theory bundled with CosmoLike
 
 # ------------------------------------------------------------------------------
 # The keys below control which cosmolike projects will be installed and compiled 
 # ------------------------------------------------------------------------------
 #export IGNORE_COSMOLIKE_LSST_Y1_CODE=1
-#export IGNORE_COSMOLIKE_LSSTY1XDESI_CODE=1
 #export IGNORE_COSMOLIKE_DES_3PCF_CODE=1
 export IGNORE_COSMOLIKE_DES_Y3_CODE=1
 #export IGNORE_COSMOLIKE_DESXPLANCK_CODE=1
 export IGNORE_COSMOLIKE_ROMAN_FOURIER_CODE=1
 #export IGNORE_COSMOLIKE_ROMAN_REAL_CODE=1
-export IGNORE_COSMOLIKE_ROMAN_KL_CODE=1
-export IGNORE_COSMOLIKE_DES_CLUSTER_CODE=1
 # WARNING: des_y6 is not production ready.
 #export IGNORE_COSMOLIKE_DES_Y6_CODE=1
 
@@ -100,18 +100,11 @@ export IGNORE_COSMOLIKE_DES_CLUSTER_CODE=1
 # ------------------------------------------------------------------------------
 export IGNORE_COSMOLIKE_DES_3PCF_COVARIANCE=1
 export IGNORE_COSMOLIKE_LSST_Y1_COVARIANCE=1
-export IGNORE_COSMOLIKE_LSSTY1XDESI_COVARIANCE=1
 export IGNORE_COSMOLIKE_ROMAN_REAL_COVARIANCE=1
 export IGNORE_COSMOLIKE_ROMAN_FOURIER_COVARIANCE=1
-export IGNORE_COSMOLIKE_ROMAN_KL_COVARIANCE=1
 export IGNORE_COSMOLIKE_DES_Y3_COVARIANCE=1
 export IGNORE_COSMOLIKE_DES_Y6_COVARIANCE=1
 export IGNORE_COSMOLIKE_DESXPLANCK_COVARIANCE=1
-export IGNORE_COSMOLIKE_DES_CLUSTER_COVARIANCE=1
-
-#export IGNORE_BFMT_CODE=1 # Baryon Feedback Theory Block from Nihar&JVicente
-#export IGNORE_BACCO_BISPECTRUM_CODE=1 # Paired P/B feedback theory bundled with CosmoLike
-#export IGNORE_BIHALOFIT_CODE=1 # Matter bispectrum theory bundled with CosmoLike
 
 # ------------------------------------------------------------------------------
 # The keys below control which private projects (may not be public repo)
@@ -120,6 +113,18 @@ export IGNORE_COSMOLIKE_DES_CLUSTER_COVARIANCE=1
 #export INSTALL_AXIONS_2025_PROJECT=1
 #export INSTALL_AXIE_CAMB_V2=1
 #export INSTALL_AXIE_CAMB_2026_PROJECT=1
+
+# Private CosmoLike projects
+#export IGNORE_COSMOLIKE_LSSTY1XDESI_CODE=1
+export IGNORE_COSMOLIKE_ROMAN_KL_CODE=1
+# Generic project for testing CosmoLike cluster code.
+# DES cluster data are maintained in the DES Y6 project.
+export IGNORE_COSMOLIKE_DES_CLUSTER_CODE=1
+
+# Optional covariance generation for private CosmoLike projects
+export IGNORE_COSMOLIKE_LSSTY1XDESI_COVARIANCE=1
+export IGNORE_COSMOLIKE_ROMAN_KL_COVARIANCE=1
+export IGNORE_COSMOLIKE_DES_CLUSTER_COVARIANCE=1
 
 # ------------------------------------------------------------------------------
 # If not set, pip_core_packages.sh will install several ML packages ------------
@@ -173,10 +178,6 @@ export LSST_Y1_URL="https://github.com/SBU-COSMOLIKE/cocoa_lsst_y1.git"
 export LSST_Y1_NAME="lsst_y1"
 export LSST_Y1_GIT_BRANCH="lowrank_fftlog"
 
-export LSSTY1XDESI_URL="https://github.com/SBU-COSMOLIKE/cocoa_lssty1xdesi.git"
-export LSSTY1XDESI_NAME="lssty1xdesi"
-export LSSTY1XDESI_GIT_BRANCH="main"
-
 export ROMAN_FOURIER_URL="https://github.com/SBU-COSMOLIKE/cocoa_roman_fourier.git"
 export ROMAN_FOURIER_NAME="roman_fourier"
 export ROMAN_FOURIER_GIT_BRANCH="lowrank_fftlog"
@@ -188,15 +189,6 @@ export ROMAN_REAL_GIT_BRANCH="lowrank_fftlog"
 export COSMOLIKE_URL="https://github.com/SBU-COSMOLIKE/cocoa-cosmolike-core.git"
 export COSMOLIKE_NAME="cosmolike_core"
 export COSMOLIKE_GIT_BRANCH="lowrank_fftlog"
-
-export ROMAN_KL_URL="https://github.com/SBU-COSMOLIKE/cocoa_roman_kl.git"
-export ROMAN_KL_NAME="roman_kl"
-export ROMAN_KL_GIT_BRANCH="lowrank_fftlog"
-
-# WARNING: des_cluster is not production ready.
-export DES_CLUSTER_URL="https://github.com/SBU-COSMOLIKE/cocoa_des_cluster.git"
-export DES_CLUSTER_NAME="des_cluster"
-export DES_CLUSTER_GIT_BRANCH="lowrank_fftlog"
 
 # WARNING: des_y6 is not production ready.
 export DES_Y6_URL="https://github.com/SBU-COSMOLIKE/cocoa_des_y6.git"
@@ -222,6 +214,19 @@ export AXIONS_PROJECT_NAME="axions"
 
 export AXIE_CAMB_2026_PROJECT_URL="https://github.com/SBU-COSMOLIKE/cocoa_axiecamb_2026.git"
 export AXIE_CAMB_2026_PROJECT_NAME="axicambv2"
+
+export LSSTY1XDESI_URL="https://github.com/SBU-COSMOLIKE/cocoa_lssty1xdesi.git"
+export LSSTY1XDESI_NAME="lssty1xdesi"
+export LSSTY1XDESI_GIT_BRANCH="main"
+
+export ROMAN_KL_URL="https://github.com/SBU-COSMOLIKE/cocoa_roman_kl.git"
+export ROMAN_KL_NAME="roman_kl"
+export ROMAN_KL_GIT_BRANCH="lowrank_fftlog"
+
+# WARNING: des_cluster is not production ready.
+export DES_CLUSTER_URL="https://github.com/SBU-COSMOLIKE/cocoa_des_cluster.git"
+export DES_CLUSTER_NAME="des_cluster"
+export DES_CLUSTER_GIT_BRANCH="lowrank_fftlog"
 
 # ------------------------------------------------------------------------------
 # ------------------------------------------------------------------------------
