@@ -177,8 +177,13 @@ unchanged. The local validation report is
 `/private/tmp/desy6_nautilus80_1000draws_20261126.4TJbTE/validation.json`.
 Representative ΛCDM and CPL+Planck fixed-parameter profile checks
 reached finite MPI worker evaluations. Those checks exercise optimizer
-startup. The numbered profile CLI smoke test needs a matching minimum.
-Confidence limits require a completed profile calculation.
+startup. Numbered case 30 also completed the genuine minimum-to-profile
+CLI handoff: five minimization temperatures followed by two fixed-parameter
+points with four temperatures each, using one step per walker. Both
+profile rows are finite, preserve the fixed coordinate and pass the
+driver's matching-configuration and saved-score checks. These bounded
+searches do not establish convergence or confidence limits. Outputs are
+under `/private/tmp/desy6_profile30_cli_smoke_20261126.CvYpJE/chains/`.
 
 The PPD notebook's conditioning-mask preparation,
 weighted chain intake and missing-nuisance prior draws were reviewed and
@@ -273,11 +278,13 @@ DES Y6 testing and remaining work:
   w and wa with cached results exactly matching fresh calculations.
   Core `201db8a` allows fifty startup posterior draws: four joint examples
   required a sixth draw, beyond the previous five-draw budget.
-- SP(k) case 60 logged unity substitutions for nonfinite suppression
-  inside its redshift range. The startup logs contain 128 redshift-row
-  substitutions in Nautilus and 18 in minimization. Both workflows
-  reached their startup criteria. The effect on predictions remains
-  unmeasured.
+- SP(k) case 60 reproduced a draw that used unity after an invalid
+  suppression calculation inside the calibrated redshift range.
+  BFMT `365006f` rejects that draw. The DES Y6 regression `5cdecfe`
+  passed, and the valid control's full suppression grid and shear data
+  vector matched bit for bit before and after the fix. Startup reruns
+  for all eight affected cases, 53–60, are running after the completed
+  case 30 profile check.
 - The twelve calibrated shift-and-stretch cases 41--52 and full named
   Fisher proposals are committed in `00c0416`. All twelve matrices passed
   finite, symmetry and Cholesky checks. MCMC, CAMB postprocessing and
