@@ -253,6 +253,12 @@ DESI `dbd8de6` and DES Y6 `0ea8a43`.
 
 DES Y6 testing and remaining work:
 
+Scope decision (2026-11-26): full feedback-specific Fisher proposals for
+the forty feedback companions, broader CMB-emulator validation and
+converged profile confidence limits are not requested. Keep the existing
+proposals and eight-point CMB validation; profile work covers bounded
+execution checks. These extensions are removed from the TODO list.
+
 - The five LSST Y1 baryonic-feedback templates are fully commented in
   all ten DES Y6 Evaluate examples (`f04ff2f`). They include the theory
   selector, parameter priors and overrides, with a warning to replace CAMB's
@@ -345,9 +351,8 @@ DES Y6 testing and remaining work:
   used one full baseline, one 2.5% stencil spacing and selected-column
   refinement, with two MPI ranks, four OpenMP threads each and BLAS=1.
   Emulator benchmark points and saved contours remain intact.
-- Use a genuine matching minimization record for the numbered profile
-  CLI smoke test. A scratch minimization for case 30 is queued to
-  supply the input for its one-step profile schedule.
+- Case 30 completed the numbered profile CLI smoke test using its genuine
+  matching minimization record and a one-step profile schedule.
 
 Longer scientific follow-ups, not completed by the teaching demonstrations:
 
@@ -357,9 +362,6 @@ Longer scientific follow-ups, not completed by the teaching demonstrations:
 - Extend the released-chain importance pilot only with compatible support
   and adequate effective sample size. The current fixed-mass pilot has
   ESS=12.50; it is not a replacement for a production posterior fit.
-- Extend the CMB validation if a broader cosmology or nuisance range is
-  needed. All eight fixed-nuisance ΛCDM and CPL pilot points met the
-  Plik prediction-distance target Δχ² < 0.2.
 - Revisit cluster-robustness cases with large numerical diagnostics before
   treating their Fisher forecasts as quantitative posterior constraints.
 - Obtain the missing systematics-weight and scale-dependent metacalibration
