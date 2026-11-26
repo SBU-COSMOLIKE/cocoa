@@ -718,6 +718,18 @@ shape, the main README wins.
 - Every command flow uses `**Step :one:**:` blocks — ALWAYS, even
   when there is a single step. A bare command block with a lead-in
   sentence is not a flow.
+- Explain runnable actions with labelled steps and give each action its
+  own command block. Never combine Evaluate, a `--check`, MCMC and Nautilus
+  launches in one bash fence, or combine minimization and profiling there.
+  A multiline command with continuation backslashes is still one action;
+  the grouped environment exports described below are one setup task.
+- Distinguish alternatives from required sequences. Even alternatives
+  listed under the same step need separate, labelled command blocks:
+  copying one block must run only the chosen action. Do not number MCMC
+  and Nautilus as if users must run both.
+  Explain dependencies before the dependent step, such as completing a
+  minimization before profiling its saved minimum. Apply the same layout
+  to Slurm submission examples.
 - Every workflow states its environment and working directory. Include
   `source start_cocoa.sh` in installation or activation flows. Sampler
   subsections assume Cocoa is activated but repeat their full CPU setup
