@@ -150,7 +150,7 @@ The bounded startup runs for all 92 numbered cases gave these outcomes.
 |---|---|
 | MCMC | 92/92 passed |
 | Matched CAMB postprocessing | 92/92 passed |
-| Nautilus | 91/92 passed in the first bounded runs. Case 80 retained no finite samples. |
+| Nautilus startup | All 92 passed; case 80 needed the larger evaluation budget |
 | Minimization startup | All 92 have finite MPI worker evidence |
 | Profile setup | 92/92 passed |
 
@@ -169,8 +169,12 @@ teardown. The local verification ledger is
 Shared core `bb39c3a` preserves the Nautilus checkpoint and reports an
 empty posterior when the effective sample size is nonfinite or
 nonpositive. Review verified three passing regression tests. The
-larger-budget Nautilus retry for case 80 had two finite likelihood
-evaluations by 400 draws and is continuing toward its 1,000-draw budget.
+larger-budget Nautilus retry for case 80 completed 1,000 draws with six
+finite likelihood evaluations and two finite weighted rows. Its effective
+sample size was 1 and it did not converge. The first 100 draws reproduced
+the original empty result exactly; priors and physical settings were
+unchanged. The local validation report is
+`/private/tmp/desy6_nautilus80_1000draws_20261126.4TJbTE/validation.json`.
 Representative ΛCDM and CPL+Planck fixed-parameter profile checks
 reached finite MPI worker evaluations. Those checks exercise optimizer
 startup. The numbered profile CLI smoke test needs a matching minimum.
