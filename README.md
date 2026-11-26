@@ -1071,29 +1071,34 @@ In addition to `setup` and `compile` scripts, Cocoa contains `unxv` scripts that
 ## :interrobang: FAQ: How can users install Cosmolike projects?  <a name="appendix_compile_cosmolike_separately"></a>
 
 The script `set_installation_options.sh` selects which Cosmolike projects
-are installed. A commented `IGNORE_*_CODE` key enables a project; an active
-key skips it; that file is the single source of truth for the selection.
+are installed. A commented `IGNORE_*_CODE` key enables a project. An active
+key skips it.
 
      [Adapted from Cocoa/set_installation_options.sh shell script]
      #export IGNORE_COSMOLIKE_LSST_Y1_CODE=1
+     #export IGNORE_COSMOLIKE_DES_3PCF_CODE=1
      export IGNORE_COSMOLIKE_DES_Y3_CODE=1
      #export IGNORE_COSMOLIKE_DESXPLANCK_CODE=1
      export IGNORE_COSMOLIKE_ROMAN_FOURIER_CODE=1
      #export IGNORE_COSMOLIKE_ROMAN_REAL_CODE=1
-     export IGNORE_COSMOLIKE_ROMAN_KL_CODE=1
-     export IGNORE_COSMOLIKE_DES_CLUSTER_CODE=1
-     # WARNING: des_y6 is not production-ready.
-     export IGNORE_COSMOLIKE_DES_Y6_CODE=1
+     # WARNING: des_y6 is not production ready.
+     #export IGNORE_COSMOLIKE_DES_Y6_CODE=1
      (...)
-     export ROMAN_REAL_URL="https://github.com/CosmoLike/cocoa_roman_real.git"
+     # Private CosmoLike projects
+     #export IGNORE_COSMOLIKE_LSSTY1XDESI_CODE=1
+     export IGNORE_COSMOLIKE_ROMAN_KL_CODE=1
+     # Generic project for testing CosmoLike cluster code.
+     # DES cluster data are maintained in the DES Y6 project.
+     export IGNORE_COSMOLIKE_DES_CLUSTER_CODE=1
+     (...)
+     export ROMAN_REAL_URL="https://github.com/SBU-COSMOLIKE/cocoa_roman_real.git"
      export ROMAN_REAL_NAME="roman_real"
-     export ROMAN_REAL_GIT_TAG="v5.09"
+     export ROMAN_REAL_GIT_BRANCH="lowrank_fftlog"
 
-Each released project is pinned to a tag. To select another revision, set
-only one of its `GIT_COMMIT`, `GIT_BRANCH` or `GIT_TAG` keys: a commit takes
-precedence over a branch, and a branch over a tag. DES Y6 is disabled by
-default and not production-ready; its key block pins a tag like the
-released projects.
+The script lists private repositories and their revisions under
+`# URL of private projects below`. To select another revision, set one of
+the project's `GIT_COMMIT`, `GIT_BRANCH`, or `GIT_TAG` keys. Cocoa checks them
+in that order.
 
 Covariance generation is a separate build option, disabled for all projects
 by default. To enable it for Roman real, comment out
