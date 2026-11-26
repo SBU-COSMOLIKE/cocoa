@@ -2097,12 +2097,25 @@ The file runs two kinds of checks on frozen configurations:
   highest value that stays healthy in every project scanned; the
   KNOB scan keeps 5 as a deliberate stress entry.
 
-Every reference is frozen and sits at the chi2 minimum, because the
-data vectors are synthetic: the model generated them at the frozen
-point. At a minimum the chi2 responds quadratically to a settings
-change, so the reported deltas are stable and small. The comfort
-target is |delta chi2| below 0.2. A larger delta is not a failure; it
-is a number to investigate.
+For a synthetic reference generated at the frozen parameter point,
+that point is the chi2 minimum. The chi2 responds quadratically to a
+settings change there, so the reported deltas measure the prediction
+distance.
+
+Before launching a numerical comparison or recommending defaults,
+verify the metric, threshold, and probe and point coverage against the
+user's instructions. Check that the code, fixture, and README agree.
+The current prediction target is $E=\delta d^\mathsf{T}C^{-1}\delta d<0.2$
+over all retained rows with the full masked covariance. Report observed
+fit $\Delta\chi^2$ separately as a diagnostic. Use 0.01, 0.05, or another
+stricter prediction target only when the user requests it. Keep FoM
+percent tolerances, emulator bins, and relative integration tolerances
+independent of this criterion.
+
+For total numerical error, compare vectors that change CAMB and native
+settings together. Their covariance-weighted cross term prevents adding
+the separate $E$ values. Choose the cheapest tested settings that meet
+the requested criterion. A lower measured $E$ is diagnostic evidence.
 
 ### 9.2 Investigation order when knobs move the chi2
 
