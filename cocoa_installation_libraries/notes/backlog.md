@@ -109,22 +109,70 @@ are finite, with 43 below the numerical target of 0.2 and a maximum of
 pass does not establish numerical convergence there. The six sibling
 reference and ordinary replays continue in two independent two-core
 lanes alongside the eight-core DES Y6 startup/diagnostic lane.
+Completed sibling numerical checks are DES Y3 (`ed8528e`), Roman Fourier
+(`25fed1f`) and DES Y3 x Planck (`a439076`). Their below-0.2 counts are
+23/50, 31/50 and 18/50; their maxima are about 670, 1400 and 400. These
+are ordinary-versus-refined CAMB/CosmoLike errors, not emulator errors.
+The worst points satisfy their configured priors. The user limits deep
+numerical diagnosis and accuracy tuning to DES Y6; the other projects
+only need their tests completed and their measured results published.
+The queued DES Y3/Roman Fourier and Planck outlier investigations are
+cancelled. Saved high-accuracy vectors remain unchanged. DES Y6's seven
+original outliers fall below 0.2
+when the diagnostic jointly uses lmax=200000, CAMB kmax=50 and the shear
+integration multiplier 4. That candidate has not replaced the common
+production baseline or been validated on all 50 points.
+Interpret large prior-tail distances with the fixed covariance and signal
+amplitudes in mind: a fixed fractional vector error grows with the signal,
+and its quadratic distance grows with the squared amplitude. A large
+distance alone does not establish a code defect or require raising all
+production settings. The DES Y6 candidate replay is descriptive evidence,
+not an automatic requirement to force every prior draw below 0.2.
+The full-50 candidate replay is now held. Reuse the saved hybrid-emulator
+Fisher contours in the numerical-accuracy plots to show where these
+prior draws lie relative to the approximate posterior region. This is
+a plotting change, with no new Fisher derivatives or model evaluations.
+The approved four-panel layout is committed in shared core `4912a7d`,
+DES Y6 `c662c1f`, DES Y3 `d2e5e75`, Roman Fourier `54bfd4c` and
+DES Y3 x Planck `454cb5a`. The new panel displays the saved 68% and 95%
+Omega_m--A_s contours beside the same numerical-error points. Reference
+vectors and measured distances remain unchanged. Roman KL and the
+DES Cluster optical check do not have matching saved 3x2pt contours;
+their different-probe contours are not substituted.
+
+Maintained pytest setup now loads BLAS with a one-thread cap in the six
+current-prior projects (`efc7f67` in the shared core, with project hooks).
+All six plain-command collection checks verified the requested native
+team and a real one-thread BLAS matrix product without scratch preloads.
 The ten guides now use compact FoM settings/change tables; the nine
 sibling-guide revisions are committed. The cross-project audit is also
 adding missing applicable test bindings, with current prior inputs kept
 separate from historical synthetic snapshots.
-The 12 shift/stretch fiducial checks pass; 40 unchanged feedback
-fiducial checks reuse actual-model validation. These 52 setup checks
-are not inference-startup results. The bounded sampler-startup queue
-remains active on two MPI ranks with
-four native OpenMP threads each and BLAS=1. Profile setup checks remain
-distinct from actual profiles, which require genuine matching minima.
+The base 40 cases passed bounded MCMC, matched CAMB postprocessing and
+Nautilus startup checks. All 12 shift/stretch cases also passed those
+three workflows and reached finite minimizer worker evaluations. Their
+24 minimizer/profile setup checks passed separately. Numbered profiles
+still need matching minimization records; setup is not a completed
+profile calculation. Representative LCDM and CPL+Planck fixed-parameter
+optimizer checks reached finite worker evaluations, with four native
+threads per MPI rank and one BLAS thread. They do not produce profile
+confidence limits or count as numbered profile CLI runs. The 40
+feedback cases are now in the bounded startup queue, with two MPI ranks,
+four native OpenMP threads each and BLAS=1.
 Independent tests now overlap at the user's request, while retaining
 one-thread BLAS. The PPD notebook's conditioning-mask preparation,
 weighted chain intake and missing-nuisance prior draws were reviewed and
 committed as DES Y6 `ba49a61`. Two actual native predictions validate the
 reader-to-prediction path; they do not supply calibrated DES
 posterior-predictive probabilities or replace conditioning chains.
+The cluster-robustness notebook was rerun at the current Evaluate2
+settings: its two derivative bases required 153 and 133 evaluations,
+yielding 11 finite positive Fisher forecasts. A replay of all notebook
+cells reproduces the saved table from those caches. Source is committed
+as DES Y6 `8748df5`; outputs are under `chains/cluster_robustness/evaluate2/`.
+The derivative-noise proxy is about 6.7% for the baseline and reaches 31%
+for clustering plus counts, so these are approximate forecasts. The two
+systematics cases still require their missing measured data vectors.
 
 The CPL linear cold-power extension is implemented in emulator `af209ae`,
 using a matched-LambdaCDM anchor at physical k=0.05/Mpc. Five regression
@@ -209,7 +257,9 @@ Remaining work in the current DES Y6 testing task:
   certify sampler convergence or all minimization/profile workflows.
 - The twelve calibrated shift-and-stretch cases 41--52 and full named
   Fisher proposals are committed in `00c0416`. All twelve matrices passed
-  finite, symmetry and Cholesky checks; bounded startup remains pending.
+  finite, symmetry and Cholesky checks. MCMC, CAMB postprocessing and
+  Nautilus startup pass for all twelve; each minimizer reaches finite
+  worker evaluations. Numbered profiles await matching minima.
   Their priors and redshift notebook are committed in `5f5c198`. CosmoSIS and
   Cardinal inventories are now documented in the data README. Data
   utilities moved to `scripts/` in `9d96174`, and the incomplete cluster
@@ -301,8 +351,12 @@ Longer scientific follow-ups, not completed by the teaching demonstrations:
   vectors, and the full 6x2pt+N measured vector, covariance and mask.
   Those configurations cannot be validated from the supplied inputs alone.
 
-Continue with one native project at a time, two MPI ranks, four OpenMP
-threads per rank and BLAS=1. Map generation stays paused and TreeCorr stays
+Use the eight-core DES Y6 lane with two MPI ranks and four OpenMP
+threads per rank, alongside two independent two-core reference lanes,
+as requested by the user. Keep BLAS=1 in every lane. Deep numerical
+analysis is restricted to DES Y6; complete and report the other projects'
+tests without additional outlier investigations. Map generation stays
+paused and TreeCorr stays
 on the HPC. Do not launch production chains as part of these test tasks.
 
 <a id="closed-des-y6-modernization"></a>
