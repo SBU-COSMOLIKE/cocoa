@@ -11,10 +11,11 @@ in the same change.
 
 ## How to read this backlog
 
-Active scope (2026-11-26): finish the required DES Y6 work below. Of the
-older Cocoa tickets, only a red-team review of cache invalidation is
-requested alongside it. The other older tickets remain recorded but are
-outside this work queue. The cache review does not replace or pause DES Y6.
+Active scope (2026-11-26): finish the required DES Y6 work below. Resolve
+the cluster-robustness Fisher derivatives first, then time the full
+LambdaCDM plus CMB 3x2pt Nautilus run. The requested cache review and its
+three fixes are complete. Other older tickets remain recorded but are
+outside this work queue.
 
 One line beginning exactly `- OPEN` per unfinished ticket in the index
 below, each carrying `BUG FIX` or `NEW FUNCTIONALITY`. Never a second
@@ -61,6 +62,21 @@ features, Low bugs, Low features.
 ## DES Y6 comparison and PPD studies
 
 **Ticket type: NEW FUNCTIONALITY. Severity: MEDIUM. OPEN (2026-11-24).**
+
+Current priorities (2026-11-26):
+
+1. Resolve the cluster-robustness derivative noise before interpreting
+   these forecasts quantitatively. Reuse the saved derivatives and test
+   the influential columns at matched settings; do not rebuild full
+   Fishers without evidence that this is necessary.
+2. Time the maintained case-1 LambdaCDM plus CMB 3x2pt Nautilus run with
+   ten MPI ranks, one native OpenMP thread per rank and BLAS=1. Ten ranks
+   provide nine likelihood workers and one coordinator. The target is
+   15,000 effective posterior samples, with a safety cap of 5,000,000
+   likelihood evaluations. Apply these defaults to the shared Nautilus
+   driver while preserving explicitly bounded test runs. Retain the
+   checkpoint for resuming and report the actual convergence status and
+   elapsed time. The local full run is explicitly authorized.
 
 Current status (2026-11-25): the project organization, numbered examples,
 sampler/minimizer/profile launchers, CAMB postprocessing configurations and

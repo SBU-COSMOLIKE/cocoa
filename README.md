@@ -421,17 +421,26 @@ likelihoods, and the theory code, all following Cobaya Conventions.
           --rank-by slot --map-by slot \
           python ./projects/example/EXAMPLE_EMUL_NAUTILUS1.py \
             --root ./projects/example/ --outroot "EXAMPLE_EMUL_NAUTILUS1"  \
-            --maxfeval 450000 --nlive 2048 --neff 15000 --flive 0.01 --nnetworks 5
+            --nlive 2048 --neff 15000 --flive 0.01 --nnetworks 5
 
   - macOS (arm)
 
         mpirun -n 12 --oversubscribe \
           python ./projects/example/EXAMPLE_EMUL_NAUTILUS1.py \
           --root ./projects/example/ --outroot "EXAMPLE_EMUL_NAUTILUS1"  \
-          --maxfeval 450000 --nlive 2048 --neff 15000 --flive 0.01 --nnetworks 5
+          --nlive 2048 --neff 15000 --flive 0.01 --nnetworks 5
 
 > [!NOTE]
-> What if the user runs an `Nautilus` chain with `maxeval` insufficient for producing `neff` samples? `Nautilus` creates a checkpoint at `chains/outroot_checkpoint.hdf5`.
+> Nautilus targets 15,000 effective posterior samples by default. A few
+> heavily weighted draws can give a small effective sample size even when
+> many draws were saved.
+>
+> The default likelihood-evaluation budget is 5,000,000. Set
+> `--maxfeval` to change the budget, for example for a short test.
+> A run can reach this limit before its effective-sample target.
+> Nautilus writes its checkpoint to `chains/outroot_checkpoint.hdf5`.
+> Add `--resume` at the same output prefix to continue an unfinished run
+> with matching settings. The budget includes earlier evaluations.
 
 - **Emcee**:
 
