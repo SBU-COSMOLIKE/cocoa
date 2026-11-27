@@ -11,11 +11,11 @@ in the same change.
 
 ## How to read this backlog
 
-Active scope (2026-11-26): finish the required DES Y6 work below. Resolve
-the cluster-robustness Fisher derivatives first, then time the full
-LambdaCDM plus CMB 3x2pt Nautilus run. The requested cache review and its
-three fixes are complete. Other older tickets remain recorded but are
-outside this work queue.
+Active scope (2026-11-26): finish the required DES Y6 work below. The
+cluster-robustness derivative repair is complete; the full LambdaCDM
+plus CMB 3x2pt Nautilus timing run is active. The requested cache review
+and its three fixes are complete. Other older tickets remain recorded
+but are outside this work queue.
 
 One line beginning exactly `- OPEN` per unfinished ticket in the index
 below, each carrying `BUG FIX` or `NEW FUNCTIONALITY`. Never a second
@@ -65,10 +65,9 @@ features, Low bugs, Low features.
 
 Current priorities (2026-11-26):
 
-1. Resolve the cluster-robustness derivative noise before interpreting
-   these forecasts quantitatively. Reuse the saved derivatives and test
-   the influential columns at matched settings; do not rebuild full
-   Fishers without evidence that this is necessary.
+1. Cluster-robustness derivative repair completed in core `72a63a7` and
+   DES Y6 `d1d295c`. The derivative calculation keeps a fixed non-Limber
+   multipole range; ordinary sampling tolerances remain unchanged.
 2. Time the maintained case-1 LambdaCDM plus CMB 3x2pt Nautilus run with
    ten MPI ranks, one native OpenMP thread per rank and BLAS=1. Ten ranks
    provide nine likelihood workers and one coordinator. The target is
@@ -77,6 +76,28 @@ Current priorities (2026-11-26):
    driver while preserving explicitly bounded test runs. Retain the
    checkpoint for resuming and report the actual convergence status and
    elapsed time. The local full run is explicitly authorized.
+
+The repaired cluster forecasts use two coherent derivative bases. The
+344-evaluation calculation took 155 seconds with two MPI ranks and four
+OpenMP threads per rank. All eleven forecasts are finite. Refining six
+influential columns changes their FoMs and widths by at most 0.0065%.
+The remaining counts fourth difference follows smooth fourth-order
+curvature: halving only the mass–richness normalization step changes the
+FoM by at most 0.058%. The 2.5% stencil is retained. The ordinary vector
+is restored bit for bit after derivative mode. Results and four reusable
+caches are under `projects/des_y6/chains/cluster_robustness/evaluate2_full_range/`.
+DES Cluster is rebuilt against the same fix. Its default 6x2pt+N
+prediction, mask and likelihood match the preceding binary bit for bit;
+toggling the cluster derivative range and restoring it also passes.
+
+The full case-1 Nautilus timing run started at 21:18 EST on 26 November.
+All ten ranks verified native OpenMP=1 and BLAS=1; all nine likelihood
+workers returned finite scores. The checkpoint, log and accumulated
+timing record are under
+`projects/des_y6/chains/nautilus_3x2pt_lcdm_cmb_20261127.2f9FHO/`.
+Its convergence time is pending. Shared defaults and checkpoint resume
+support are committed as core `f922f3c`; the safety cap counts calls from
+earlier resumed segments too.
 
 Current status (2026-11-25): the project organization, numbered examples,
 sampler/minimizer/profile launchers, CAMB postprocessing configurations and
