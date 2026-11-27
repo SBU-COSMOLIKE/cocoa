@@ -13,7 +13,9 @@ in the same change.
 
 Active scope (2026-11-26): finish the required DES Y6 work below. The
 cluster-robustness derivative repair is complete; the full LambdaCDM
-plus CMB 3x2pt Nautilus timing run is active. The requested cache review
+plus CMB 3x2pt Nautilus timing run has restarted from scratch with the
+repaired emulator-only theory. Native CosmoLike timings and all 92
+configuration startup checks are complete. The requested cache review
 and its three fixes are complete. Other older tickets remain recorded
 but are outside this work queue.
 
@@ -95,9 +97,55 @@ All ten ranks verified native OpenMP=1 and BLAS=1; all nine likelihood
 workers returned finite scores. The checkpoint, log and accumulated
 timing record are under
 `projects/des_y6/chains/nautilus_3x2pt_lcdm_cmb_20261127.2f9FHO/`.
-Its convergence time is pending. Shared defaults and checkpoint resume
+The controller and all MPI ranks are stopped with the checkpoint intact.
+The pause follows 19,116 completed calls and about 88 minutes of active
+wall time. First measure native CosmoLike alone at one and eight OpenMP
+threads, averaging ten changing cosmology and nuisance points after warmup;
+exclude theory preparation from this timing. This check is complete:
+native setters, projection and chi-squared average 0.22 seconds at one
+thread and 0.058 seconds at eight threads, with BLAS=1. The ten vectors
+are bitwise identical across thread counts. The full DES likelihood,
+including its Python preparation, averages 0.22 and 0.066 seconds.
+Evidence is in `/private/tmp/desy6_nautilus_neff15000_20261127.rqq1U9/`,
+files `case1_native_omp1` and `case1_native_omp8` (JSON, NPZ and logs).
+The original run was retired without changing its checkpoint. Its
+convergence time was not measured. Shared defaults and checkpoint resume
 support are committed as core `f922f3c`; the safety cap counts calls from
 earlier resumed segments too.
+
+The exact run requests derived sigma8 from CAMB, causing a full transfer
+calculation despite emulated matter and CMB spectra. Ten matched uncached
+points average 1.9 seconds per evaluation, of which CAMB takes 1.7 seconds.
+EMUL2 must never calculate with CAMB, including background distances or
+acoustic-scale conversion. DES Y6 `9f49b55` switches all 92 sampler YAMLs
+to the existing distance emulators and explicit matter-emulator sigma8;
+their 276 Nautilus, minimization and profile launchers read the same inputs.
+All 92 configurations return finite startup scores with no CAMB calls.
+The other active matter-emulator project recipes already have no outer
+CAMB block. Core `bbdcce2` enforces the emulator-only sampler route and
+updates the comparison candidate, retaining CAMB only as the reference.
+All ten shared sampler regression tests pass. Nine project comparison
+wrappers produce finite reference and candidate predictions at a saved
+point; these startup checks do not certify prediction accuracy across
+the prior. The CAMB reweights for cases 1, 11 and 31 also pass.
+The complete LambdaCDM emulator replacement passes ten matched points:
+maximum prediction delta chi-squared is 0.00030 and mean total time is
+0.26 seconds at one OpenMP thread. The ten-point CPL comparison has maximum
+combined DES and Plik prediction delta chi-squared 0.11, below 0.2, and
+mean total time 0.26 seconds. Both candidate routes are entirely emulated.
+
+The fresh case-1 run started at 23:13 EST on 26 November, using ten MPI
+ranks, one OpenMP thread per rank and BLAS=1, targeting 15,000 effective
+samples with the 5,000,000-evaluation cap. No previous samples or checkpoint
+were reused. Its prefix is
+`projects/des_y6/chains/nautilus_3x2pt_lcdm_cmb_emul2_20261127.U5yHbK/case1`.
+The old checkpoint remains archived with its original checksum.
+
+Refresh the saved emulator comparison figures through the corrected
+candidate route, using the same fixed cosmologies and Fisher references.
+Existing figures used CAMB backgrounds and are labeled accordingly.
+The DES 3PCF check remains an explicitly separate matter-spectrum comparison;
+it is not validation of a full EMUL2 sampler.
 
 Current status (2026-11-25): the project organization, numbered examples,
 sampler/minimizer/profile launchers, CAMB postprocessing configurations and
@@ -105,7 +153,7 @@ Slurm array example are implemented. The comparison, redshift-mode,
 cluster-robustness and PPD teaching notebooks have been executed. Archived
 Lighthouse inputs are portable; they are not a new external-code run.
 
-All 21 CPL emulator comparisons are complete and reviewed: 50 broad and
+The archived 21 CPL matter-emulator comparisons are complete: 50 broad and
 25 focused points per scope, strict w0+wa < -0.4, matching saved Fisher
 contours, and a 21-page combined PDF. All 1,575 paired evaluations are
 finite. Finite does not mean accurate: DES Cluster's largest focused

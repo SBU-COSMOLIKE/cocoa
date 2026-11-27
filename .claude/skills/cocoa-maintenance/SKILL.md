@@ -128,6 +128,23 @@ These rules apply to every project's `tests/` and the shared
 shared Fisher implementation used by LSST Y1 x DESI. Do not add a second
 Fisher engine, plotting script or benchmark framework per project.
 
+### EMUL2 must never calculate with CAMB
+
+- EMUL2 uses emulators for matter power, background distances, acoustic-scale
+  conversion and CMB spectra when requested. Derived `sigma8` and `S8` must
+  also come from the emulator predictions. There is no background-only CAMB
+  exception. Apply this to MCMC, Nautilus, minimization and profile inputs,
+  their notebook consumers, and the EMUL2 candidate in accuracy tests.
+- Inspect the resolved theory providers and nested backends, not just the
+  filename or `use_emulator` flag. Reject a CAMB theory block or an emulator
+  configured to call CAMB in an EMUL2 run. Check the providers of derived
+  outputs: an unassigned `sigma8` can silently request transfer functions.
+- CAMB belongs in explicit reference calculations, plain CAMB evaluations
+  and CAMB postprocessing. An isolated matter-power comparison that retains
+  CAMB for other quantities is not validation of an EMUL2 pipeline.
+- Validate changed emulator routes with the prediction-distance statistic
+  below and measure ten changing points after warmup before a long run.
+
 ### Emulator accuracy is an ordinary chi-squared calculation
 
 - Use the saved benchmark configuration, mask, covariance, nuisance values
