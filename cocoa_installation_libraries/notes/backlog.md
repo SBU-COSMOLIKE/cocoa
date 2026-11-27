@@ -76,8 +76,13 @@ Current priorities (2026-11-26):
    15,000 effective posterior samples, with a safety cap of 5,000,000
    likelihood evaluations. Apply these defaults to the shared Nautilus
    driver while preserving explicitly bounded test runs. Retain the
-   checkpoint for resuming and report the actual convergence status and
-   elapsed time. The local full run is explicitly authorized.
+   checkpoint and report the actual convergence status and elapsed time.
+   After convergence, run case 11 (CPL plus CMB), then cases 21 and 31
+   (LambdaCDM and CPL DES-only) unless the user changes the schedule.
+   Each run starts fresh with its own prefix and the same resource limits.
+   Advance only after a successful exit and at least 15,000 effective
+   samples with convergence confirmed; stop the queue on failure or a
+   nonconverged exit. These local full runs are explicitly authorized.
 
 The repaired cluster forecasts use two coherent derivative bases. The
 344-evaluation calculation took 155 seconds with two MPI ranks and four
@@ -140,6 +145,14 @@ samples with the 5,000,000-evaluation cap. No previous samples or checkpoint
 were reused. Its prefix is
 `projects/des_y6/chains/nautilus_3x2pt_lcdm_cmb_emul2_20261127.U5yHbK/case1`.
 The old checkpoint remains archived with its original checksum.
+
+The sequential supervisor is active under
+`projects/des_y6/chains/nautilus_sequence_20261127.s9APVv/`.
+It observes the existing case-1 run, then starts fresh cases 11, 21 and 31
+one at a time. `status.json` records each completed run's elapsed time,
+effective samples, likelihood calls and evidence. `CONTROL.md` describes
+holding or stopping the queue before the next case; the active run is not
+interrupted by those controls. There is no automatic retry or resume.
 
 Refresh the saved emulator comparison figures through the corrected
 candidate route, using the same fixed cosmologies and Fisher references.
