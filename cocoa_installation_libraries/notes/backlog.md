@@ -11,6 +11,11 @@ in the same change.
 
 ## How to read this backlog
 
+Active scope (2026-11-26): finish the required DES Y6 work below. Of the
+older Cocoa tickets, only a red-team review of cache invalidation is
+requested alongside it. The other older tickets remain recorded but are
+outside this work queue. The cache review does not replace or pause DES Y6.
+
 One line beginning exactly `- OPEN` per unfinished ticket in the index
 below, each carrying `BUG FIX` or `NEW FUNCTIONALITY`. Never a second
 `- OPEN` line inside a ticket. Every ticket has one anchored section
@@ -39,8 +44,6 @@ features, Low bugs, Low features.
 ### Medium
 
 - OPEN **MEDIUM** **NEW FUNCTIONALITY** — [DES Y6 comparison and PPD studies](#open-des-y6-studies)
-- OPEN **MEDIUM** **BUG** — [Cache-key hardening for in-process reconfiguration](#open-cache-key-hardening)
-- OPEN **MEDIUM** **NEW FUNCTIONALITY** — [Cache the Fourier non-Limber band-center corrections](#open-fourier-nonlimber-cache)
 - OPEN **MEDIUM** **NEW FUNCTIONALITY** — [Rewrite analytic covariances in an isolated module](#open-covariance-rewrite)
 - OPEN **MEDIUM** **NEW FUNCTIONALITY** — [Project endpoint refreezes, notebooks and numerical follow-ups](#open-project-endpoint-refreeze)
 - OPEN **MEDIUM** **NEW FUNCTIONALITY** — [Remaining 3PCF integration follow-ups](#open-threepcf-integration-followups)
@@ -51,8 +54,6 @@ features, Low bugs, Low features.
 ### Low
 
 - OPEN **LOW** **NEW FUNCTIONALITY** — [IA x higher-order-bias (gb2) cross terms in cfastpt](#open-cfastpt-gb2-ia-bias)
-- OPEN **LOW** **NEW FUNCTIONALITY** — [Contract the dlnxi/dlnw scale-cut cache builds](#open-scuts-dlnxi-contraction)
-- OPEN **LOW** **NEW FUNCTIONALITY** — [Finish the Compton-y port (C_gy, C_ys, C_ky, C_yy)](#open-compton-y-port)
 - OPEN **LOW** **NEW FUNCTIONALITY** — [Web-halo model (WHM, arXiv:2508.10902) for nonlinear P(k)](#open-web-halo-model)
 - OPEN **LOW** **NEW FUNCTIONALITY** — [Vectorization study for halo.c (SIMDe, SLEEF)](#open-halo-vectorization)
 
@@ -288,9 +289,14 @@ execution checks. These extensions are removed from the TODO list.
   suppression calculation inside the calibrated redshift range.
   BFMT `365006f` rejects that draw. The DES Y6 regression `5cdecfe`
   passed, and the valid control's full suppression grid and shear data
-  vector matched bit for bit before and after the fix. Startup reruns
-  for all eight affected cases, 53–60, are running after the completed
-  case 30 profile check.
+  vector matched bit for bit before and after the fix. All 32 startup
+  rechecks passed for cases 53–60: MCMC, matched CAMB postprocessing,
+  Nautilus and finite MPI minimizer-worker evaluations. Across 800
+  identical Nautilus draws, 113 formerly accepted invalid scores became
+  rejections; valid scores agreed within 2.4e-10 in log likelihood.
+  These bounded checks do not establish sampler or minimizer convergence.
+  The verification report is
+  `/private/tmp/desy6_spk_startup_recheck_20261126.PSPtcQ/validation.json`.
 - The twelve calibrated shift-and-stretch cases 41--52 and full named
   Fisher proposals are committed in `00c0416`. All twelve matrices passed
   finite, symmetry and Cholesky checks. MCMC, CAMB postprocessing and
@@ -351,6 +357,9 @@ execution checks. These extensions are removed from the TODO list.
   used one full baseline, one 2.5% stencil spacing and selected-column
   refinement, with two MPI ranks, four OpenMP threads each and BLAS=1.
   Emulator benchmark points and saved contours remain intact.
+- The completed CPL and LambdaCDM emulator comparisons are readable from
+  `notes/code_comparison/EMULATOR_CAMB.ipynb` (`2d96d2e`). All 150 saved
+  distances reproduced without new predictions or Fisher calculations.
 - Case 30 completed the numbered profile CLI smoke test using its genuine
   matching minimization record and a one-step profile schedule.
 
@@ -518,105 +527,6 @@ Deliverables I1–I4, sources and acceptance checks are in the tracked core
 The plan requires zero-amplitude recovery, odd/even amplitude sign checks,
 independent source-field expansions, CLI/notebook and thread agreement,
 positive total covariances and unchanged data-vector regressions.
-
-<a id="open-cache-key-hardening"></a>
-## Cache-key hardening for in-process reconfiguration
-
-### High-level summary
-
-The 2026-09-28 crash fixes keyed the ggl pair maps on
-tomo.random_ggl; the same review found the remaining static state
-that survives an in-process reconfiguration it should not survive.
-None of it is reachable from the shipped pytest suites (every model
-rebuild redraws Ntable.random), but notebooks driving the C inits
-directly can hit each one.
-
-### Current status
-
-**Ticket type: BUG.**
-
-**OPEN.** The list:
-
-- FAST-PT table ownership (pt_cfastpt.c / generic_interface.cpp):
-  `owned_tab` detects a python-installed table by pointer identity;
-  a free-then-malloc of the same base address (common for equal-size
-  blocks) defeats it. Fix: a uint64 generation stamp in the FPTIA
-  and FPTbias structs, bumped by set_IA_PS/set_bias_PS, keyed in
-  get_FPT_IA/get_FPT_bias. Do NOT key on nuisance.random_ia: that
-  redraws per sampled point and would rebuild FAST-PT (~72 ms) every
-  evaluation.
-- Z1/Z2/N_shear/ZCL1/ZCL2/N_CL (redshift_spline.c): build-once maps
-  with no invalidation key; stale when bin COUNTS change in-process.
-  Natural keys exist (redshift.random_shear, random_clustering);
-  warm in init_ntomo_powerspectra beside the ggl maps.
-- C_cl_tomo statics (cosmo2D.c): CLnl/CLlin/lx and the FFT block are
-  sized with the current clustering_nbin but rekeyed only on
-  Ntable.random; add redshift.random_clustering (the class of bug
-  e7a51af fixed elsewhere).
-- `test_kmax`'s chiref (redshift_spline.c): built once, cosmology
-  dependent, never invalidated; currently dormant (no callers).
-- init_binning_fourier/init_binning_real_space/init_probes/
-  init_survey/init_bias draw no cache-busting random: a mid-process
-  change does not invalidate Ntable.random-keyed tables.
-- CONFIRMED AND MEASURED (2026-09-28, found while validating the
-  internal ell grid): a bare post-initialize Ntable.random bump -
-  init_ntable_ell_internal called with the DEFAULT value, so no
-  setting changes - deterministically shifts the lsst_y1 frozen
-  fiducial chi2 by 2.5e-4 (3.4317e-2 -> 3.4065e-2). Some state built
-  during likelihood initialization is Ntable-coupled but rebuilds to
-  different values on a bump; init_ntable_lmax and every accuracy
-  init that bumps Ntable.random share the trigger. Reproduction:
-  build the frozen lsst_y1 example2 model, call
-  ci.init_ntable_ell_internal(nell_internal=192), evaluate. The
-  planned sector-ladder cache test would have caught this class;
-  finding the stale consumer is the first task of this ticket.
-
-**Severity: MEDIUM.** Latent, notebook-reachable; each fix is one
-key plus one warm-up in the established idiom.
-
-### What is already in place
-
-tomo.random_ggl and the init_ntomo_powerspectra warm-up show the
-pattern end to end.
-
-### What is missing
-
-The stamps, the keys, the warm-ups, and the sector-ladder cache test
-(planned per project) that exercises exactly this class.
-
-<a id="open-fourier-nonlimber-cache"></a>
-## Cache the Fourier non-Limber band-center corrections
-
-### High-level summary
-
-adopt_limber_gs = 0 is now the roman_fourier and roman_kl default,
-and C_gs_tomo_ells has no caching: every evaluation redoes C_gs_tomo
-(the FFTLog split), two 150-multipole Limber batches, and the
-band-center interpolation, about +70 ms per evaluation. The
-real-space path caches everything behind w_gammat_tomo's key set;
-the Fourier path deserves the same.
-
-### Current status
-
-**Ticket type: NEW FUNCTIONALITY.**
-
-**OPEN.** Measured 2026-09-28: roman_fourier full evaluation +26%
-with the flag on (22 -> 92 ms cosmolike time).
-
-**Severity: MEDIUM.** A per-evaluation cost on two default
-configurations; the fix is the standard static-table-plus-randoms
-pattern around C_gs_tomo_ells (and C_gg_tomo_ells for any Fourier
-project that switches adopt_limber_gg to 0).
-
-### What is already in place
-
-w_gammat_tomo's cache condition lists the exact key set; the ells
-functions are pure of static state, so the cache wraps cleanly.
-
-### What is missing
-
-The cached wrapper and a timing note in the two project READMEs.
-
 
 <a id="open-covariance-rewrite"></a>
 ## Rewrite analytic covariances in an isolated module
@@ -1068,105 +978,6 @@ IA_gb2 module as a cross-check reference (with caveats below).
 
 </details>
 
-<a id="open-compton-y-port"></a>
-## Finish the Compton-y port (C_gy, C_ys, C_ky, C_yy)
-
-### High-level summary
-
-The Compton-y cross spectra were never finished when cosmolike was
-ported into cocoa: nothing enables the gy/sy/ky/yy probes, and every
-python binding for them was commented out. The pieces now live outside
-the build in
-`cosmolike_core/future_port_unfinished/cosmo2d_tmp.c` (declarations,
-C functions, and the commented wrapper bindings), moved there on
-2026-09-26 to clean cosmo2D.c.
-
-### Current status
-
-**Ticket type: NEW FUNCTIONALITY.**
-
-**OPEN.** Idea stage; parked deliberately.
-
-**Severity: LOW.** No analysis in cocoa uses a y probe today.
-
-### What is already in place
-
-The parked code compiles against the pre-batch API it was written
-for, and the radial-weight infrastructure the port needs
-(`radial_weights.c`) already carries the lensing kernels.
-
-### What is missing
-
-Port the y radial weight, revive the parked functions on the _work
-batch design (they follow the retired single-grid per-point pattern),
-wire probes and bindings, and validate against the original cosmolike.
-
-<details><summary>Technical record</summary>
-
-- Parking lot: `cosmolike_core/future_port_unfinished/cosmo2d_tmp.c`
-  (NOT compiled; header comment lists the contents).
-- The like struct already carries the gy/sy/ky/yy probe flags.
-
-</details>
-
-<a id="open-scuts-dlnxi-contraction"></a>
-
-## Contract the dlnxi/dlnw scale-cut cache builds
-
-### High-level summary
-
-The per-cosmology scale-cut refill on roman_real costs ~5.7 s, and
-measurement localized it to the dlnxi (and dlnw_ks) cache builds:
-Ntable.dCX_dlnk_nlnk = 256 nointerp calls, each a Glpm Legendre
-sweep over every integer multipole for all (theta, pair) rows. The
-RF layer above is closed-form (6e160ac) and the dC tables below
-cost ~44 ms, so this build is the only expensive stage left. Not
-chain-critical (scale cuts run offline); worth doing when a
-scale-cut study makes 5.7 s per cosmology annoying.
-
-### Current status
-
-Design verified against the code (2026-09-28). The nointerp per-k
-cost splits three ways: (1) the dCgrid node fill - 2 x pairs x
-N_ell scalar dC_ss_dlnk_tomo_limber calls, each paying cache-key
-checks and a bilinear read to evaluate the table at its own ell
-nodes at one fixed k; (2) limber_fill_interp expansion to every
-integer ell (already AVX2, optimal); (3) the Glpm x cx simd
-reduction over LMAX ~ 1e5 (already threaded and vectorized).
-
-### What is missing
-
-1. A perf profile of one nointerp call confirming the split (the
-   RF work taught the attribution lesson twice: measure, never
-   infer).
-2. Step-(1) fix, standalone and small: at fixed k the node fill is
-   one fixed-weight blend of two dC table k-rows (the same t for
-   every entry, contiguous, SIMD-trivial); needs a _fill-style
-   sharing struct for the dC statics - the C_ss/ss_ precedent.
-   Expected ~1.5-2x on the build by itself.
-3. The contraction, subsuming (2)+(3): both apply the same fixed
-   linear map every call - limber_fill_interp's node ->
-   integer-ell weights followed by the Ntable-cached Glpm dot.
-   Precompute W(theta, node) = sum_ell Glpm(theta, ell)
-   w_node(ell) once per Ntable change (one of today's 1e5 sweeps,
-   ~200 KB); each k-node then costs 2 x pairs x Ntheta dot
-   products of length N_ell. Expected order 50-200x on the build;
-   validate to float reassociation (~1e-14 relative) against
-   nointerp on a probe grid, nointerp kept as the guarded
-   reference. The weights to contract against are exactly
-   limber_fill_interp's map (verified in code, no hidden scheme).
-
-<details><summary>Technical record</summary>
-
-- Owner: `cosmolike_core/cosmolike/cosmo2D_scuts.c`
-  (`dlnxi_dlnk_pm_tomo_nointerp`, `dlnw_ks_dlnk_tomo_nointerp`,
-  their cache builders), the Glpm kernels, the la/ldx coupling.
-- Timing evidence (roman_real, 2026-09-28): rf-path per-cosmology
-  refill 5.676 s after 6e160ac; dC+dlnxi table stage in isolation
-  42.8 ms; the difference is this build.
-
-</details>
-
 <a id="open-halo-vectorization"></a>
 ## Vectorization study for halo.c (SIMDe, SLEEF)
 
@@ -1328,6 +1139,39 @@ porting precedent any WHM work would build on.
 
 <a id="closed-tickets"></a>
 # Closed tickets
+
+<a id="closed-cache-key-hardening"></a>
+## Cache invalidation review and fixes (2026-11-26)
+
+Core `d9281c0` fixes three reproduced in-process state defects:
+
+- Native FAST-PT checks the existing Python-producer flag before reusing
+  a table. Memory-address reuse no longer hides a producer change.
+- Loaded optical and cluster measurements retain their angular bin
+  definitions; Fourier measurements retain their band centers. Changed
+  bins require matching measurements to be reloaded. Integration-accuracy
+  changes and exact restoration of the binning remain allowed.
+- `initial_setup` clears the previous model's optical measurements and
+  baryon principal components through the existing state owners.
+
+The new checks reproduced the defects on the previous libraries. After
+rebuilding, 37 native checks passed: eight focused optical transitions,
+13 LSST Y1 setting/cache checks, 14 DES Y6 setting/cache checks and two
+Fourier checks. The LSST Y1 optical and DES Y6 optical/cluster predictions,
+masks and likelihood values were bitwise unchanged at the saved ordinary
+points, using four OpenMP threads and one BLAS thread. All ten project
+interfaces rebuilt and were installed. Seven sibling interfaces also
+passed direct import/reset checks; no new numerical survey was run there.
+
+Regression commits: LSST Y1 `9f147c8`, LSST Y1×DESI `2d5bc9e`, DES Y6
+`43d4d71`. The core README explains ownership, measured bins and reset
+behavior. The production diff stays within five existing files and adds
+no new framework, dependency or numerical kernel.
+
+Verification records:
+`/private/tmp/cocoa_cache_baseline_20261126.bcHOqh/`,
+`/private/tmp/cocoa_cache_fixes_build_zeuu9clf/` and
+`/private/tmp/cocoa_cache_fixes_other_builds.DjFub8/`.
 
 <a id="closed-vic-emulator-validation"></a>
 ## Vic emulator validation for DES Y6
